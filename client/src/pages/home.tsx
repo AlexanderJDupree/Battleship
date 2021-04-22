@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
-import { SocketEvent as Event } from 'common/lib/events';
+import { ServerToClient as Server, Common} from 'common/lib/events';
 
 // TODO: remove example component
 function Example() {
@@ -26,21 +26,21 @@ function Example() {
 
   // Update server status when socket state changes
   useEffect(() => {
-    socket.on(Event.Client.Connect, handleConnect);
+    socket.on(Server.Connect, handleConnect);
 
-    socket.on(Event.Client.ConnectError, handleConnectError);
+    socket.on(Server.ConnectError, handleConnectError);
 
     return () => {
       // Teardown event listeners
-      socket.off(Event.Client.Connect, handleConnect);
-      socket.off(Event.Client.ConnectError, handleConnectError);
+      socket.off(Server.Connect, handleConnect);
+      socket.off(Server.ConnectError, handleConnectError);
     };
   }, [socket, handleConnectError, handleConnect]);
 
   const sendMsg = () => {
     if (socket.connected) {
       setCount(count + 1);
-      socket.emit(Event.DebugMessage, `Message number ${count}`);
+      socket.emit(Common.DebugMessage, `Message number ${count}`);
     }
   };
 
