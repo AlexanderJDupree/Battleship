@@ -24,6 +24,7 @@
     "build-common": "cd common && yarn run build",
     "build-client": "cd client && yarn run build",
     "build-server": "cd server && yarn run build",
+    "build-all" : "yarn build-common && yarn build-client && yarn build-server",
     "client" : "cd client && yarn start",
     "server" : "cd server && yarn start", 
     "start"  : "yarn build-common && concurrently \"yarn server\" \"yarn client\""

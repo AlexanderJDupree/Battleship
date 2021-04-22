@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
-import { ServerToClient as Server, Common} from 'common/lib/events';
+import { ServerToClient as Server, Common } from 'common/lib/events';
 
 // TODO: remove example component
 function Example() {
@@ -61,7 +61,10 @@ export default function Home() {
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus ab
         veniam commodi culpa neque consectetur dolor incidunt vel praesentium
         impedit, saepe dolore nam ex sapiente architecto, perferendis natus
-        voluptatem consequatur?
+        voluptatem consequatur? Lorem ipsum dolor sit amet, consectetur
+        adipisicing elit. Nihil sed provident ratione quae debitis illum
+        incidunt obcaecati esse modi deserunt, delectus natus maiores aliquid,
+        placeat, mollitia voluptatum architecto eaque rem!
       </p>
       <Example />
     </div>
