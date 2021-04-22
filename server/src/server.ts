@@ -17,7 +17,7 @@ const io = new IO<Client.Events, Server.Events>(server, {
 });
 
 // TODO: Add session management to connected sockets
-io.on(Client.Connection, (socket: string) => {
+io.on(Client.Connection, (socket: Socket) => {
   socket.emit(Common.DebugMessage, `Socket ID: ${socket.id}`);
 
   socket.on(Client.Disconnect, (reason: string) => {
