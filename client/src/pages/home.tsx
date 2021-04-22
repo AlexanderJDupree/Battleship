@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import { SocketContext } from '../contexts';
 import { SocketEvent as Event } from 'common/lib/events';
 
+// TODO: remove example component
 function Example() {
   // Get global socket context
   const socket = useContext(SocketContext);
@@ -10,14 +11,19 @@ function Example() {
   const [count, setCount] = useState(0);
 
   const sendMsg = () => {
-    setCount(count + 1);
-    socket.emit(Event.DebugMessage, `Message number ${count}`);
+    if (socket.connected) {
+      setCount(count + 1);
+      socket.emit(Event.DebugMessage, `Message number ${count}`);
+    }
   };
+
+  let warning = socket.connected ? '' : 'Warning, server is not responding';
 
   return (
     <div>
       <button onClick={sendMsg}>Send Message to the server</button>
       <p>You've sent {count} messages</p>
+      <p>{warning}</p>
     </div>
   );
 }
