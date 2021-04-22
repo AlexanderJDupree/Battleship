@@ -25,6 +25,8 @@
     "build-client": "cd client && yarn run build",
     "build-server": "cd server && yarn run build",
     "build-all" : "yarn build-common && yarn build-client && yarn build-server",
+    "predeploy" : "rm -rf node_modules common/node_modules client/node_modules server/node_modules",
+    "deploy" : "yarn predeploy && yarn install --frozen lockfile && yarn build-all",
     "client" : "cd client && yarn start",
     "server" : "cd server && yarn start", 
     "start"  : "yarn build-common && concurrently \"yarn server\" \"yarn client\""
