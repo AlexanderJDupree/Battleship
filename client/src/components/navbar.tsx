@@ -1,7 +1,31 @@
+/**
+ * Navbar react component. To add new NavItems to the NavItem simply add
+ * the NavItem component with the correct properties. The routing is handled in
+ * the root app.tsx file
+ */
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-function Navbar(props: any) {
+interface NavItemProps {
+  path: string;
+  text: string;
+  activePath: string;
+}
+
+export const NavItem = ({ path, text, activePath }: NavItemProps) => {
+  let active = activePath === path ? 'active' : '';
+  return (
+    <li className={`nav-item ${active}`}>
+      <Link className='nav-link' to={path}>
+        {text}
+      </Link>
+    </li>
+  );
+};
+
+function Navbar() {
+  let loc = useLocation().pathname;
+
   return (
     <nav className='navbar navbar-expand navbar-dark bg-dark'>
       <div className='container'>
@@ -11,25 +35,8 @@ function Navbar(props: any) {
 
         <div>
           <ul className='navbar-nav ml-auto'>
-            <li
-              className={`nav-item  ${
-                props.location.pathname === '/' ? 'active' : ''
-              }`}
-            >
-              <Link className='nav-link' to='/'>
-                Home
-                <span className='sr-only'>(current)</span>
-              </Link>
-            </li>
-            <li
-              className={`nav-item  ${
-                props.location.pathname === '/about' ? 'active' : ''
-              }`}
-            >
-              <Link className='nav-link' to='/about'>
-                About
-              </Link>
-            </li>
+            <NavItem path='/' activePath={loc} text='Home' />
+            <NavItem path='/about' activePath={loc} text='About' />
           </ul>
         </div>
       </div>
@@ -37,4 +44,4 @@ function Navbar(props: any) {
   );
 }
 
-export default withRouter(Navbar);
+export default Navbar;

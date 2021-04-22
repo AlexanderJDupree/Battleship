@@ -1,7 +1,7 @@
 export default function About() {
   return (
     <div className='about'>
-      <h1 className='bg-info mx-auto w-100 text-dark'>About Us</h1>
+      <h1 className='bg-info text-dark text-center'>About Us</h1>
       <p>
         Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus ab
         veniam commodi culpa neque consectetur dolor incidunt vel praesentium

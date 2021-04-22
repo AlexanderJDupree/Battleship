@@ -1,13 +1,18 @@
-import './styles/main.css';
-import { DebugMessage } from 'common/lib/events';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Navbar, Footer } from './components';
+import { Home, About } from './pages';
 
 function App() {
   return (
     <main className='App'>
-      <div className='container mx-auto'>
-        <h1 className='bg-info text-light text-center'>Hello World!</h1>
-        <p>{DebugMessage}</p>
-      </div>
+      <Router>
+        <Navbar />
+        <Switch>
+          <Route path='/about' exact component={() => <About />} />
+          <Route path='/' exact component={() => <Home />} />
+        </Switch>
+        <Footer />
+      </Router>
     </main>
   );
 }
