@@ -1,0 +1,34 @@
+{
+  "name": "battleship",
+  "version": "0.1.0",
+  "description": "Battleship in the browser!",
+  "license": "MIT",
+  "keywords": [
+    "server",
+    "battleship",
+    "game",
+    "websocket"
+  ],
+  "contributors": [
+    "Alexander DuPree",
+    "Katherine Kagawa",
+    "Joshua Carlson"
+  ],
+  "private": true,
+  "workspaces": [
+    "server",
+    "client",
+    "common"
+  ],
+  "scripts": {
+    "build-common": "cd common && yarn run build",
+    "build-client": "cd client && yarn run build",
+    "build-server": "cd server && yarn run build",
+    "client" : "cd client && yarn start",
+    "server" : "cd server && yarn start", 
+    "start"  : "yarn build-common && concurrently \"yarn server\" \"yarn client\""
+  },
+  "dependencies": {
+    "concurrently": "^6.0.2"
+  }
+}

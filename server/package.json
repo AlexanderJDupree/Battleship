@@ -1,0 +1,34 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "Backend for battleship game",
+  "main": "dist/server.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc --build",
+    "clean": "tsc --build --clean",
+    "start": "tsc --build && nodemon dist/server.js"
+  },
+  "nodemonConfig" : {
+    "watch": ["src"],
+    "ext": "ts",
+    "exec": "tsc --build && node dist/server.js"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.11",
+    "eslint": "^7.24.0",
+    "nodemon": "^2.0.7",
+    "typescript": "^4.2.4"
+  },
+  "dependencies": {
+    "cross-env": "5.0.5",
+    "express": "^4.17.1",
+    "socket.io": "^4.0.1",
+    "common" : "^0.1.0"
+  },
+  "optionalDependencies": {
+    "bufferutil": "^4.0.3",
+    "utf-8-validate": "^5.0.4"
+  }
+}
