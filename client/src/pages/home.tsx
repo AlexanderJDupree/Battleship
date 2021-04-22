@@ -1,14 +1,41 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
 import { SocketEvent as Event } from 'common/lib/events';
 
 // TODO: remove example component
 function Example() {
+  /**
+   * Example component detailing use cases for different react hooks
+   */
+
   // Get global socket context
   const socket = useContext(SocketContext);
 
   // Declare a new state variable, which we'll call "count"
   const [count, setCount] = useState(0);
+
+  const [serverStatus, setStatus] = useState('Server status unknown');
+
+  const handleConnectError = useCallback(() => {
+    setStatus('Error connecting to server');
+  }, []);
+
+  const handleConnect = useCallback(() => {
+    setStatus('Connected to server!');
+  }, []);
+
+  // Update server status when socket state changes
+  useEffect(() => {
+    socket.on(Event.Client.Connect, handleConnect);
+
+    socket.on(Event.Client.ConnectError, handleConnectError);
+
+    return () => {
+      // Teardown event listeners
+      socket.off(Event.Client.Connect, handleConnect);
+      socket.off(Event.Client.ConnectError, handleConnectError);
+    };
+  }, [socket, handleConnectError, handleConnect]);
 
   const sendMsg = () => {
     if (socket.connected) {
@@ -17,13 +44,11 @@ function Example() {
     }
   };
 
-  let warning = socket.connected ? '' : 'Warning, server is not responding';
-
   return (
     <div>
       <button onClick={sendMsg}>Send Message to the server</button>
       <p>You've sent {count} messages</p>
-      <p>{warning}</p>
+      <p>{serverStatus}</p>
     </div>
   );
 }

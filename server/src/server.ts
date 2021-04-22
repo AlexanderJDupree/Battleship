@@ -1,10 +1,14 @@
 import Express from 'express';
 import { createServer } from 'http'; // TODO use https server instead
-import { Server, Socket } from 'socket.io';
-import { SocketEvent as Event } from 'common/lib/events';
+import { Server as IO, Socket } from 'socket.io';
+import {
+  ServerToClient as Server,
+  ClientToServer as Client,
+  Common,
+} from 'common/lib/events';
 
 const server = createServer(Express());
-const io = new Server(server, {
+const io = new IO<Client.Events, Server.Events>(server, {
   // https://socket.io/docs/v4/server-initialization/#Options
   cors: {
     origin: 'http://localhost:3000', // TODO the clients address needs to be dynamically loaded
@@ -13,14 +17,14 @@ const io = new Server(server, {
 });
 
 // TODO: Add session management to connected sockets
-io.on(Event.Server.Connection, (socket: Socket) => {
-  socket.emit(Event.DebugMessage, `Socket ID: ${socket.id}`);
+io.on(Client.Connection, (socket: string) => {
+  socket.emit(Common.DebugMessage, `Socket ID: ${socket.id}`);
 
-  socket.on(Event.Server.Disconnect, (reason: string) => {
+  socket.on(Client.Disconnect, (reason: string) => {
     console.log(`disconnect[${socket.id}] : ${reason}`);
   });
 
-  socket.on(Event.DebugMessage, (msg: string) => {
+  socket.on(Common.DebugMessage, (msg: string) => {
     console.log(`debug[${socket.id}]: ${msg}`);
   });
 });
