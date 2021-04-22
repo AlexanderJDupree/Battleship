@@ -23,7 +23,7 @@ export const NavItem = ({ path, text, activePath }: NavItemProps) => {
   );
 };
 
-function Navbar() {
+export default function Navbar() {
   let loc = useLocation().pathname;
 
   return (
@@ -43,5 +43,3 @@ function Navbar() {
     </nav>
   );
 }
-
-export default Navbar;
