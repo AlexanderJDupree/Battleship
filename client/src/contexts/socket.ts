@@ -6,10 +6,11 @@ import {
   Common,
 } from 'common/lib/events';
 
-// TODO read server url from some config file
-export const socket: Socket<Server.Events, Client.Events> = io(
-  'ws://localhost:8080'
-);
+const server_port = process.env.REACT_APP_SERVER_PORT || 8080;
+export const server_uri =
+  process.env.REACT_APP_SERVER_URI || `ws://localhost:${server_port}`;
+
+export const socket: Socket<Server.Events, Client.Events> = io(server_uri);
 export const SocketContext = React.createContext(socket);
 
 socket.on(Server.Connect, () => {
@@ -17,11 +18,8 @@ socket.on(Server.Connect, () => {
 });
 
 socket.on(Server.ConnectError, () => {
-  // This event fires when the server connection cannot be established
-  // in which case the client will attempt to reconnect. Or the servers
-  // middleware refused the connection, which means we need to fix the
-  // error and manually reconnect
-  // TODO: display a message to the user that the server is down or something
+  // Logic for connection error problems, probably just log something
+  console.log(`Failure to connect to ${server_uri}`);
 });
 
 socket.on(Server.Disconnect, (reason: string) => {
