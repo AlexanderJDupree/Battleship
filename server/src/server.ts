@@ -15,14 +15,14 @@ const server = createServer(Express());
 const io = new IO<Client.Events, Server.Events>(server, {
   // https://socket.io/docs/v4/server-initialization/#Options
   cors: {
-    origin: cors, 
+    origin: cors,
     methods: ['GET', 'POST'],
   },
 });
 
 // TODO: Add session management to connected sockets
 io.on(Client.Connection, (socket: Socket) => {
-  socket.emit(Common.DebugMessage, `Socket ID: ${socket.id}`);
+  console.log(`connection[${socket.id}] : client connected`);
 
   socket.on(Client.Disconnect, (reason: string) => {
     console.log(`disconnect[${socket.id}] : ${reason}`);

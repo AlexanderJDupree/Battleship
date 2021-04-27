@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
 import { ServerToClient as Server, Common } from 'common/lib/events';
+import Jumbotron from 'react-bootstrap/Jumbotron';
+import Button from 'react-bootstrap/Button';
 
 // TODO: remove example component
 function Example() {
@@ -14,14 +16,16 @@ function Example() {
   // Declare a new state variable, which we'll call "count"
   const [count, setCount] = useState(0);
 
-  const [serverStatus, setStatus] = useState('Server status unknown');
+  const [serverStatus, setStatus] = useState(
+    <p className='text-warning'>Server Status Unknown</p>
+  );
 
   const handleConnectError = useCallback(() => {
-    setStatus('Error connecting to server');
+    setStatus(<p className='text-danger'>Error connecting to server</p>);
   }, []);
 
   const handleConnect = useCallback(() => {
-    setStatus('Connected to server!');
+    setStatus(<p className='text-success'>Connected to Server!</p>);
   }, []);
 
   // Update server status when socket state changes
@@ -46,9 +50,11 @@ function Example() {
 
   return (
     <div>
-      <button onClick={sendMsg}>Send Message to the server</button>
+      <Button variant='primary' onClick={sendMsg}>
+        Send message to server
+      </Button>
       <p>You've sent {count} messages</p>
-      <p>{serverStatus}</p>
+      {serverStatus}
     </div>
   );
 }
@@ -56,17 +62,19 @@ function Example() {
 export default function Home() {
   return (
     <div className='home'>
-      <h1 className='bg-info text-dark text-center'>Hello World!</h1>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus ab
-        veniam commodi culpa neque consectetur dolor incidunt vel praesentium
-        impedit, saepe dolore nam ex sapiente architecto, perferendis natus
-        voluptatem consequatur? Lorem ipsum dolor sit amet, consectetur
-        adipisicing elit. Nihil sed provident ratione quae debitis illum
-        incidunt obcaecati esse modi deserunt, delectus natus maiores aliquid,
-        placeat, mollitia voluptatum architecto eaque rem!
-      </p>
-      <Example />
+      <Jumbotron>
+        <h1>Hello, World!</h1>
+        <p>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus ab
+          veniam commodi culpa neque consectetur dolor incidunt vel praesentium
+          impedit, saepe dolore nam ex sapiente architecto, perferendis natus
+          voluptatem consequatur? Lorem ipsum dolor sit amet, consectetur
+          adipisicing elit. Nihil sed provident ratione quae debitis illum
+          incidunt obcaecati esse modi deserunt, delectus natus maiores aliquid,
+          placeat, mollitia voluptatum architecto eaque rem!
+        </p>
+        <Example />
+      </Jumbotron>
     </div>
   );
 }

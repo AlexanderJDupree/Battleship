@@ -14,16 +14,15 @@ export const socket: Socket<Server.Events, Client.Events> = io(server_uri);
 export const SocketContext = React.createContext(socket);
 
 socket.on(Server.Connect, () => {
-  // Logic for when we connect/reconnect to the server
+  console.log(`Connected to server at ${server_uri}`);
 });
 
 socket.on(Server.ConnectError, () => {
-  // Logic for connection error problems, probably just log something
   console.log(`Failure to connect to ${server_uri}`);
 });
 
 socket.on(Server.Disconnect, (reason: string) => {
-  // Client disconnected
+  console.log(`Disconnected from ${server_uri}: ${reason}`);
 });
 
 socket.on(Common.DebugMessage, (msg: string) => {
