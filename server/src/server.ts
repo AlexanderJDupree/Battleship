@@ -20,7 +20,6 @@ const io = new IO<Client.Events, Server.Events>(server, {
   },
 });
 
-// TODO: Add session management to connected sockets
 io.on(Client.Connection, (socket: Socket) => {
   console.log(`connection[${socket.id}] : client connected`);
 
