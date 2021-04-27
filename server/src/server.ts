@@ -7,7 +7,7 @@ import {
   Common,
 } from 'common/lib/events';
 
-const client_port = process.env.PORT || 3000;
+const client_port = 3000;
 const port = process.env.SERVER_PORT || 8080;
 const cors = process.env.CORS || `http://localhost:${client_port}`;
 
@@ -38,6 +38,7 @@ app.get('/', (req, res) => {
   res.status(200).json({
     status: 'running',
     activeClients: io.sockets.sockets.size,
+    origin: cors,
   });
 });
 
