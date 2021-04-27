@@ -25,8 +25,10 @@
     "build-client": "cd client && yarn run build",
     "build-server": "cd server && yarn run build",
     "build-all" : "yarn build-common && yarn build-client && yarn build-server",
-    "predeploy" : "rm -rf node_modules common/node_modules client/node_modules server/node_modules",
-    "deploy" : "yarn predeploy && yarn install --frozen lockfile && yarn build-all",
+    "clean" : "rm -rf node_modules common/node_modules client/node_modules server/node_modules client/build server/dist",
+    "predeploy": "clean && yarn install --frozen-lockfile",
+    "deploy-client" : "yarn predeploy && yarn build-common && yarn build-client",
+    "deploy-server": "yarn predeploy && yarn build-common && yarn build-server && gcloud app deploy",
     "client" : "cd client && yarn start",
     "server" : "cd server && yarn start", 
     "start"  : "yarn build-common && concurrently \"yarn server\" \"yarn client\""

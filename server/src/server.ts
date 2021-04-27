@@ -11,7 +11,8 @@ const client_port = process.env.PORT || 3000;
 const port = process.env.SERVER_PORT || 8080;
 const cors = process.env.CORS || `http://localhost:${client_port}`;
 
-const server = createServer(Express());
+const app = Express();
+const server = createServer(app);
 const io = new IO<Client.Events, Server.Events>(server, {
   // https://socket.io/docs/v4/server-initialization/#Options
   cors: {
@@ -30,6 +31,13 @@ io.on(Client.Connection, (socket: Socket) => {
 
   socket.on(Common.DebugMessage, (msg: string) => {
     console.log(`debug[${socket.id}]: ${msg}`);
+  });
+});
+
+app.get('/', (req, res) => {
+  res.status(200).json({
+    status: 'running',
+    activeClients: io.sockets.sockets.size,
   });
 });
 
