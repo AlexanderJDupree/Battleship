@@ -9,16 +9,15 @@ import {
 
 const client_port = process.env.PORT || 3000;
 const port = process.env.SERVER_PORT || 8080;
-const allowedOrigins = process.env.ALLOWED_ORIGINS.split(',') || [
-  `http://localhost:${client_port}`,
-];
+const allowedOrigins =
+  process.env.ALLOWED_ORIGINS || `http://localhost:${client_port}`;
 
 const app = Express();
 const server = createServer(app);
 const io = new IO<Client.Events, Server.Events>(server, {
   // https://socket.io/docs/v4/server-initialization/#Options
   cors: {
-    origin: allowedOrigins,
+    origin: allowedOrigins.split(','),
     methods: ['GET', 'POST'],
   },
 });
