@@ -14,11 +14,11 @@ name: Deploy to Firebase Hosting on PR
 jobs:
   build_and_preview_client:
     runs-on: ubuntu-latest
-    env:
-      REACT_APP_SERVER_URI: https://battleship-server-7mihdh3ufa-wl.a.run.app
     steps:
       - uses: actions/checkout@v2
       - run: yarn run deploy-client
+        env:
+          REACT_APP_SERVER_URI: https://battleship-server-7mihdh3ufa-uw.a.run.app
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
