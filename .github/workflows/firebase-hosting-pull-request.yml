@@ -9,6 +9,7 @@ name: Deploy to Firebase Hosting on PR
       - '**/README.md'
       - '**/LICENSE'
       - '**/.gitignore'
+      - 'server/**'
 
 jobs:
   build_and_preview_client:
