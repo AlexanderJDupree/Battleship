@@ -1,4 +1,5 @@
 # Battleship server docker file for Google Cloud Run deployment
+# TODO make this a multi-stage Docker file and reduce the final image size
 FROM node:14-buster-slim
 
 COPY . /app

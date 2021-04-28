@@ -11,7 +11,7 @@ name: Deploy to Firebase Hosting on PR
       - '**/.gitignore'
 
 jobs:
-  build_and_preview:
+  build_and_preview_client:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
