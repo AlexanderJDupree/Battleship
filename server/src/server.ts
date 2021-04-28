@@ -17,7 +17,7 @@ const server = createServer(app);
 const io = new IO<Client.Events, Server.Events>(server, {
   // https://socket.io/docs/v4/server-initialization/#Options
   cors: {
-    origin: allowedOrigins.split(','),
+    origin: allowedOrigins.split(',').map((s) => new RegExp(s)),
     methods: ['GET', 'POST'],
   },
 });
