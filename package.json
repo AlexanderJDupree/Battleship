@@ -26,7 +26,7 @@
     "build-server": "cd server && yarn run build",
     "build-all" : "yarn build-common && yarn build-client && yarn build-server",
     "clean" : "rm -rf node_modules common/node_modules client/node_modules server/node_modules client/build server/dist",
-    "predeploy": "clean && yarn install --frozen-lockfile",
+    "predeploy": "yarn clean && yarn install --frozen-lockfile",
     "deploy-client" : "yarn predeploy && yarn build-common && yarn build-client",
     "deploy-server": "yarn predeploy && yarn build-common && yarn build-server",
     "client" : "cd client && yarn start",
