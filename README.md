@@ -1,6 +1,6 @@
 # Battleship
 
-[playbattleship.com](playbattleship.com) is a full-stack web application for playing the classic strategy game, [Battleship](<https://en.wikipedia.org/wiki/Battleship_(game)>), in the browser. This application was developed as part of the Full-Stack Web Development course at Portland State University.
+[playbattleship.com](https://playbattleship.com) is a full-stack web application for playing the classic strategy game, [Battleship](<https://en.wikipedia.org/wiki/Battleship_(game)>), in the browser. This application was developed as part of the Full-Stack Web Development course at Portland State University.
 
 ## Built With
 
