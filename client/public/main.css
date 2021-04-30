@@ -1,0 +1,67 @@
+:root {
+  --white: #ffffff;
+  --gray1: #333333;
+  --gray2: #555555;
+  --gray3: #cccccc;
+  --gray4: #aaaaaa;
+
+  --teal: #006060;
+  --lightteal: #008080;
+  --purple: #800080;
+  --navy: #000080;
+  --violetred: #c71585;
+  --red: #ff0000;
+  --green: #006400;
+
+  --theme-primary: #027bee;
+  --theme-primary-light: #65a9ff;
+  --theme-primary-dark: #0050bb;
+  --theme-secondary: #546e7a;
+  --theme-secondary-light: #819ca9;
+  --theme-secondary-dark: #394243;
+  --theme-error: #b00020;
+  --theme-text-primary: #252525;
+  --theme-text-secondary: #ffffff;
+}
+
+body {
+  font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1.2em;
+  color: var(--theme-text-primary);
+}
+
+.bg-theme-primary {
+  background-color: var(--theme-primary);
+}
+
+.bg-theme-primary-light {
+  background-color: var(--theme-primary-light);
+}
+
+.bg-theme-primary-dark {
+  background-color: var(--theme-primary-dark);
+}
+
+.bg-theme-secondary {
+  background-color: var(--theme-secondary);
+}
+
+.bg-theme-secondary-light {
+  background-color: var(--theme-secondary-light);
+}
+
+.bg-theme-secondary-dark {
+  background-color: var(--theme-secondary-dark);
+}
+
+.bg-theme-error {
+  background-color: var(--theme-error);
+}
+
+.theme-text-primary {
+  color: var(--theme-text-primary);
+}
+
+.theme-text-secondary {
+  color: var(--theme-text-secondary);
+}
