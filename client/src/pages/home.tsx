@@ -19,7 +19,7 @@ export default function Home() {
         <Container>
           <h1 className='display-4'>Welcome,</h1>
           <p className='lead'>
-            Play the class strategy game of Battleship right here in your
+            Play the classic strategy game of Battleship right here in your
             browser
           </p>
           <hr className='mb-4' />
