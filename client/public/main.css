@@ -65,3 +65,11 @@ body {
 .theme-text-secondary {
   color: var(--theme-text-secondary);
 }
+
+.brand-icon {
+  color: var(--theme-primary-light);
+}
+
+.brand-icon:hover {
+  color: var(--theme-primary);
+}
