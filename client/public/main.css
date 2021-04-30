@@ -66,6 +66,10 @@ body {
   color: var(--theme-text-secondary);
 }
 
+.leader-icon {
+  color: orange;
+}
+
 .brand-icon {
   color: var(--theme-primary-light);
 }
