@@ -5,10 +5,7 @@
  */
 import { LinkContainer } from 'react-router-bootstrap';
 import { Container, Nav, Navbar } from 'react-bootstrap';
-import {
-  FontAwesomeIcon as FA,
-  FontAwesomeIcon,
-} from '@fortawesome/react-fontawesome';
+import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faAnchor } from '@fortawesome/free-solid-svg-icons';
 
 export default function Navigation() {
