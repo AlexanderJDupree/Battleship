@@ -3,43 +3,33 @@
  * the NavItem component with the correct properties. The routing is handled in
  * the root app.tsx file
  */
-import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { LinkContainer } from 'react-router-bootstrap';
+import { Container, Nav, Navbar } from 'react-bootstrap';
 
-interface NavItemProps {
-  path: string;
-  text: string;
-  activePath: string;
-}
-
-export const NavItem = ({ path, text, activePath }: NavItemProps) => {
-  let active = activePath === path ? 'active' : '';
+export default function Navigation() {
   return (
-    <li className={`nav-item ${active}`}>
-      <Link className='nav-link' to={path}>
-        {text}
-      </Link>
-    </li>
-  );
-};
-
-export default function Navbar() {
-  let loc = useLocation().pathname;
-
-  return (
-    <nav className='navbar navbar-expand navbar-dark bg-theme-secondary-dark'>
-      <div className='container'>
-        <Link className='navbar-brand' to='/'>
-          Battleship
-        </Link>
-
-        <div>
-          <ul className='navbar-nav ml-auto'>
-            <NavItem path='/' activePath={loc} text='Home' />
-            <NavItem path='/about' activePath={loc} text='About' />
-          </ul>
-        </div>
-      </div>
-    </nav>
+    <Navbar
+      collapseOnSelect
+      expand='lg'
+      bg='theme-secondary-dark'
+      variant='dark'
+    >
+      <Container>
+        <LinkContainer to='/'>
+          <Navbar.Brand>Battleship</Navbar.Brand>
+        </LinkContainer>
+        <Navbar.Toggle aria-controls='responsive-navbar-nav' />
+        <Navbar.Collapse id='responsive-navbar-nav'>
+          <Nav className='ml-auto'>
+            <LinkContainer to='/'>
+              <Nav.Link>Home</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/about'>
+              <Nav.Link>About</Nav.Link>
+            </LinkContainer>
+          </Nav>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 }
