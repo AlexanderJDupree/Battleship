@@ -27,7 +27,7 @@ export default function Navbar() {
   let loc = useLocation().pathname;
 
   return (
-    <nav className='navbar navbar-expand navbar-dark bg-dark'>
+    <nav className='navbar navbar-expand navbar-dark bg-theme-secondary-dark'>
       <div className='container'>
         <Link className='navbar-brand' to='/'>
           Battleship
