@@ -48,7 +48,7 @@ export default function Example() {
   return (
     <div>
       <Button variant='primary' onClick={sendMsg}>
-        Send message to server
+        Example button
       </Button>
       <p>You've sent {count} messages</p>
       {serverStatus}
