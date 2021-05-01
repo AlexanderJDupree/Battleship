@@ -7,7 +7,7 @@ import {
   Table,
 } from 'react-bootstrap';
 import Jumbotron from 'react-bootstrap/Jumbotron';
-import { Example } from '../components';
+import { ServerStats } from '../components';
 import Button from 'react-bootstrap/Button';
 import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
@@ -46,9 +46,6 @@ export default function Home() {
                 <ListGroup.Item>1. setup board</ListGroup.Item>
                 <ListGroup.Item>2. take turns shooting stuff</ListGroup.Item>
                 <ListGroup.Item>3. TODO add actual rules</ListGroup.Item>
-                <ListGroup.Item>
-                  <Example />
-                </ListGroup.Item>
               </ListGroup>
             </Card.Body>
           </Card>
@@ -121,12 +118,7 @@ export default function Home() {
               <Card.Header as='h5' className='font-weight-bold'>
                 Site Stats
               </Card.Header>
-              <ListGroup variant='flush'>
-                <ListGroup.Item>Games Played: 0</ListGroup.Item>
-                <ListGroup.Item>People Playing: 1</ListGroup.Item>
-                <ListGroup.Item>Visitor Count: Just you</ListGroup.Item>
-                <ListGroup.Item>TODO: Make this functional</ListGroup.Item>
-              </ListGroup>
+              <ServerStats />
               <Card.Footer>
                 <small className='text-muted'>Last updated 3 mins ago</small>
               </Card.Footer>
