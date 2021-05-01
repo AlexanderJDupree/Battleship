@@ -6,7 +6,10 @@
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
 import { ListGroup } from 'react-bootstrap';
-import { ServerToClient as Server, Common } from 'common/lib/events';
+import {
+  ServerToClient as Server,
+  ClientToServer as Client,
+} from 'common/lib/events';
 
 enum ServerStatus {
   Unknown = 'Server status unknown',
@@ -28,7 +31,7 @@ interface Stats {
   gamesPlayed: number;
 }
 
-const StatusTextColor = (status: ServerStatus) => {
+const statusToTextColor = (status: ServerStatus) => {
   switch (status) {
     case ServerStatus.Ok:
       return 'text-success';
@@ -58,19 +61,34 @@ const ServerStats: React.FC<ServerStatsProps> = (props) => {
     setStats((s) => ({ ...s, status: ServerStatus.ConnectionError }));
   }, []);
 
+  const refreshStats = useCallback(() => {
+    socket.emit(Client.StatsRequest, (server) => {
+      setStats((s) => ({
+        ...s,
+        playersOnline: server.playersOnline,
+        activeGames: server.activeGames,
+        gamesPlayed: server.gamesPlayed,
+      }));
+    });
+  }, [socket]);
+
   useEffect(() => {
     socket.on(Server.Connect, handleConnect);
 
     socket.on(Server.ConnectError, handleConnectError);
 
-    const interval = setInterval(() => {}, props.interval || 1000);
+    const interval = setInterval(refreshStats, props.interval || 1000);
 
-    return () => clearInterval(interval);
-  }, [props, socket, handleConnect, handleConnectError]);
+    return () => {
+      clearInterval(interval);
+      socket.off(Server.Connect, handleConnect);
+      socket.off(Server.ConnectError, handleConnectError);
+    };
+  }, [props, socket, handleConnect, handleConnectError, refreshStats]);
 
   return (
     <ListGroup variant={props.variant} className={props.className}>
-      <ListGroup.Item className={StatusTextColor(stats.status)}>
+      <ListGroup.Item className={statusToTextColor(stats.status)}>
         {stats.status}
       </ListGroup.Item>
       <ListGroup.Item>Players Online: {stats.playersOnline}</ListGroup.Item>

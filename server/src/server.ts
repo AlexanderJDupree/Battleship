@@ -1,5 +1,5 @@
 import Express from 'express';
-import { createServer } from 'http'; // TODO use https server instead
+import { createServer } from 'http';
 import { Server as IO, Socket } from 'socket.io';
 import {
   ServerToClient as Server,
@@ -26,12 +26,20 @@ const io = new IO<Client.Events, Server.Events>(server, {
 io.on(Client.Connection, (socket: Socket) => {
   console.log(`connection[${socket.id}] : client connected`);
 
+  socket.on(Common.DebugMessage, (msg: string) => {
+    console.log(`debug[${socket.id}]: ${msg}`);
+  });
+
   socket.on(Client.Disconnect, (reason: string) => {
     console.log(`disconnect[${socket.id}] : ${reason}`);
   });
 
-  socket.on(Common.DebugMessage, (msg: string) => {
-    console.log(`debug[${socket.id}]: ${msg}`);
+  socket.on(Client.StatsRequest, (ack) => {
+    ack({
+      playersOnline: io.sockets.sockets.size,
+      activeGames: 0, // TODO return actual value
+      gamesPlayed: 0, // TODO return actual value
+    });
   });
 });
 
@@ -39,7 +47,7 @@ app.get('/', (req, res) => {
   res.status(200).json({
     status: 'running',
     activeClients: io.sockets.sockets.size,
-    allowedOrigins: allowedOrigins,
+    allowedOrigins: allowedOrigins, // TODO this is here as a sanity check, should remove in future versions
   });
 });
 

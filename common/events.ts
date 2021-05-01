@@ -8,10 +8,10 @@ export namespace Common {
   /**
    * Event fires when the server/client sends a debug message
    */
-  export const DebugMessage = 'debug_msg';
+  export const DebugMessage = 'debugMsg';
 
   export interface Events {
-    debug_msg: (msg: string) => void;
+    debugMsg: (msg: string) => void;
   }
 }
 
@@ -47,6 +47,12 @@ export namespace ServerToClient {
     connect: () => void;
     disconnect: () => void;
   }
+
+  export type Stats = {
+    playersOnline: number;
+    activeGames: number;
+    gamesPlayed: number;
+  };
 }
 
 export namespace ClientToServer {
@@ -61,11 +67,16 @@ export namespace ClientToServer {
   export const Disconnect = 'disconnect';
 
   /**
+   * Request server statistics
+   */
+  export const StatsRequest = 'statsRequest';
+
+  /**
    * Typed events interface for Client to Server
    */
   export interface Events extends Common.Events {
     connection: (socket: Socket) => void;
     disconnect: (reason: string) => void;
-    debug_msg: (msg: string) => void;
+    statsRequest: (ack: (status: ServerToClient.Stats) => void) => void;
   }
 }
