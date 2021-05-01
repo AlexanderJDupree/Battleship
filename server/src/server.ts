@@ -41,6 +41,18 @@ io.on(Client.Connection, (socket: Socket) => {
       gamesPlayed: 0, // TODO return actual value
     });
   });
+
+  socket.on(Client.GetLeaderboard, (resp) => {
+    resp([
+      // TODO fill with actual leaderboard data
+      { username: 'Rick', wins: 42 },
+      { username: 'Morty', wins: 39 },
+      { username: 'Beth', wins: 23 },
+      { username: 'Summer', wins: 13 },
+      { username: 'Jerry', wins: 1 },
+      { username: 'Squanch', wins: 1 },
+    ]);
+  });
 });
 
 app.get('/', (req, res) => {

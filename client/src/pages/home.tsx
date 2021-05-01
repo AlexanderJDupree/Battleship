@@ -1,7 +1,6 @@
-import { Card, CardDeck, Container, ListGroup } from 'react-bootstrap';
+import { Button, Card, CardDeck, Container, ListGroup } from 'react-bootstrap';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import { ServerStats, Leaderboard } from '../components';
-import Button from 'react-bootstrap/Button';
 
 export default function Home() {
   return (
@@ -29,7 +28,10 @@ export default function Home() {
         <CardDeck>
           {/* Rules Card */}
           <Card className='shadow'>
-            <Card.Header as='h5' className='font-weight-bold'>
+            <Card.Header
+              as='h5'
+              className='font-weight-bold text-center bg-theme-primary-light theme-text-primary'
+            >
               Rules
             </Card.Header>
             <ListGroup variant='flush'>
@@ -41,15 +43,21 @@ export default function Home() {
 
           {/* Leaderboard Card */}
           <Card className='shadow'>
-            <Leaderboard striped hover size='sm' />
-            <Card.Footer>
-              <small className='text-muted'>Last updated 3 mins ago</small>
-            </Card.Footer>
+            <Card.Header
+              as='h5'
+              className='font-weight-bold text-center bg-theme-secondary theme-text-secondary'
+            >
+              Leaderboard
+            </Card.Header>
+            <Leaderboard striped hover size='sm' bordered />
           </Card>
 
           {/* Site Stats Card */}
           <Card className='shadow'>
-            <Card.Header as='h5' className='font-weight-bold'>
+            <Card.Header
+              as='h5'
+              className='font-weight-bold text-center bg-theme-primary-light theme-text-primary'
+            >
               Site Stats
             </Card.Header>
             <ServerStats variant='flush' />

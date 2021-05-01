@@ -21,7 +21,7 @@
   --theme-secondary-dark: #394243;
   --theme-error: #b00020;
   --theme-text-primary: #252525;
-  --theme-text-secondary: #ffffff;
+  --theme-text-secondary: #f0f0f0;
 }
 
 body {
@@ -58,12 +58,40 @@ body {
   background-color: var(--theme-error);
 }
 
+.theme-primary {
+  color: var(--theme-primary);
+}
+
+.theme-primary-light {
+  color: var(--theme-primary-light);
+}
+
+.theme-primary-dark {
+  color: var(--theme-primary-dark);
+}
+
+.theme-secondary {
+  color: var(--theme-secondary);
+}
+
+.theme-secondary-light {
+  color: var(--theme-secondary-light);
+}
+
+.theme-secondary-dark {
+  color: var(--theme-secondary-dark);
+}
+
 .theme-text-primary {
   color: var(--theme-text-primary);
 }
 
 .theme-text-secondary {
   color: var(--theme-text-secondary);
+}
+
+.theme-error {
+  background-color: var(--theme-error);
 }
 
 .leader-icon {
