@@ -112,16 +112,12 @@ export default function Home() {
             </Card.Footer>
           </Card>
 
-          {/* Site Stats Card - TODO refactor into seperate React component */}
           <Card className='shadow'>
             <Card.Body>
               <Card.Header as='h5' className='font-weight-bold'>
                 Site Stats
               </Card.Header>
               <ServerStats />
-              <Card.Footer>
-                <small className='text-muted'>Last updated 3 mins ago</small>
-              </Card.Footer>
             </Card.Body>
           </Card>
         </CardDeck>
