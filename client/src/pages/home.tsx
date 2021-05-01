@@ -38,16 +38,14 @@ export default function Home() {
         <CardDeck>
           {/* Rules Card */}
           <Card className='shadow'>
-            <Card.Body>
-              <Card.Header as='h5' className='font-weight-bold'>
-                Rules
-              </Card.Header>
-              <ListGroup variant='flush'>
-                <ListGroup.Item>1. setup board</ListGroup.Item>
-                <ListGroup.Item>2. take turns shooting stuff</ListGroup.Item>
-                <ListGroup.Item>3. TODO add actual rules</ListGroup.Item>
-              </ListGroup>
-            </Card.Body>
+            <Card.Header as='h5' className='font-weight-bold'>
+              Rules
+            </Card.Header>
+            <ListGroup variant='flush'>
+              <ListGroup.Item>1. setup board</ListGroup.Item>
+              <ListGroup.Item>2. take turns shooting stuff</ListGroup.Item>
+              <ListGroup.Item>3. TODO add actual rules</ListGroup.Item>
+            </ListGroup>
           </Card>
 
           {/* Leaderboard Card - TODO refactor into seperate React component */}
@@ -112,17 +110,11 @@ export default function Home() {
             </Card.Footer>
           </Card>
 
-          {/* Site Stats Card - TODO refactor into seperate React component */}
           <Card className='shadow'>
-            <Card.Body>
-              <Card.Header as='h5' className='font-weight-bold'>
-                Site Stats
-              </Card.Header>
-              <ServerStats />
-              <Card.Footer>
-                <small className='text-muted'>Last updated 3 mins ago</small>
-              </Card.Footer>
-            </Card.Body>
+            <Card.Header as='h5' className='font-weight-bold'>
+              Site Stats
+            </Card.Header>
+            <ServerStats />
           </Card>
         </CardDeck>
       </Container>

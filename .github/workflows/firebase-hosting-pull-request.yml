@@ -18,7 +18,7 @@ jobs:
       - uses: actions/checkout@v2
       - run: yarn run deploy-client
         env:
-          REACT_APP_SERVER_URI: https://battleship-server-7mihdh3ufa-uw.a.run.app
+          REACT_APP_SERVER_URI: https://battleship-server-preview-7mihdh3ufa-uw.a.run.app
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: '${{ secrets.GITHUB_TOKEN }}'
