@@ -34,7 +34,7 @@ io.on(Client.Connection, (socket: Socket) => {
     console.log(`disconnect[${socket.id}] : ${reason}`);
   });
 
-  socket.on(Client.StatsRequest, (ack) => {
+  socket.on(Client.GetServerStats, (ack) => {
     ack({
       playersOnline: io.sockets.sockets.size,
       activeGames: 0, // TODO return actual value

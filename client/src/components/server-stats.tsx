@@ -62,7 +62,7 @@ const ServerStats: React.FC<ServerStatsProps> = (props) => {
   }, []);
 
   const refreshStats = useCallback(() => {
-    socket.emit(Client.StatsRequest, (server) => {
+    socket.emit(Client.GetServerStats, (server) => {
       setStats((s) => ({
         ...s,
         playersOnline: server.playersOnline,

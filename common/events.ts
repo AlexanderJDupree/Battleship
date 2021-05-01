@@ -69,7 +69,7 @@ export namespace ClientToServer {
   /**
    * Request server statistics
    */
-  export const StatsRequest = 'statsRequest';
+  export const GetServerStats = 'getServerStats';
 
   /**
    * Typed events interface for Client to Server
@@ -77,6 +77,6 @@ export namespace ClientToServer {
   export interface Events extends Common.Events {
     connection: (socket: Socket) => void;
     disconnect: (reason: string) => void;
-    statsRequest: (ack: (status: ServerToClient.Stats) => void) => void;
+    getServerStats: (ack: (status: ServerToClient.Stats) => void) => void;
   }
 }
