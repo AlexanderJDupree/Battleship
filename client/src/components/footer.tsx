@@ -1,11 +1,23 @@
+import { Container, Navbar } from 'react-bootstrap';
+import { useWindowDimensions } from '../hooks';
+
 export default function Footer() {
+  const dimensions = useWindowDimensions();
+
+  // TODO magic number, attempting to make the navbar non-fixed on smaller
+  // screens here. This is what I came up with but it's mostly a hack.
   return (
-    <div className='footer'>
-      <footer className='py-5 bg-dark fixed-bottom'>
-        <div className='container'>
-          <p className='m-0 text-center text-white'>some text and stuff</p>
-        </div>
-      </footer>
-    </div>
+    <Navbar
+      expand='lg'
+      bg='theme-secondary-dark'
+      variant='dark'
+      as='footer'
+      className='mt-3'
+      fixed={dimensions.width >= 768 ? 'bottom' : undefined}
+    >
+      <Container className='align-items-center justify-content-center'>
+        <p className='theme-text-secondary text-center'>Some text and stuff</p>
+      </Container>
+    </Navbar>
   );
 }

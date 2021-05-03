@@ -2,21 +2,11 @@
  * Leaderboard returns a table of the Battleship server leaders
  */
 
-import React, { useState, useContext, useEffect, useCallback } from 'react';
-import { SocketContext } from '../contexts';
-import {
-  ServerToClient as Server,
-  ClientToServer as Client,
-} from 'common/lib/events';
+import React from 'react';
 import { Badge, Spinner, Table, TableProps } from 'react-bootstrap';
 import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
-
-enum LeaderboardStatus {
-  Loading,
-  Loaded,
-  Error,
-}
+import useLeaderboard, { LeaderboardStatus } from '../hooks/leaderboard';
 
 interface LeaderboardProps extends TableProps {
   leaderboard: { username: string; wins: number }[];
@@ -69,40 +59,9 @@ const LeaderboardLoaded: React.FC<LeaderboardProps> = (props) => {
 };
 
 const Leaderboard: React.FC<TableProps> = (props) => {
-  const socket = useContext(SocketContext);
+  const leaderboard = useLeaderboard();
 
-  const [state, setState] = useState<LeaderboardStatus>(
-    LeaderboardStatus.Loading
-  );
-
-  const [leaderboard, setLeaderboard] = useState<Server.Leaderboard>([]);
-
-  const handleError = useCallback(() => {
-    setState(LeaderboardStatus.Error);
-  }, []);
-
-  const refreshLeaderboard = useCallback(() => {
-    if (socket.connected) {
-      socket.emit(Client.GetLeaderboard, (response) => {
-        setState(LeaderboardStatus.Loaded);
-        setLeaderboard(response);
-      });
-    } else {
-      setState(LeaderboardStatus.Error);
-    }
-  }, [socket]);
-
-  useEffect(() => {
-    socket.on(Server.ConnectError, handleError);
-
-    const interval = setInterval(refreshLeaderboard, 1000);
-    return () => {
-      clearInterval(interval);
-      socket.off(Server.ConnectError, handleError);
-    };
-  }, [socket, handleError, refreshLeaderboard]);
-
-  switch (state) {
+  switch (leaderboard.status) {
     case LeaderboardStatus.Loading:
       return (
         <div className='h-100 d-flex justify-content-center align-items-center'>
@@ -115,10 +74,13 @@ const Leaderboard: React.FC<TableProps> = (props) => {
           </Spinner>
         </div>
       );
-    case LeaderboardStatus.Error:
-      return <div className='mx-auto mt-4'>Something went wrong... 🤷‍♂️</div>;
     case LeaderboardStatus.Loaded:
-      return <LeaderboardLoaded {...props} leaderboard={leaderboard} />;
+      return (
+        <LeaderboardLoaded {...props} leaderboard={leaderboard.leaderboard} />
+      );
+    case LeaderboardStatus.Error:
+    default:
+      return <div className='mx-auto mt-4'>Something went wrong... 🤷‍♂️</div>;
   }
 };
 
