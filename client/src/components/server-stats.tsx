@@ -5,7 +5,7 @@
 
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
-import { ListGroup } from 'react-bootstrap';
+import { ListGroup, ListGroupProps } from 'react-bootstrap';
 import {
   ServerToClient as Server,
   ClientToServer as Client,
@@ -18,11 +18,10 @@ enum ServerStatus {
   Ok = 'Connected to server!',
 }
 
-type ServerStatsProps = {
-  className?: string;
+interface ServerStatsProps extends ListGroupProps {
   variant?: 'flush';
   interval?: number;
-};
+}
 
 interface Stats {
   status: ServerStatus;
@@ -62,14 +61,18 @@ const ServerStats: React.FC<ServerStatsProps> = (props) => {
   }, []);
 
   const refreshStats = useCallback(() => {
-    socket.emit(Client.GetServerStats, (server) => {
-      setStats((s) => ({
-        ...s,
-        playersOnline: server.playersOnline,
-        activeGames: server.activeGames,
-        gamesPlayed: server.gamesPlayed,
-      }));
-    });
+    if (socket.connected) {
+      socket.emit(Client.GetServerStats, (server) => {
+        setStats({
+          status: ServerStatus.Ok,
+          playersOnline: server.playersOnline,
+          activeGames: server.activeGames,
+          gamesPlayed: server.gamesPlayed,
+        });
+      });
+    } else {
+      setStats((s) => ({ ...s, status: ServerStatus.ConnectionError }));
+    }
   }, [socket]);
 
   useEffect(() => {
@@ -87,7 +90,7 @@ const ServerStats: React.FC<ServerStatsProps> = (props) => {
   }, [props, socket, handleConnect, handleConnectError, refreshStats]);
 
   return (
-    <ListGroup variant={props.variant} className={props.className}>
+    <ListGroup {...props}>
       <ListGroup.Item className={statusToTextColor(stats.status)}>
         {stats.status}
       </ListGroup.Item>

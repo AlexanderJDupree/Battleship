@@ -53,6 +53,8 @@ export namespace ServerToClient {
     activeGames: number;
     gamesPlayed: number;
   };
+
+  export type Leaderboard = { username: string; wins: number }[];
 }
 
 export namespace ClientToServer {
@@ -72,11 +74,19 @@ export namespace ClientToServer {
   export const GetServerStats = 'getServerStats';
 
   /**
+   * Request current leaderboard
+   */
+  export const GetLeaderboard = 'getLeaderboard';
+
+  /**
    * Typed events interface for Client to Server
    */
   export interface Events extends Common.Events {
     connection: (socket: Socket) => void;
     disconnect: (reason: string) => void;
     getServerStats: (ack: (status: ServerToClient.Stats) => void) => void;
+    getLeaderboard: (
+      resp: (leaderboard: ServerToClient.Leaderboard) => void
+    ) => void;
   }
 }
