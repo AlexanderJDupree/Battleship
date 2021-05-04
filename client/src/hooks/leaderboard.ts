@@ -2,12 +2,10 @@
  * Leaderboard hook polls the server for updated leaderboard data and returns it.
  */
 
-import { useState, useContext, useEffect, useCallback } from 'react';
-import { SocketContext } from '../contexts';
-import {
-  ServerToClient as Server,
-  ClientToServer as Client,
-} from 'common/lib/events';
+import { useState, useEffect, useCallback } from 'react';
+import { ServerToClient as Server } from 'common/lib/events';
+import { SERVER_URL } from '../contexts/socket';
+import axios from 'axios';
 
 export enum LeaderboardStatus {
   Loading,
@@ -15,39 +13,39 @@ export enum LeaderboardStatus {
   Error,
 }
 
-const useLeaderboard = () => {
-  const socket = useContext(SocketContext);
-
+const useLeaderboard = (refresh?: number) => {
   const [status, setStatus] = useState<LeaderboardStatus>(
     LeaderboardStatus.Loading
   );
 
   const [leaderboard, setLeaderboard] = useState<Server.Leaderboard>([]);
 
-  const handleError = useCallback(() => {
+  const handleError = useCallback((err) => {
+    console.log(err);
     setStatus(LeaderboardStatus.Error);
   }, []);
 
-  const refreshLeaderboard = useCallback(() => {
-    if (socket.connected) {
-      socket.emit(Client.GetLeaderboard, (response) => {
-        setStatus(LeaderboardStatus.Loaded);
-        setLeaderboard(response);
-      });
-    } else {
-      setStatus(LeaderboardStatus.Error);
-    }
-  }, [socket]);
+  const updateLeaderboard = useCallback((resp) => {
+    setLeaderboard(resp.data);
+    setStatus(LeaderboardStatus.Loaded);
+  }, []);
+
+  const getLeaderboard = useCallback(() => {
+    axios
+      .get<Server.Leaderboard>(`${SERVER_URL}/leaderboard`)
+      .then(updateLeaderboard)
+      .catch(handleError);
+  }, [handleError, updateLeaderboard]);
 
   useEffect(() => {
-    socket.on(Server.ConnectError, handleError);
+    getLeaderboard();
 
-    const interval = setInterval(refreshLeaderboard, 1000);
-    return () => {
-      clearInterval(interval);
-      socket.off(Server.ConnectError, handleError);
-    };
-  }, [socket, handleError, refreshLeaderboard]);
+    if (refresh) {
+      // Refresh leaderboard at specified interval
+      const interval = setInterval(getLeaderboard, refresh);
+      return () => clearInterval(interval);
+    }
+  }, [getLeaderboard, refresh]);
 
   return { status, leaderboard };
 };

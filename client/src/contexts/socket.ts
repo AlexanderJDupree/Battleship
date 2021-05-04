@@ -6,23 +6,23 @@ import {
   Common,
 } from 'common/lib/events';
 
-const server_port = process.env.REACT_APP_SERVER_PORT || 8080;
-export const server_uri =
-  process.env.REACT_APP_SERVER_URI || `ws://localhost:${server_port}`;
+const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 8080;
+export const SERVER_URL =
+  process.env.REACT_APP_SERVER_URI || `http://localhost:${SERVER_PORT}`;
 
-export const socket: Socket<Server.Events, Client.Events> = io(server_uri);
+export const socket: Socket<Server.Events, Client.Events> = io(SERVER_URL);
 export const SocketContext = React.createContext(socket);
 
 socket.on(Server.Connect, () => {
-  console.log(`Connected to server at ${server_uri}`);
+  console.log(`Connected to server at ${SERVER_URL}`);
 });
 
 socket.on(Server.ConnectError, () => {
-  console.log(`Failure to connect to ${server_uri}`);
+  console.log(`Failure to connect to ${SERVER_URL}`);
 });
 
 socket.on(Server.Disconnect, (reason: string) => {
-  console.log(`Disconnected from ${server_uri}: ${reason}`);
+  console.log(`Disconnected from ${SERVER_URL}: ${reason}`);
 });
 
 socket.on(Common.DebugMessage, (msg: string) => {

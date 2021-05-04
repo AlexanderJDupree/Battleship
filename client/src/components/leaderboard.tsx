@@ -59,7 +59,7 @@ const LeaderboardLoaded: React.FC<LeaderboardProps> = (props) => {
 };
 
 const Leaderboard: React.FC<TableProps> = (props) => {
-  const leaderboard = useLeaderboard();
+  const leaderboard = useLeaderboard(10000); // Refresh every 10 seconds
 
   switch (leaderboard.status) {
     case LeaderboardStatus.Loading:
