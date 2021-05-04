@@ -31,19 +31,32 @@ const io = new IO<Client.Events, Server.Events>(server, {
   cors: corsOptions,
 });
 
+interface ExtSocket extends Socket<Client.Events, Server.Events> {
+  username: string;
+}
+
 // Setup Middleware
 app.use(cors(corsOptions));
 
+io.use((socket: ExtSocket, next) => {
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error('No username present'));
+  }
+  socket.username = username;
+  next();
+});
+
 // Socket IO handlers
-io.on(Client.Connection, (socket: Socket) => {
-  console.log(`connection[${socket.id}] : client connected`);
+io.on(Client.Connection, (socket: ExtSocket) => {
+  console.log(`connection[${socket.username}:${socket.id}] : user connected`);
 
   socket.on(Common.DebugMessage, (msg: string) => {
-    console.log(`debug[${socket.id}]: ${msg}`);
+    console.log(`debug[${socket.username}:${socket.id}]: ${msg}`);
   });
 
   socket.on(Client.Disconnect, (reason: string) => {
-    console.log(`disconnect[${socket.id}] : ${reason}`);
+    console.log(`disconnect[${socket.username}:${socket.id}] : ${reason}`);
   });
 });
 

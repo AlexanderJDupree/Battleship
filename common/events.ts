@@ -43,7 +43,7 @@ export namespace ServerToClient {
    * Typed events interface for Server to Client
    */
   export interface Events extends Common.Events {
-    connect_error: () => void;
+    connect_error: (err: Error) => void;
     connect: () => void;
     disconnect: () => void;
   }

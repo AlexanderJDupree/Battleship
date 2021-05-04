@@ -1,8 +1,19 @@
+import { useContext, useCallback } from 'react';
 import { Button, Card, CardDeck, Container, ListGroup } from 'react-bootstrap';
 import Jumbotron from 'react-bootstrap/Jumbotron';
 import { ServerStats, Leaderboard } from '../components';
+import { SocketContext } from '../contexts';
 
 export default function Home() {
+  const socket = useContext(SocketContext);
+
+  const handleConnect = useCallback(() => {
+    if (!socket.connected) {
+      socket.auth = { username: 'bob' };
+      socket.connect();
+    }
+  }, [socket]);
+
   return (
     <div className='home'>
       <Jumbotron>
@@ -19,7 +30,12 @@ export default function Home() {
           <Button variant='outline-primary' size='lg' className='mr-4 mt-3'>
             Find Game
           </Button>
-          <Button variant='outline-success' size='lg' className='mr-4 mt-3'>
+          <Button
+            variant='outline-success'
+            size='lg'
+            className='mr-4 mt-3'
+            onClick={handleConnect}
+          >
             Join Game
           </Button>
         </Container>
