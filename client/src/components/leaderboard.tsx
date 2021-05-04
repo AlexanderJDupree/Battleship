@@ -6,7 +6,9 @@ import React from 'react';
 import { Badge, Spinner, Table, TableProps } from 'react-bootstrap';
 import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
-import useLeaderboard, { LeaderboardStatus } from '../hooks/leaderboard';
+import useFetch, { FetchStatus } from '../hooks/fetch';
+import { SERVER_URL } from '../contexts/socket';
+import { ServerToClient as Server } from 'common/lib/events';
 
 interface LeaderboardProps extends TableProps {
   leaderboard: { username: string; wins: number }[];
@@ -59,10 +61,14 @@ const LeaderboardLoaded: React.FC<LeaderboardProps> = (props) => {
 };
 
 const Leaderboard: React.FC<TableProps> = (props) => {
-  const leaderboard = useLeaderboard(10000); // Refresh every 10 seconds
+  const leaderboard = useFetch<Server.Leaderboard>(
+    `${SERVER_URL}/leaderboard`,
+    [],
+    10000 // Refresh leaderboard every 10 seconds
+  );
 
   switch (leaderboard.status) {
-    case LeaderboardStatus.Loading:
+    case FetchStatus.Loading:
       return (
         <div className='h-100 d-flex justify-content-center align-items-center'>
           <Spinner
@@ -74,11 +80,9 @@ const Leaderboard: React.FC<TableProps> = (props) => {
           </Spinner>
         </div>
       );
-    case LeaderboardStatus.Loaded:
-      return (
-        <LeaderboardLoaded {...props} leaderboard={leaderboard.leaderboard} />
-      );
-    case LeaderboardStatus.Error:
+    case FetchStatus.Loaded:
+      return <LeaderboardLoaded {...props} leaderboard={leaderboard.data} />;
+    case FetchStatus.Error:
     default:
       return <div className='mx-auto mt-4'>Something went wrong... 🤷‍♂️</div>;
   }

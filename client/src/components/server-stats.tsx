@@ -4,40 +4,53 @@
  */
 
 import React from 'react';
-import { ListGroup, ListGroupProps } from 'react-bootstrap';
-import useServerStats, { ServerStatus } from '../hooks/server-stats';
+import { ListGroup, ListGroupProps, Spinner } from 'react-bootstrap';
+import useFetch, { FetchStatus } from '../hooks/fetch';
+import { SERVER_URL } from '../contexts/socket';
+import { ServerToClient as Server } from 'common/lib/events';
 
-interface ServerStatsProps extends ListGroupProps {
-  variant?: 'flush';
-  interval?: number;
-}
+const ServerStats: React.FC<ListGroupProps> = (props) => {
+  const server = useFetch<Server.Stats>(
+    `${SERVER_URL}/stats`,
+    { playersOnline: 0, activeGames: 0, gamesPlayed: 0 },
+    2000
+  ); // Refresh every 3 seconds
 
-const statusToTextColor = (status: ServerStatus) => {
-  switch (status) {
-    case ServerStatus.Ok:
-      return 'text-success';
-    case ServerStatus.Error:
-      return 'text-danger';
-    case ServerStatus.Connecting:
-      return 'text-info';
+  switch (server.status) {
+    case FetchStatus.Loading:
+      return (
+        <div className='h-100 d-flex justify-content-center align-items-center'>
+          <Spinner
+            animation='border'
+            role='status'
+            className='theme-secondary-light'
+          >
+            <span className='sr-only'>Loading...</span>
+          </Spinner>
+        </div>
+      );
+    case FetchStatus.Error:
+      return (
+        <div className='mx-auto mt-4 text-danger'>No response from Server</div>
+      );
+    case FetchStatus.Loaded:
+      return (
+        <ListGroup {...props}>
+          <ListGroup.Item className='text-success'>
+            Server Online!
+          </ListGroup.Item>
+          <ListGroup.Item>
+            Players Online: {server.data.playersOnline}
+          </ListGroup.Item>
+          <ListGroup.Item>
+            Active Games: {server.data.activeGames}
+          </ListGroup.Item>
+          <ListGroup.Item>
+            Games Played: {server.data.gamesPlayed}
+          </ListGroup.Item>
+        </ListGroup>
+      );
   }
-};
-
-const ServerStats: React.FC<ServerStatsProps> = (props) => {
-  const server = useServerStats(3000); // Refresh every 3 seconds
-
-  return (
-    <ListGroup {...props}>
-      <ListGroup.Item className={statusToTextColor(server.status)}>
-        {server.status}
-      </ListGroup.Item>
-      <ListGroup.Item>
-        Players Online: {server.stats.playersOnline}
-      </ListGroup.Item>
-      <ListGroup.Item>Active Games: {server.stats.activeGames}</ListGroup.Item>
-      <ListGroup.Item>Games Played: {server.stats.gamesPlayed}</ListGroup.Item>
-    </ListGroup>
-  );
 };
 
 export default ServerStats;
