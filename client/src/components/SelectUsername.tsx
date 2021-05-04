@@ -1,13 +1,49 @@
-export default function SelectUsername() {
+import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
+
+const SelectUsername = () => {
+  const [username, setUsername] = useState('');
+  const [error, setError] = useState('');
+  const [validated, setValidated] = useState(false);
+
+  const handleSubmit = (event: React.FormEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!username || username === '') {
+      setError('Please Choose a Username');
+    } else if (username.length > 30) {
+      setError('Name is over 30 characters');
+    }
+    // Add any other validation logic here
+    else {
+      setError('');
+      setValidated(true);
+    }
+  };
+
   return (
-    <div className='about'>
-      <h1 className='bg-info text-dark text-center'>About Us</h1>
-      <p>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus ab
-        veniam commodi culpa neque consectetur dolor incidunt vel praesentium
-        impedit, saepe dolore nam ex sapiente architecto, perferendis natus
-        voluptatem consequatur?
-      </p>
-    </div>
+    <Form inline validated={validated} onSubmit={handleSubmit}>
+      <Form.Group controlId='selectUsername.username'>
+        <Form.Label htmlFor='username' srOnly>
+          Username
+        </Form.Label>
+        <Form.Control
+          as='input'
+          type='text'
+          className='mr-4 mt-4'
+          id='username'
+          placeholder='Choose a Username...'
+          isInvalid={error !== ''}
+          onChange={(e) => setUsername(e.target.value)}
+        />
+        <Button type='submit' className='mt-4' variant='primary'>
+          Connect
+        </Button>
+        <Form.Control.Feedback type='invalid'>{error}</Form.Control.Feedback>
+      </Form.Group>
+    </Form>
   );
-}
+};
+
+export default SelectUsername;
