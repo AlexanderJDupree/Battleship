@@ -1,2 +1,2 @@
-export { default as useWindowDimensions } from './window';
-export { default as useFetch } from './fetch';
+export { default as useWindowDimensions } from './UseWindow';
+export { default as useFetch } from './UseFetch';

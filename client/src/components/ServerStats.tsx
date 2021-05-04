@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { ListGroup, ListGroupProps, Spinner } from 'react-bootstrap';
-import useFetch, { FetchStatus } from '../hooks/fetch';
-import { SERVER_URL } from '../contexts/socket';
+import useFetch, { FetchStatus } from '../hooks/UseFetch';
+import { SERVER_URL } from '../contexts/Socket';
 import { ServerToClient as Server } from 'common/lib/events';
 
 const ServerStats: React.FC<ListGroupProps> = (props) => {

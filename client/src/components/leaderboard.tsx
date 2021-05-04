@@ -6,8 +6,8 @@ import React from 'react';
 import { Badge, Spinner, Table, TableProps } from 'react-bootstrap';
 import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
-import useFetch, { FetchStatus } from '../hooks/fetch';
-import { SERVER_URL } from '../contexts/socket';
+import useFetch, { FetchStatus } from '../hooks/UseFetch';
+import { SERVER_URL } from '../contexts/Socket';
 import { ServerToClient as Server } from 'common/lib/events';
 
 interface LeaderboardProps extends TableProps {
