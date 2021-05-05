@@ -5,11 +5,13 @@ import { validateUsername } from 'common/lib/details';
 interface SelectUsernameProps {
   onValidated: (username: string) => void;
   label?: string;
+  disabled?: boolean;
 }
 
 const SelectUsername: React.FC<SelectUsernameProps> = ({
   onValidated,
   label,
+  disabled,
 }) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
@@ -47,7 +49,12 @@ const SelectUsername: React.FC<SelectUsernameProps> = ({
           isInvalid={error !== ''}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <Button type='submit' className='mt-4' variant='primary'>
+        <Button
+          type='submit'
+          className='mt-4'
+          variant='primary'
+          disabled={disabled || validated}
+        >
           {label ? label : 'Submit'}
         </Button>
         <Form.Control.Feedback type='invalid'>{error}</Form.Control.Feedback>

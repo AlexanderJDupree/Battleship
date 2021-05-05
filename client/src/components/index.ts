@@ -7,3 +7,4 @@ export { default as Example } from './Example';
 export { default as ServerStats } from './ServerStats';
 export { default as Leaderboard } from './Leaderboard';
 export { default as SelectUsername } from './SelectUsername';
+export { default as MatchMakingGroup } from './MatchMakingGroup';
