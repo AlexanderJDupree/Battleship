@@ -36,7 +36,7 @@ const useFetch = <T>(url: string, initialState: T, refresh?: number) => {
       const interval = setInterval(fetchResource, refresh);
       return () => clearInterval(interval);
     }
-  });
+  }, [fetchResource, refresh]);
 
   return { status, data };
 };

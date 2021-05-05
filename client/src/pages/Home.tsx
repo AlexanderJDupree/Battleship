@@ -7,12 +7,15 @@ import { SocketContext } from '../contexts';
 export default function Home() {
   const socket = useContext(SocketContext);
 
-  const handleConnect = useCallback(() => {
-    if (!socket.connected) {
-      socket.auth = { username: 'bob' };
-      socket.connect();
-    }
-  }, [socket]);
+  const handleConnect = useCallback(
+    (username: string) => {
+      if (!socket.connected) {
+        socket.auth = { username };
+        socket.connect();
+      }
+    },
+    [socket]
+  );
 
   return (
     <div className='home'>
@@ -27,7 +30,7 @@ export default function Home() {
           <blockquote className='blockquote'>
             <p className='lead mb-0'>random naval battlefact</p>
           </blockquote>
-          <SelectUsername />
+          <SelectUsername onValidated={handleConnect} label='Connect' />
         </Container>
       </Jumbotron>
       <Container>

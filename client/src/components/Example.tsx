@@ -3,7 +3,7 @@
  */
 import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { SocketContext } from '../contexts';
-import { ServerToClient as Server, Common } from 'common/lib/events';
+import { Server, Common } from 'common/lib/events';
 import Button from 'react-bootstrap/Button';
 
 export default function Example() {

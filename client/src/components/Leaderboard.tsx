@@ -8,7 +8,7 @@ import { FontAwesomeIcon as FA } from '@fortawesome/react-fontawesome';
 import { faCrown } from '@fortawesome/free-solid-svg-icons';
 import useFetch, { FetchStatus } from '../hooks/UseFetch';
 import { SERVER_URL } from '../contexts/Socket';
-import { Leaderboard } from 'common/lib/details';
+import { Leaderboard as ServerLeaderboard } from 'common/lib/details';
 
 interface LeaderboardProps extends TableProps {
   leaderboard: { username: string; wins: number }[];
@@ -61,7 +61,7 @@ const LeaderboardLoaded: React.FC<LeaderboardProps> = (props) => {
 };
 
 const Leaderboard: React.FC<TableProps> = (props) => {
-  const leaderboard = useFetch<Leaderboard>(
+  const leaderboard = useFetch<ServerLeaderboard>(
     `${SERVER_URL}/leaderboard`,
     [],
     10000 // Refresh leaderboard every 10 seconds

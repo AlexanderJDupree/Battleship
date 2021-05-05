@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import { Form, Button } from 'react-bootstrap';
+import { validateUsername } from 'common/lib/details';
 
-const SelectUsername = () => {
+interface SelectUsernameProps {
+  onValidated: (username: string) => void;
+  label?: string;
+}
+
+const SelectUsername: React.FC<SelectUsernameProps> = ({
+  onValidated,
+  label,
+}) => {
   const [username, setUsername] = useState('');
   const [error, setError] = useState('');
   const [validated, setValidated] = useState(false);
@@ -10,21 +19,22 @@ const SelectUsername = () => {
     event.preventDefault();
     event.stopPropagation();
 
+    let status = validateUsername(username);
+
     if (!username || username === '') {
       setError('Please Choose a Username');
-    } else if (username.length > 30) {
-      setError('Name is over 30 characters');
-    }
-    // Add any other validation logic here
-    else {
+    } else if (status !== true) {
+      setError(status);
+    } else {
       setError('');
-      setValidated(true);
+      setValidated(status);
+      onValidated(username);
     }
   };
 
   return (
     <Form inline validated={validated} onSubmit={handleSubmit}>
-      <Form.Group controlId='selectUsername.username'>
+      <Form.Group>
         <Form.Label htmlFor='username' srOnly>
           Username
         </Form.Label>
@@ -38,7 +48,7 @@ const SelectUsername = () => {
           onChange={(e) => setUsername(e.target.value)}
         />
         <Button type='submit' className='mt-4' variant='primary'>
-          Connect
+          {label ? label : 'Submit'}
         </Button>
         <Form.Control.Feedback type='invalid'>{error}</Form.Control.Feedback>
       </Form.Group>
