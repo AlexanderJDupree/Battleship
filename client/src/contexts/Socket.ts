@@ -8,6 +8,7 @@ export const SERVER_URL =
 
 export const socket: Socket<Server.Events, Client.Events> = io(SERVER_URL, {
   autoConnect: false,
+  withCredentials: true,
 });
 export const SocketContext = React.createContext(socket);
 
@@ -15,8 +16,12 @@ socket.on(Server.Connect, () => {
   console.log(`Connected to server at ${SERVER_URL}`);
 });
 
+socket.on(Server.CreateSession, ({ username, userID, sessionID }) => {
+  console.log(`${username}\n${userID}\n${sessionID}`);
+});
+
 socket.on(Server.ConnectError, (err: Error) => {
-  console.log(`Failure to connect to ${SERVER_URL}: ${err}`);
+  console.log(`Failure to connect to ${SERVER_URL}: ${err.message}`);
 });
 
 socket.on(Server.Disconnect, (reason: string) => {

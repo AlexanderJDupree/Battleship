@@ -10,8 +10,10 @@
     "clean": "tsc --build --clean",
     "start": "tsc --build && nodemon dist/server.js"
   },
-  "nodemonConfig" : {
-    "watch": ["src"],
+  "nodemonConfig": {
+    "watch": [
+      "src"
+    ],
     "ext": "ts",
     "exec": "tsc --build && node dist/server.js"
   },
@@ -22,10 +24,12 @@
     "typescript": "^4.2.4"
   },
   "dependencies": {
+    "@types/express-session": "^1.17.3",
+    "common": "^0.1.0",
     "cross-env": "5.0.5",
     "express": "^4.17.1",
-    "socket.io": "^4.0.1",
-    "common" : "^0.1.0"
+    "express-session": "^1.17.1",
+    "socket.io": "^4.0.1"
   },
   "optionalDependencies": {
     "bufferutil": "^4.0.3",
