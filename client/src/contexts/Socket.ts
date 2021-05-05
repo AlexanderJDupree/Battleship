@@ -1,10 +1,6 @@
 import React from 'react';
 import { io, Socket } from 'socket.io-client';
-import {
-  ServerToClient as Server,
-  ClientToServer as Client,
-  Common,
-} from 'common/lib/events';
+import { Server, Client, Common } from 'common/lib/events';
 
 const SERVER_PORT = process.env.REACT_APP_SERVER_PORT || 8080;
 export const SERVER_URL =

@@ -7,10 +7,10 @@ import React from 'react';
 import { ListGroup, ListGroupProps, Spinner } from 'react-bootstrap';
 import useFetch, { FetchStatus } from '../hooks/UseFetch';
 import { SERVER_URL } from '../contexts/Socket';
-import { ServerToClient as Server } from 'common/lib/events';
+import { ServerStats as Stats } from 'common/lib/details';
 
 const ServerStats: React.FC<ListGroupProps> = (props) => {
-  const server = useFetch<Server.Stats>(
+  const server = useFetch<Stats>(
     `${SERVER_URL}/stats`,
     { playersOnline: 0, activeGames: 0, gamesPlayed: 0 },
     2000

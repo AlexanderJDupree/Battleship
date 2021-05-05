@@ -7,11 +7,12 @@ import Express from 'express';
 import { createServer } from 'http';
 import { Server as IO, Socket } from 'socket.io';
 import cors from 'cors';
-import {
-  ServerToClient as Server,
-  ClientToServer as Client,
-  Common,
-} from 'common/lib/events';
+import { validateUsername } from 'common/lib/details';
+import { Server, Client, Common } from 'common/lib/events';
+
+interface ClientSocket extends Socket<Client.Events, Server.Events> {
+  username: string;
+}
 
 // Server configuration
 const client_port = process.env.PORT || 3000;
@@ -23,7 +24,7 @@ const corsOptions: cors.CorsOptions = {
   methods: ['GET', 'POST'],
 };
 
-// Setup server and socket.io
+/// Setup server and socket.io
 const app = Express();
 const server = createServer(app);
 const io = new IO<Client.Events, Server.Events>(server, {
@@ -31,24 +32,22 @@ const io = new IO<Client.Events, Server.Events>(server, {
   cors: corsOptions,
 });
 
-interface ExtSocket extends Socket<Client.Events, Server.Events> {
-  username: string;
-}
-
-// Setup Middleware
+/// Setup Middleware
 app.use(cors(corsOptions));
 
-io.use((socket: ExtSocket, next) => {
+io.use((socket: ClientSocket, next) => {
   const username = socket.handshake.auth.username;
-  if (!username) {
-    return next(new Error('No username present'));
+  let status = validateUsername(username);
+  if (status === true) {
+    socket.username = username;
+    next();
+  } else {
+    return next(new Error(status));
   }
-  socket.username = username;
-  next();
 });
 
-// Socket IO handlers
-io.on(Client.Connection, (socket: ExtSocket) => {
+/// Socket IO event handlers
+io.on(Client.Connection, (socket: ClientSocket) => {
   console.log(`connection[${socket.username}:${socket.id}] : user connected`);
 
   socket.on(Common.DebugMessage, (msg: string) => {
@@ -89,6 +88,7 @@ app.get('/stats', (req, res) => {
   });
 });
 
+/// Start the server!
 server.listen(port, () => {
   console.log(`Listening on port ${port}...`);
 });
