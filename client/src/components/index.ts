@@ -1,8 +1,9 @@
 /**
  * Reexport components for public use
  */
-export { default as Navigation } from './navbar';
-export { default as Footer } from './footer';
-export { default as Example } from './example';
-export { default as ServerStats } from './server-stats';
-export { default as Leaderboard } from './leaderboard';
+export { default as Navigation } from './Navbar';
+export { default as Footer } from './Footer';
+export { default as ServerStats } from './ServerStats';
+export { default as Leaderboard } from './Leaderboard';
+export { default as SelectUsername } from './SelectUsername';
+export { default as MatchMakingGroup } from './MatchMakingGroup';

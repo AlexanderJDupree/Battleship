@@ -1,6 +1,11 @@
-import { Button, Card, CardDeck, Container, ListGroup } from 'react-bootstrap';
-import Jumbotron from 'react-bootstrap/Jumbotron';
-import { ServerStats, Leaderboard } from '../components';
+import {
+  Jumbotron,
+  Card,
+  CardDeck,
+  Container,
+  ListGroup,
+} from 'react-bootstrap';
+import { ServerStats, Leaderboard, MatchMakingGroup } from '../components';
 
 export default function Home() {
   return (
@@ -16,12 +21,7 @@ export default function Home() {
           <blockquote className='blockquote'>
             <p className='lead mb-0'>random naval battlefact</p>
           </blockquote>
-          <Button variant='outline-primary' size='lg' className='mr-4 mt-3'>
-            Find Game
-          </Button>
-          <Button variant='outline-success' size='lg' className='mr-4 mt-3'>
-            Join Game
-          </Button>
+          <MatchMakingGroup />
         </Container>
       </Jumbotron>
       <Container>
@@ -67,3 +67,6 @@ export default function Home() {
     </div>
   );
 }
+
+/*
+ */

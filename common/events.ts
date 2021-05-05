@@ -2,8 +2,11 @@
  * Battleship game socket events
  *
  */
-import { Socket } from 'socket.io';
+import { Socket as IOSocket } from 'socket.io';
 
+/**
+ * Events that can be sent by either the server or client
+ */
 export namespace Common {
   /**
    * Event fires when the server/client sends a debug message
@@ -15,7 +18,10 @@ export namespace Common {
   }
 }
 
-export namespace ServerToClient {
+/**
+ * Events sent from the server to the client
+ */
+export namespace Server {
   /**
    * Event fired when:
    *    - Low level connection cannot be established
@@ -43,21 +49,16 @@ export namespace ServerToClient {
    * Typed events interface for Server to Client
    */
   export interface Events extends Common.Events {
-    connect_error: () => void;
+    connect_error: (err: Error) => void;
     connect: () => void;
     disconnect: () => void;
   }
-
-  export type Stats = {
-    playersOnline: number;
-    activeGames: number;
-    gamesPlayed: number;
-  };
-
-  export type Leaderboard = { username: string; wins: number }[];
 }
 
-export namespace ClientToServer {
+/**
+ * Events sent from the client to the server
+ */
+export namespace Client {
   /**
    * Event fires when the Server receives a new socket connection
    */
@@ -69,24 +70,10 @@ export namespace ClientToServer {
   export const Disconnect = 'disconnect';
 
   /**
-   * Request server statistics
-   */
-  export const GetServerStats = 'getServerStats';
-
-  /**
-   * Request current leaderboard
-   */
-  export const GetLeaderboard = 'getLeaderboard';
-
-  /**
    * Typed events interface for Client to Server
    */
   export interface Events extends Common.Events {
-    connection: (socket: Socket) => void;
+    connection: (socket: IOSocket) => void;
     disconnect: (reason: string) => void;
-    getServerStats: (ack: (status: ServerToClient.Stats) => void) => void;
-    getLeaderboard: (
-      resp: (leaderboard: ServerToClient.Leaderboard) => void
-    ) => void;
   }
 }

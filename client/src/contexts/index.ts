@@ -1,1 +1,1 @@
-export { socket, SocketContext } from './socket';
+export { socket, SocketContext } from './Socket';
