@@ -46,12 +46,27 @@ export namespace Server {
   export const Disconnect = 'disconnect';
 
   /**
+   * Event fires after user connects, provides client with session details
+   */
+  export const CreateSession = 'create_session';
+
+  /**
+   * Session details
+   */
+  export interface Session {
+    username: string;
+    userID: string;
+    sessionID: string;
+  }
+
+  /**
    * Typed events interface for Server to Client
    */
   export interface Events extends Common.Events {
     connect_error: (err: Error) => void;
     connect: () => void;
     disconnect: () => void;
+    create_session: (session: Session) => void;
   }
 }
 
