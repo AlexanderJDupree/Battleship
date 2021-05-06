@@ -2,80 +2,102 @@
  * TODO this file could use a serious refactor.
  */
 import React, { useContext, useCallback, useState, useEffect } from 'react';
-import { Button } from 'react-bootstrap';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
-import { SelectUsername } from '../components';
 import { SocketContext } from '../contexts';
 import { Server } from 'common/lib/events';
+import { hasSessionID } from '../contexts/Socket';
+import { FindGameState } from '../components/FindGameButton';
+import {
+  ConnectToServerForm,
+  FindGameButton,
+  JoinGameButton,
+} from '../components';
+
+type MatchmakingButtons = 'none' | 'find' | 'join' | 'connect';
 
 const MatchMakingGroup = () => {
   const socket = useContext(SocketContext);
   const [connected, setConnected] = useState(socket.connected);
   const [connectError, setConnectError] = useState(false);
+  const [findGameState, setFindGameState] = useState<FindGameState>('initial');
+  const [disabled, setDisabled] = useState<MatchmakingButtons>('none');
 
-  const handleConnectError = useCallback(() => {
-    setConnectError(true);
+  const handleValidated = useCallback(
+    (username: string) => {
+      if (!socket.connected) {
+        setDisabled('connect');
+        socket.auth = { username };
+        socket.connect();
+      }
+    },
+    [socket]
+  );
+
+  const handleFindGameClick = useCallback(() => {
+    setDisabled('join');
+    setFindGameState('searching');
+    setTimeout(() => setFindGameState('found'), 3000);
+    setTimeout(() => setFindGameState('error'), 6000);
+    setTimeout(() => setFindGameState('initial'), 9000);
+  }, []);
+
+  const handleJoinGameSubmit = useCallback((roomCode: string) => {
+    let status = false; // TODO validate room code
+    if (status) {
+      setDisabled('find');
+      return status;
+    } else {
+      return 'Invalid room code';
+    }
   }, []);
 
   const handleConnect = useCallback(() => {
+    setConnected(true);
     setConnectError(false);
   }, []);
 
-  const nodeRef = React.createRef<HTMLDivElement>();
-
-  const handleValidated = (username: string) => {
-    if (!socket.connected) {
-      socket.auth = { username };
-      socket.connect();
-      setConnected(true);
-    }
-  };
+  const handleConnectError = useCallback(() => {
+    setConnected(false);
+    setConnectError(true);
+  }, []);
 
   useEffect(() => {
+    socket.on(Server.Connect, handleConnect);
     socket.on(Server.ConnectError, handleConnectError);
     socket.on(Server.Disconnect, handleConnectError);
-    socket.on(Server.Connect, handleConnect);
     return () => {
-      socket.off(Server.ConnectError, handleConnectError);
-      socket.off(Server.Disconnect, handleConnectError);
-      socket.off(Server.ConnectError, handleConnect);
+      socket.off(Server.Connect, handleConnect);
     };
-  }, [socket, handleConnectError, handleConnect]);
+  });
+
+  const nodeRef = React.createRef<HTMLDivElement>();
 
   return (
-    <div>
+    <>
       <SwitchTransition>
         <CSSTransition
-          key={connected ? 'connected' : 'not-connected'}
+          key={connected || hasSessionID() ? 'connected' : 'not-connected'}
           timeout={500}
           classNames='fade'
           nodeRef={nodeRef}
         >
           <div ref={nodeRef}>
-            {connected ? (
+            {connected || hasSessionID() ? (
               <div>
-                <Button
-                  variant='outline-primary'
-                  size='lg'
-                  className='mr-4 mt-3'
-                  disabled={connectError}
-                >
-                  Find Game
-                </Button>
-                <Button
-                  variant='outline-success'
-                  size='lg'
-                  className='mr-4 mt-3'
-                  disabled={connectError}
-                >
-                  Join Game
-                </Button>
+                <FindGameButton
+                  disabled={connectError || disabled === 'find'}
+                  state={findGameState}
+                  onClick={handleFindGameClick}
+                />
+                <JoinGameButton
+                  disabled={connectError || disabled === 'join'}
+                  onSubmit={handleJoinGameSubmit}
+                />
               </div>
             ) : (
-              <SelectUsername
+              <ConnectToServerForm
                 onValidated={handleValidated}
-                label='Connect'
-                disabled={connectError}
+                disabled={connectError || disabled === 'connect'}
               />
             )}
           </div>
@@ -88,7 +110,7 @@ const MatchMakingGroup = () => {
       ) : (
         <></>
       )}
-    </div>
+    </>
   );
 };
 

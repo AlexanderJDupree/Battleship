@@ -13,7 +13,7 @@ export default function Footer() {
       variant='dark'
       as='footer'
       className='mt-3'
-      fixed={dimensions.width >= 768 ? 'bottom' : undefined}
+      fixed={dimensions.height >= 955 ? 'bottom' : undefined}
     >
       <Container className='align-items-center justify-content-center'>
         <p className='theme-text-secondary text-center'>Some text and stuff</p>
