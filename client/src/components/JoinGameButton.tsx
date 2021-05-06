@@ -53,7 +53,7 @@ const JoinGameButton: React.FC<JoinGameProps> = ({ onSubmit, disabled }) => {
   return (
     <>
       <Button
-        variant='outline-success'
+        variant='outline-info'
         size='lg'
         className='mr-4 mt-3'
         onClick={handleClick}

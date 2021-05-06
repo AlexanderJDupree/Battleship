@@ -6,26 +6,46 @@ import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import { SocketContext } from '../contexts';
 import { Server } from 'common/lib/events';
 import { hasSessionID } from '../contexts/Socket';
+import { useHistory } from 'react-router-dom';
 import { FindGameState } from '../components/FindGameButton';
 import {
   ConnectToServerForm,
   FindGameButton,
   JoinGameButton,
 } from '../components';
+import { Button } from 'react-bootstrap';
 
-type MatchmakingButtons = 'none' | 'find' | 'join' | 'connect';
+interface HostGameProps {
+  disabled: boolean;
+  onClick: () => void;
+}
+const HostGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
+  return (
+    <Button
+      variant='outline-success'
+      size='lg'
+      className='mr-4 mt-3'
+      disabled={disabled}
+      onClick={onClick}
+    >
+      Host Game
+    </Button>
+  );
+};
 
 const MatchMakingGroup = () => {
   const socket = useContext(SocketContext);
   const [connected, setConnected] = useState(socket.connected);
   const [connectError, setConnectError] = useState(false);
   const [findGameState, setFindGameState] = useState<FindGameState>('initial');
-  const [disabled, setDisabled] = useState<MatchmakingButtons>('none');
+  const [disableButtons, setDisableButtons] = useState(false);
+
+  let history = useHistory();
 
   const handleValidated = useCallback(
     (username: string) => {
       if (!socket.connected) {
-        setDisabled('connect');
+        setDisableButtons(true);
         socket.auth = { username };
         socket.connect();
       }
@@ -34,7 +54,7 @@ const MatchMakingGroup = () => {
   );
 
   const handleFindGameClick = useCallback(() => {
-    setDisabled('join');
+    setDisableButtons(true);
     setFindGameState('searching');
     setTimeout(() => setFindGameState('found'), 3000);
     setTimeout(() => setFindGameState('error'), 6000);
@@ -42,14 +62,18 @@ const MatchMakingGroup = () => {
   }, []);
 
   const handleJoinGameSubmit = useCallback((roomCode: string) => {
-    let status = false; // TODO validate room code
+    let status = true; // TODO validate room code
     if (status) {
-      setDisabled('find');
+      setDisableButtons(true);
       return status;
     } else {
       return 'Invalid room code';
     }
   }, []);
+
+  const handleHostGameClick = useCallback(() => {
+    history.push('/game?host=true');
+  }, [history]);
 
   const handleConnect = useCallback(() => {
     setConnected(true);
@@ -85,19 +109,23 @@ const MatchMakingGroup = () => {
             {connected || hasSessionID() ? (
               <div>
                 <FindGameButton
-                  disabled={connectError || disabled === 'find'}
+                  disabled={connectError || disableButtons}
                   state={findGameState}
                   onClick={handleFindGameClick}
                 />
+                <HostGameButton
+                  disabled={connectError || disableButtons}
+                  onClick={handleHostGameClick}
+                />
                 <JoinGameButton
-                  disabled={connectError || disabled === 'join'}
+                  disabled={connectError || disableButtons}
                   onSubmit={handleJoinGameSubmit}
                 />
               </div>
             ) : (
               <ConnectToServerForm
                 onValidated={handleValidated}
-                disabled={connectError || disabled === 'connect'}
+                disabled={connectError || disableButtons}
               />
             )}
           </div>

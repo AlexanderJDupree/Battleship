@@ -122,3 +122,56 @@ body {
 .fade-exit-active {
   transition: opacity 500ms;
 }
+
+.chat-window {
+}
+
+.chat-messages {
+  height: 220px;
+  max-height: 220px;
+  align-content: flex-end;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+.chat-input {
+  line-height: 1.5;
+  width: 90%;
+  border-radius: 0;
+}
+
+.chat-submit {
+  width: 10%;
+  border-radius: 0;
+  text-align: center;
+}
+
+.chat-message {
+  line-height: 20px;
+  flex-wrap: wrap;
+  align-self: flex-end;
+}
+
+.chat-username {
+  font-weight: bold;
+}
+
+.sent {
+  flex-direction: row-reverse;
+}
+
+.sent p {
+  background: var(--theme-primary-light);
+  color: var(--theme-text-primary);
+  align-self: flex-end;
+}
+
+.received p {
+  background: var(--theme-secondary-light);
+  color: var(--theme-text-secondary);
+}
+
+.flex-break {
+  flex-basis: 100%;
+  height: 0;
+}
