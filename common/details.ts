@@ -10,6 +10,18 @@ export type ServerStats = {
 
 export type Leaderboard = { username: string; wins: number }[];
 
+export enum JoinGameStatus {
+  Error,
+  GameNotFound,
+  JoinSuccess,
+}
+
+export enum RoomStatus {
+  NotFound,
+  RoomFull,
+  Ok,
+}
+
 export const USERNAME_MAX_CHARS = 30;
 export const USERNAME_REGEX = /^[a-zA-Z0-9_]*$/;
 

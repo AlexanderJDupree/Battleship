@@ -9,3 +9,4 @@ export { default as ConnectToServerForm } from './ConnectToServerForm';
 export { default as FindGameButton } from './FindGameButton';
 export { default as JoinGameButton } from './JoinGameButton';
 export { default as MatchMakingGroup } from './MatchMakingGroup';
+export { default as ChatWindow } from './ChatWindow';

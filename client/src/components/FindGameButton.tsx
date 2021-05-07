@@ -17,37 +17,35 @@ const FindGameButton: React.FC<FindGameProps> = ({
   let label = <>Find Game</>;
   let variant = 'outline-primary';
 
-  if (!disabled) {
-    switch (state) {
-      case 'searching':
-        disabled = true;
-        label = (
-          <>
-            <Spinner
-              as='span'
-              animation='grow'
-              size='sm'
-              role='status'
-              aria-hidden='true'
-              className='mr-2 mb-1'
-            />
-            Finding Game...
-          </>
-        );
-        break;
-      case 'found':
-        disabled = true;
-        variant = 'primary';
-        label = <>Game Found!</>;
-        break;
-      case 'error':
-        variant = 'outline-danger';
-        label = <>An error occured 😞</>;
-        break;
-      case 'initial':
-      default:
-        break;
-    }
+  switch (state) {
+    case 'searching':
+      disabled = true;
+      label = (
+        <>
+          <Spinner
+            as='span'
+            animation='grow'
+            size='sm'
+            role='status'
+            aria-hidden='true'
+            className='mr-2 mb-1'
+          />
+          Finding Game...
+        </>
+      );
+      break;
+    case 'found':
+      disabled = true;
+      variant = 'primary';
+      label = <>Game Found!</>;
+      break;
+    case 'error':
+      variant = 'outline-danger';
+      label = <>An error occured 😞</>;
+      break;
+    case 'initial':
+    default:
+      break;
   }
   return (
     <Button

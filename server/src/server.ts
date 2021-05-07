@@ -7,12 +7,17 @@ import Express from 'express';
 import { createServer } from 'http';
 import { Server as IO, Socket } from 'socket.io';
 import cors from 'cors';
-import { validateUsername } from 'common/lib/details';
+import {
+  JoinGameStatus,
+  validateUsername,
+  RoomStatus,
+} from 'common/lib/details';
 import { Server, Client, Common } from 'common/lib/events';
 import { ExtendedSocket } from './utils';
 import { genID } from './session';
 import * as config from './config';
 import { MemorySessionStore } from './session';
+import { MemoryGameStore } from './game';
 
 /// Setup server and socket.io
 const app = Express();
@@ -22,6 +27,7 @@ const io = new IO<Client.Events, Server.Events>(server, {
   cors: config.CORS_OPTIONS,
 });
 const sessionStore = new MemorySessionStore();
+const gameStore = new MemoryGameStore();
 
 /// Setup Middleware
 app.use(cors(config.CORS_OPTIONS));
@@ -91,6 +97,66 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       connected: false,
     });
   });
+
+  socket.on(Client.CheckRoom, (roomID, callback) => {
+    let game = gameStore.get(roomID);
+    if (game) {
+      if (
+        game.players.includes(socket.userID) ||
+        !game.players[0] ||
+        !game.players[1]
+      ) {
+        callback(RoomStatus.Ok);
+      } else {
+        callback(RoomStatus.RoomFull);
+      }
+    } else {
+      callback(RoomStatus.NotFound);
+    }
+  });
+
+  socket.on(Client.LeaveRoom, (roomID) => socket.leave(roomID));
+
+  socket.on(Client.CreateGame, (callback) => {
+    let gameID = genID();
+    console.log(`Created new game: ${gameID}`);
+    gameStore.set(gameID, { players: [socket.userID, null] });
+    callback(gameID);
+  });
+
+  socket.on(Client.JoinGame, (roomID, callback) => {
+    // Resume game from session store if it exists
+    let game = gameStore.get(roomID);
+    if (game) {
+      if (game.players.includes(socket.userID)) {
+        // Player is reconnecting to room
+        socket.join(roomID);
+        callback(JoinGameStatus.JoinSuccess);
+      } else if (!game.players[1]) {
+        // Room has a vacant slot, join game
+        socket.join(roomID);
+        gameStore.set(roomID, {
+          ...game,
+          players: [game.players[0], socket.userID],
+        });
+        callback(JoinGameStatus.JoinSuccess);
+      } else {
+        callback(JoinGameStatus.Error);
+      }
+    } else {
+      callback(JoinGameStatus.GameNotFound);
+    }
+  });
+
+  socket.on(Client.ChatMessage, (roomID, msg) => {
+    let game = gameStore.get(roomID);
+    if (game.players.includes(socket.userID)) {
+      io.to(roomID).emit(Server.ChatMessage, {
+        username: socket.username,
+        msg,
+      });
+    }
+  });
 });
 
 // Express server handlers
@@ -116,8 +182,8 @@ app.get('/leaderboard', (req, res) => {
 app.get('/stats', (req, res) => {
   res.status(200).json({
     playersOnline: io.sockets.sockets.size,
-    activeGames: 0, // TODO return actual value
-    gamesPlayed: 0, // TODO return actual value
+    activeGames: gameStore.length(),
+    gamesPlayed: gameStore.length(), // TODO return actual value
   });
 });
 

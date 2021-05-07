@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Button, Spinner, Collapse, Form } from 'react-bootstrap';
+import { SocketContext } from '../contexts';
+import { Client } from 'common/lib/events';
+import { RoomStatus } from 'common/lib/details';
 
 interface JoinGameProps {
-  onSubmit: (roomCode: string) => true | string;
+  onValidated: (roomCode: string) => void;
   disabled: boolean;
 }
 
-const JoinGameButton: React.FC<JoinGameProps> = ({ onSubmit, disabled }) => {
+const JoinGameButton: React.FC<JoinGameProps> = ({ onValidated, disabled }) => {
+  const socket = useContext(SocketContext);
   const [open, setOpen] = useState(false);
   const [label, setLabel] = useState(<>Join Game</>);
-
   const [roomCode, setRoomCode] = useState('');
   const [error, setError] = useState<string | null>(null);
 
@@ -17,28 +20,35 @@ const JoinGameButton: React.FC<JoinGameProps> = ({ onSubmit, disabled }) => {
     event.preventDefault();
     event.stopPropagation();
 
-    let status = onSubmit(roomCode); // TODO attempt to connect to room
-    if (!roomCode || roomCode === '') {
-      setError('Please enter a room ID');
-    } else if (status !== true) {
-      setError(status);
-    } else {
-      setError(null);
-      setLabel(
-        <>
-          <Spinner
-            as='span'
-            animation='grow'
-            size='sm'
-            role='status'
-            aria-hidden='true'
-            className='mr-2 mb-1'
-          />
-          Joining Game!
-        </>
-      );
-      setOpen(false);
-    }
+    socket.emit(Client.CheckRoom, roomCode, (status) => {
+      switch (status) {
+        case RoomStatus.Ok:
+          setError(null);
+          setLabel(
+            <>
+              <Spinner
+                as='span'
+                animation='grow'
+                size='sm'
+                role='status'
+                aria-hidden='true'
+                className='mr-2 mb-1'
+              />
+              Joining Game!
+            </>
+          );
+          setOpen(false);
+          onValidated(roomCode);
+          break;
+        case RoomStatus.NotFound:
+          setError('Room not found');
+          break;
+
+        case RoomStatus.RoomFull:
+          setError('Room is full');
+          break;
+      }
+    });
   };
 
   const handleClick = () => {
@@ -53,7 +63,7 @@ const JoinGameButton: React.FC<JoinGameProps> = ({ onSubmit, disabled }) => {
   return (
     <>
       <Button
-        variant='outline-success'
+        variant='outline-info'
         size='lg'
         className='mr-4 mt-3'
         onClick={handleClick}
@@ -78,7 +88,10 @@ const JoinGameButton: React.FC<JoinGameProps> = ({ onSubmit, disabled }) => {
                 id='username'
                 placeholder='Enter Room Code...'
                 isInvalid={error != null}
-                onChange={(e) => setRoomCode(e.target.value)}
+                onChange={(e) => {
+                  setRoomCode(e.target.value);
+                  setError(null);
+                }}
                 disabled={disabled}
               />
               <Button

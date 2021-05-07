@@ -3,6 +3,7 @@
  *
  */
 import { Socket as IOSocket } from 'socket.io';
+import { JoinGameStatus, RoomStatus } from './details';
 
 /**
  * Events that can be sent by either the server or client
@@ -60,6 +61,11 @@ export namespace Server {
   }
 
   /**
+   * Event fires after when a chat message is being relayed to the room
+   */
+  export const ChatMessage = 'relay_chat_message';
+
+  /**
    * Typed events interface for Server to Client
    */
   export interface Events extends Common.Events {
@@ -67,6 +73,13 @@ export namespace Server {
     connect: () => void;
     disconnect: () => void;
     create_session: (session: Session) => void;
+    relay_chat_message: ({
+      username,
+      msg,
+    }: {
+      username: string;
+      msg: string;
+    }) => void;
   }
 }
 
@@ -85,10 +98,49 @@ export namespace Client {
   export const Disconnect = 'disconnect';
 
   /**
+   * Check if room id exists
+   */
+  export const CheckRoom = 'check_room';
+
+  /**
+   * Request to join matchmaking server
+   */
+  export const JoinMatchmaking = 'join_matchmaking';
+
+  /**
+   * Request to join a game
+   */
+  export const JoinGame = 'join_game';
+
+  /**
+   * Request to leave a room, does not forfeit game
+   */
+  export const LeaveRoom = 'leave_room';
+
+  /**
+   * Request to create a new game
+   */
+  export const CreateGame = 'create_game';
+
+  /**
+   * Emit chat message
+   */
+  export const ChatMessage = 'chat_message';
+
+  /**
    * Typed events interface for Client to Server
    */
   export interface Events extends Common.Events {
     connection: (socket: IOSocket) => void;
     disconnect: (reason: string) => void;
+    chat_message: (roomID: string, msg: string) => void;
+    create_game: (ack: (roomID: string) => void) => void;
+    // TODO add gamestate type
+    join_game: (
+      roomID: string,
+      ack: (status: JoinGameStatus, gamestate?: {}) => void
+    ) => void;
+    leave_room: (roomID: string) => void;
+    check_room: (roomID: string, ack: (roomStatus: RoomStatus) => void) => void;
   }
 }

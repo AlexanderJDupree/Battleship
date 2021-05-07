@@ -12,10 +12,11 @@ export type Session = {
   expiry?: number;
 };
 
-interface SessionStore {
+export interface SessionStore {
   get: (sid: SessionID) => Session | undefined;
   set: (sid: SessionID, session: Session) => boolean;
   all: () => Session[];
+  length: () => number;
   destroy: (sid: SessionID) => boolean;
   clear: () => void;
   touch: (sid: SessionID) => boolean;
@@ -72,5 +73,9 @@ export class MemorySessionStore implements SessionStore {
     } else {
       return false;
     }
+  }
+
+  length() {
+    return this.store.size;
   }
 }
