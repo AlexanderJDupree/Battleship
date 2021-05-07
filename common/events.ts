@@ -108,9 +108,19 @@ export namespace Client {
   export const JoinMatchmaking = 'join_matchmaking';
 
   /**
-   * Request to join a game or create a new game room if roomID does not exist
+   * Request to join a game
    */
   export const JoinGame = 'join_game';
+
+  /**
+   * Request to leave a room, does not forfeit game
+   */
+  export const LeaveRoom = 'leave_room';
+
+  /**
+   * Request to create a new game
+   */
+  export const CreateGame = 'create_game';
 
   /**
    * Emit chat message
@@ -124,11 +134,13 @@ export namespace Client {
     connection: (socket: IOSocket) => void;
     disconnect: (reason: string) => void;
     chat_message: (roomID: string, msg: string) => void;
+    create_game: (ack: (roomID: string) => void) => void;
     // TODO add gamestate type
     join_game: (
       roomID: string,
       ack: (status: JoinGameStatus, gamestate?: {}) => void
     ) => void;
+    leave_room: (roomID: string) => void;
     check_room: (roomID: string, ack: (roomStatus: RoomStatus) => void) => void;
   }
 }

@@ -1,20 +1,21 @@
 import { UserID } from './session';
 
+export type GameID = string;
+
 export type GameState = {
-  player1: UserID;
-  player2?: UserID;
+  players: [UserID?, UserID?];
   todo?: 'implement me';
   expiry?: number;
 };
 
 export interface GameStore {
-  get: (uid: UserID) => GameState | undefined;
-  set: (uid: UserID, gameState: GameState) => boolean;
+  get: (gid: GameID) => GameState | undefined;
+  set: (gid: GameID, gameState: GameState) => boolean;
   all: () => GameState[];
   length: () => number;
-  destroy: (uid: UserID) => boolean;
+  destroy: (gid: GameID) => boolean;
   clear: () => void;
-  touch: (uid: UserID) => boolean;
+  touch: (gid: GameID) => boolean;
 }
 
 export type MemoryGameStoreOptions = {
@@ -22,19 +23,19 @@ export type MemoryGameStoreOptions = {
 };
 
 export class MemoryGameStore implements GameStore {
-  store: Map<UserID, GameState>;
+  store: Map<GameID, GameState>;
   opts: MemoryGameStoreOptions;
 
   constructor(opts?) {
-    this.store = new Map<UserID, GameState>();
+    this.store = new Map<GameID, GameState>();
     this.opts = opts || { ttl: 86400 };
   }
 
-  get(uid: UserID) {
-    let gameState = this.store.get(uid);
+  get(gid: GameID) {
+    let gameState = this.store.get(gid);
     if (gameState) {
       if (Date.now() > gameState.expiry) {
-        this.destroy(uid);
+        this.destroy(gid);
       } else {
         return gameState;
       }
@@ -42,9 +43,9 @@ export class MemoryGameStore implements GameStore {
     return undefined;
   }
 
-  set(uid: UserID, gameState: GameState) {
+  set(gid: GameID, gameState: GameState) {
     let expiry = Date.now() + this.opts.ttl;
-    this.store.set(uid, { ...gameState, expiry });
+    this.store.set(gid, { ...gameState, expiry });
     return true;
   }
 
@@ -52,16 +53,16 @@ export class MemoryGameStore implements GameStore {
     return [...this.store.values()];
   }
 
-  destroy(uid: UserID) {
-    return this.store.delete(uid);
+  destroy(gid: GameID) {
+    return this.store.delete(gid);
   }
 
   clear() {
     this.store.clear();
   }
 
-  touch(uid: UserID) {
-    let gameState = this.get(uid);
+  touch(gid: GameID) {
+    let gameState = this.get(gid);
     if (gameState) {
       gameState.expiry = Date.now() + this.opts.ttl;
       return true;

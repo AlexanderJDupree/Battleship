@@ -102,51 +102,55 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     let game = gameStore.get(roomID);
     if (game) {
       if (
-        game.player1 &&
-        game.player2 &&
-        !(socket.userID === game.player1 || socket.userID === game.player2)
+        game.players.includes(socket.userID) ||
+        !game.players[0] ||
+        !game.players[1]
       ) {
-        callback(RoomStatus.RoomFull);
-      } else {
         callback(RoomStatus.Ok);
+      } else {
+        callback(RoomStatus.RoomFull);
       }
     } else {
       callback(RoomStatus.NotFound);
     }
   });
 
+  socket.on(Client.LeaveRoom, (roomID) => socket.leave(roomID));
+
+  socket.on(Client.CreateGame, (callback) => {
+    let gameID = genID();
+    console.log(`Created new game: ${gameID}`);
+    gameStore.set(gameID, { players: [socket.userID, null] });
+    callback(gameID);
+  });
+
   socket.on(Client.JoinGame, (roomID, callback) => {
     // Resume game from session store if it exists
     let game = gameStore.get(roomID);
     if (game) {
-      if (socket.userID === game.player1 || socket.userID === game.player2) {
+      if (game.players.includes(socket.userID)) {
         // Player is reconnecting to room
         socket.join(roomID);
         callback(JoinGameStatus.JoinSuccess);
-      } else if (!game.player2) {
+      } else if (!game.players[1]) {
         // Room has a vacant slot, join game
         socket.join(roomID);
         gameStore.set(roomID, {
           ...game,
-          player2: socket.userID,
+          players: [game.players[0], socket.userID],
         });
         callback(JoinGameStatus.JoinSuccess);
       } else {
         callback(JoinGameStatus.Error);
       }
     } else {
-      // Create new initial game state and push to store
-      socket.join(roomID);
-
-      gameStore.set(roomID, { player1: socket.userID });
-
-      callback(JoinGameStatus.GameCreated);
+      callback(JoinGameStatus.GameNotFound);
     }
   });
 
   socket.on(Client.ChatMessage, (roomID, msg) => {
     let game = gameStore.get(roomID);
-    if (socket.userID === game.player1 || socket.userID === game.player2) {
+    if (game.players.includes(socket.userID)) {
       io.to(roomID).emit(Server.ChatMessage, {
         username: socket.username,
         msg,
@@ -178,8 +182,8 @@ app.get('/leaderboard', (req, res) => {
 app.get('/stats', (req, res) => {
   res.status(200).json({
     playersOnline: io.sockets.sockets.size,
-    activeGames: 0, // TODO return actual value
-    gamesPlayed: 0, // TODO return actual value
+    activeGames: gameStore.length(),
+    gamesPlayed: gameStore.length(), // TODO return actual value
   });
 });
 

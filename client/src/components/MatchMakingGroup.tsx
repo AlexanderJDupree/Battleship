@@ -4,7 +4,7 @@
 import React, { useContext, useCallback, useState, useEffect } from 'react';
 import { SwitchTransition, CSSTransition } from 'react-transition-group';
 import { SocketContext } from '../contexts';
-import { Server } from 'common/lib/events';
+import { Server, Client } from 'common/lib/events';
 import { hasSessionID } from '../contexts/Socket';
 import { useHistory } from 'react-router-dom';
 import { FindGameState } from '../components/FindGameButton';
@@ -64,13 +64,16 @@ const MatchMakingGroup = () => {
   const handleJoinGame = useCallback(
     (roomCode: string) => {
       // TODO this is a hack to delay the transition to the next page.
-      setTimeout(() => history.push(`/game?host=${roomCode}`), 1000);
+      setTimeout(() => history.push(`/game?room=${roomCode}`), 1000);
     },
     [history]
   );
 
   const handleHostGameClick = useCallback(() => {
-    history.push(`/game?host=${socket.userID}`);
+    socket.emit(Client.CreateGame, (roomID) => {
+      console.log(`Created Game: ${roomID}`);
+      history.push(`/game?room=${roomID}`);
+    });
   }, [history, socket]);
 
   const handleConnect = useCallback(() => {

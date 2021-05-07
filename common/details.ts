@@ -12,8 +12,8 @@ export type Leaderboard = { username: string; wins: number }[];
 
 export enum JoinGameStatus {
   Error,
+  GameNotFound,
   JoinSuccess,
-  GameCreated,
 }
 
 export enum RoomStatus {

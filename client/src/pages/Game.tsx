@@ -5,43 +5,55 @@ import { Client } from 'common/lib/events';
 import { JoinGameStatus } from 'common/lib/details';
 import { ChatWindow } from '../components';
 
+const joinStatusToString = (status: JoinGameStatus) => {
+  switch (status) {
+    case JoinGameStatus.GameNotFound:
+      return 'Game Not Found';
+
+    case JoinGameStatus.Error:
+      return 'Failed to Join game, an error occured';
+
+    case JoinGameStatus.JoinSuccess:
+      return 'Join Successful!';
+  }
+};
+
 const Game = () => {
-  const [roomID, setRoomID] = useState('unknown');
-  const [joinStatus, setJoinStatus] = useState(JoinGameStatus.JoinSuccess);
+  const [error, setError] = useState<string | null>(null);
   const socket = useContext(SocketContext);
   const query = useQuery();
 
+  const roomID = query.get('room');
+
   useEffect(() => {
-    let room = query.get('host');
-    if (room) {
-      setRoomID(room);
-      socket.emit(Client.JoinGame, room, (status: JoinGameStatus) => {
-        setJoinStatus(status);
+    if (roomID) {
+      socket.emit(Client.JoinGame, roomID, (status: JoinGameStatus) => {
         switch (status) {
-          case JoinGameStatus.GameCreated:
-            console.log(`Game Created: ${room}`);
-            break;
-
           case JoinGameStatus.JoinSuccess:
-            console.log(`Joined Game Room: ${room}`);
+            console.log(`Joined Game Room: ${roomID}`);
             break;
 
+          case JoinGameStatus.GameNotFound:
           case JoinGameStatus.Error:
+            setError(joinStatusToString(status));
             console.log(`Error joining room ${roomID}`);
             break;
         }
       });
     } else {
-      // TODO handle error
+      setError('Error parsing room query');
     }
+    return () => {
+      socket.emit(Client.LeaveRoom, roomID || 'unknown');
+    };
   }, [query, socket, roomID]);
 
   return (
     <div className='game'>
-      <RoomContext.Provider value={roomID}>
+      <RoomContext.Provider value={roomID || 'unknown'}>
         <h1 className='text-center'>Game board and stuff goes here</h1>
-        {joinStatus === JoinGameStatus.Error ? (
-          <h2 className='text-center'>Join error</h2>
+        {error ? (
+          <h2 className='text-center'>{error}</h2>
         ) : (
           <h2 className='text-center'>Room ID: {roomID}</h2>
         )}

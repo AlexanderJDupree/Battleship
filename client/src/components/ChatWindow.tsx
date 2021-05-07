@@ -53,7 +53,6 @@ const ChatWindow = () => {
 
   const handleChatMessage = useCallback(
     (message) => {
-      console.log(`Chat Message: ${message}`);
       setMessages([...messages, message]);
     },
     [messages]
