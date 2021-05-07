@@ -7,7 +7,7 @@ import Express from 'express';
 import { createServer } from 'http';
 import { Server as IO, Socket } from 'socket.io';
 import cors from 'cors';
-import { validateUsername } from 'common/lib/details';
+import { JoinGameStatus, validateUsername } from 'common/lib/details';
 import { Server, Client, Common } from 'common/lib/events';
 import { ExtendedSocket } from './utils';
 import { genID } from './session';
@@ -90,6 +90,23 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       userID: socket.userID,
       connected: false,
     });
+  });
+
+  socket.on(Client.JoinGame, (roomID, callback) => {
+    // Resume game from session store if it exists
+    if (false) {
+    } else {
+      socket.join(roomID);
+
+      // Create new initial game state and push to store
+
+      callback(JoinGameStatus.GameCreated);
+    }
+  });
+
+  socket.on(Client.ChatMessage, (roomID, msg) => {
+    // TODO verify client is actually a part of the room before relaying message
+    io.to(roomID).emit(Server.ChatMessage, { username: socket.username, msg });
   });
 });
 

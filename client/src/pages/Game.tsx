@@ -1,5 +1,17 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect,
+  useRef,
+  useState,
+  useContext,
+  useCallback,
+} from 'react';
 import { Button, Container, Form } from 'react-bootstrap';
+import { SocketContext } from '../contexts';
+import useQuery from '../hooks/UseQuery';
+import { Server, Client } from 'common/lib/events';
+import { JoinGameStatus } from 'common/lib/details';
+
+const RoomContext = React.createContext('unknown');
 
 interface Message {
   username: string;
@@ -7,7 +19,9 @@ interface Message {
 }
 
 const ChatMessage: React.FC<Message> = ({ username, msg }) => {
-  let messageClass = username === 'rick' ? 'sent' : 'received';
+  const socket = useContext(SocketContext);
+
+  let messageClass = username === socket.username ? 'sent' : 'received';
 
   return (
     <div className={`chat-message mx-3 p-1 d-flex ${messageClass}`}>
@@ -19,9 +33,12 @@ const ChatMessage: React.FC<Message> = ({ username, msg }) => {
 };
 
 const ChatWindow = () => {
-  const messageEndRef = useRef<HTMLDivElement>(null);
+  const roomID = useContext(RoomContext);
+  const socket = useContext(SocketContext);
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
+
+  const messageEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
     messageEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -31,14 +48,26 @@ const ChatWindow = () => {
     event.preventDefault();
     event.stopPropagation();
 
-    setMessages([...messages, { username: 'rick', msg: message }]);
+    socket.emit(Client.ChatMessage, roomID, message);
 
     setMessage('');
   };
 
+  const handleChatMessage = useCallback(
+    (message) => {
+      console.log(`Chat Message: ${message}`);
+      setMessages([...messages, message]);
+    },
+    [messages]
+  );
+
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+    socket.on(Server.ChatMessage, handleChatMessage);
+    return () => {
+      socket.off(Server.ChatMessage, handleChatMessage);
+    };
+  }, [messages, socket, handleChatMessage]);
 
   return (
     <Container fluid='md' className='chat-window border p-0'>
@@ -47,7 +76,7 @@ const ChatWindow = () => {
 
         <div ref={messageEndRef}></div>
       </section>
-      <Form onSubmit={handleSubmit} className='w-100 d-flex mt-4'>
+      <Form onSubmit={handleSubmit} className='w-100 d-flex mt-0'>
         <Form.Label htmlFor='message' srOnly>
           Message
         </Form.Label>
@@ -73,10 +102,40 @@ const ChatWindow = () => {
 };
 
 const Game = () => {
+  const [roomID, setRoomID] = useState('unknown');
+  const socket = useContext(SocketContext);
+  const query = useQuery();
+
+  useEffect(() => {
+    let room = query.get('host');
+    if (room) {
+      setRoomID(room);
+      socket.emit(Client.JoinGame, room, (status: JoinGameStatus) => {
+        switch (status) {
+          case JoinGameStatus.GameCreated:
+            console.log(`Game Created: ${room}`);
+            break;
+
+          case JoinGameStatus.JoinSuccess:
+            break;
+
+          case JoinGameStatus.RoomFull:
+          case JoinGameStatus.Error:
+            // TODO handle error
+            break;
+        }
+      });
+    } else {
+      // TODO handle error
+    }
+  }, [query, socket, roomID]);
+
   return (
     <div className='game'>
-      <h1 className='text-center'>Game</h1>
-      <ChatWindow />
+      <RoomContext.Provider value={roomID}>
+        <h1 className='text-center'>Game board and stuff goes here</h1>
+        <ChatWindow />
+      </RoomContext.Provider>
     </div>
   );
 };

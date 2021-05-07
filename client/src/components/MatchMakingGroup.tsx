@@ -72,12 +72,13 @@ const MatchMakingGroup = () => {
   }, []);
 
   const handleHostGameClick = useCallback(() => {
-    history.push('/game?host=true');
-  }, [history]);
+    history.push(`/game?host=${socket.userID}`);
+  }, [history, socket]);
 
   const handleConnect = useCallback(() => {
     setConnected(true);
     setConnectError(false);
+    setDisableButtons(false);
   }, []);
 
   const handleConnectError = useCallback(() => {
@@ -91,6 +92,8 @@ const MatchMakingGroup = () => {
     socket.on(Server.Disconnect, handleConnectError);
     return () => {
       socket.off(Server.Connect, handleConnect);
+      socket.off(Server.ConnectError, handleConnectError);
+      socket.off(Server.Disconnect, handleConnectError);
     };
   });
 
