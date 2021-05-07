@@ -4,6 +4,7 @@ import useQuery from '../hooks/UseQuery';
 import { Client } from 'common/lib/events';
 import { JoinGameStatus } from 'common/lib/details';
 import { ChatWindow } from '../components';
+import { hasSessionID } from '../contexts/Socket';
 
 const joinStatusToString = (status: JoinGameStatus) => {
   switch (status) {
@@ -26,7 +27,7 @@ const Game = () => {
   const roomID = query.get('room');
 
   useEffect(() => {
-    if (roomID) {
+    if (roomID && socket.connected) {
       socket.emit(Client.JoinGame, roomID, (status: JoinGameStatus) => {
         switch (status) {
           case JoinGameStatus.JoinSuccess:
@@ -41,7 +42,7 @@ const Game = () => {
         }
       });
     } else {
-      setError('Error parsing room query');
+      setError(`Can't join game`);
     }
     return () => {
       socket.emit(Client.LeaveRoom, roomID || 'unknown');
