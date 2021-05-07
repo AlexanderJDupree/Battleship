@@ -42,7 +42,7 @@ const MatchMakingGroup = () => {
 
   let history = useHistory();
 
-  const handleValidated = useCallback(
+  const handleConnectToServer = useCallback(
     (username: string) => {
       if (!socket.connected) {
         setDisableButtons(true);
@@ -61,15 +61,13 @@ const MatchMakingGroup = () => {
     setTimeout(() => setFindGameState('initial'), 9000);
   }, []);
 
-  const handleJoinGameSubmit = useCallback((roomCode: string) => {
-    let status = true; // TODO validate room code
-    if (status) {
-      setDisableButtons(true);
-      return status;
-    } else {
-      return 'Invalid room code';
-    }
-  }, []);
+  const handleJoinGame = useCallback(
+    (roomCode: string) => {
+      // TODO this is a hack to delay the transition to the next page.
+      setTimeout(() => history.push(`/game?host=${roomCode}`), 1000);
+    },
+    [history]
+  );
 
   const handleHostGameClick = useCallback(() => {
     history.push(`/game?host=${socket.userID}`);
@@ -122,12 +120,12 @@ const MatchMakingGroup = () => {
                 />
                 <JoinGameButton
                   disabled={connectError || disableButtons}
-                  onSubmit={handleJoinGameSubmit}
+                  onValidated={handleJoinGame}
                 />
               </div>
             ) : (
               <ConnectToServerForm
-                onValidated={handleValidated}
+                onValidated={handleConnectToServer}
                 disabled={connectError || disableButtons}
               />
             )}

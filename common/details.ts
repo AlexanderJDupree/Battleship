@@ -14,7 +14,12 @@ export enum JoinGameStatus {
   Error,
   JoinSuccess,
   GameCreated,
+}
+
+export enum RoomStatus {
+  NotFound,
   RoomFull,
+  Ok,
 }
 
 export const USERNAME_MAX_CHARS = 30;

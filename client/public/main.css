@@ -144,14 +144,15 @@ body {
 }
 
 .chat-window {
+  background-color: #efefef;
 }
 
 .chat-messages {
-  height: 220px;
-  max-height: 220px;
-  align-content: flex-end;
+  height: 180px;
+  max-height: 180px;
   overflow: scroll;
   overflow-x: hidden;
+  list-style-type: none;
 }
 
 .chat-input {
@@ -167,28 +168,30 @@ body {
 }
 
 .chat-message {
+  display: flex;
+  align-items: center;
   line-height: 20px;
-  flex-wrap: wrap;
-  align-self: flex-end;
+  padding: 0.5rem 1rem;
 }
 
 .chat-username {
   font-weight: bold;
 }
 
-.sent {
+.chat-messages > li:nth-child(odd) {
+  background-color: var(--white);
+}
+
+.received {
   flex-direction: row-reverse;
 }
 
-.sent p {
-  background: var(--theme-primary-light);
-  color: var(--theme-text-primary);
-  align-self: flex-end;
+.sent .chat-username {
+  color: var(--theme-primary);
 }
 
-.received p {
-  background: var(--theme-secondary-light);
-  color: var(--theme-text-secondary);
+.received .chat-username {
+  color: var(--theme-secondary);
 }
 
 .flex-break {

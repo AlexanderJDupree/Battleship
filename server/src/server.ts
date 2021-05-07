@@ -7,12 +7,17 @@ import Express from 'express';
 import { createServer } from 'http';
 import { Server as IO, Socket } from 'socket.io';
 import cors from 'cors';
-import { JoinGameStatus, validateUsername } from 'common/lib/details';
+import {
+  JoinGameStatus,
+  validateUsername,
+  RoomStatus,
+} from 'common/lib/details';
 import { Server, Client, Common } from 'common/lib/events';
 import { ExtendedSocket } from './utils';
 import { genID } from './session';
 import * as config from './config';
 import { MemorySessionStore } from './session';
+import { MemoryGameStore } from './game';
 
 /// Setup server and socket.io
 const app = Express();
@@ -22,6 +27,7 @@ const io = new IO<Client.Events, Server.Events>(server, {
   cors: config.CORS_OPTIONS,
 });
 const sessionStore = new MemorySessionStore();
+const gameStore = new MemoryGameStore();
 
 /// Setup Middleware
 app.use(cors(config.CORS_OPTIONS));
@@ -92,21 +98,60 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     });
   });
 
+  socket.on(Client.CheckRoom, (roomID, callback) => {
+    let game = gameStore.get(roomID);
+    if (game) {
+      if (
+        game.player1 &&
+        game.player2 &&
+        !(socket.userID === game.player1 || socket.userID === game.player2)
+      ) {
+        callback(RoomStatus.RoomFull);
+      } else {
+        callback(RoomStatus.Ok);
+      }
+    } else {
+      callback(RoomStatus.NotFound);
+    }
+  });
+
   socket.on(Client.JoinGame, (roomID, callback) => {
     // Resume game from session store if it exists
-    if (false) {
+    let game = gameStore.get(roomID);
+    if (game) {
+      if (socket.userID === game.player1 || socket.userID === game.player2) {
+        // Player is reconnecting to room
+        socket.join(roomID);
+        callback(JoinGameStatus.JoinSuccess);
+      } else if (!game.player2) {
+        // Room has a vacant slot, join game
+        socket.join(roomID);
+        gameStore.set(roomID, {
+          ...game,
+          player2: socket.userID,
+        });
+        callback(JoinGameStatus.JoinSuccess);
+      } else {
+        callback(JoinGameStatus.Error);
+      }
     } else {
+      // Create new initial game state and push to store
       socket.join(roomID);
 
-      // Create new initial game state and push to store
+      gameStore.set(roomID, { player1: socket.userID });
 
       callback(JoinGameStatus.GameCreated);
     }
   });
 
   socket.on(Client.ChatMessage, (roomID, msg) => {
-    // TODO verify client is actually a part of the room before relaying message
-    io.to(roomID).emit(Server.ChatMessage, { username: socket.username, msg });
+    let game = gameStore.get(roomID);
+    if (socket.userID === game.player1 || socket.userID === game.player2) {
+      io.to(roomID).emit(Server.ChatMessage, {
+        username: socket.username,
+        msg,
+      });
+    }
   });
 });
 

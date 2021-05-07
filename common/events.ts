@@ -3,7 +3,7 @@
  *
  */
 import { Socket as IOSocket } from 'socket.io';
-import { JoinGameStatus } from './details';
+import { JoinGameStatus, RoomStatus } from './details';
 
 /**
  * Events that can be sent by either the server or client
@@ -100,7 +100,7 @@ export namespace Client {
   /**
    * Check if room id exists
    */
-  export const CheckRoomID = 'check_room';
+  export const CheckRoom = 'check_room';
 
   /**
    * Request to join matchmaking server
@@ -129,5 +129,6 @@ export namespace Client {
       roomID: string,
       ack: (status: JoinGameStatus, gamestate?: {}) => void
     ) => void;
+    check_room: (roomID: string, ack: (roomStatus: RoomStatus) => void) => void;
   }
 }
