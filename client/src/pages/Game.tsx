@@ -4,7 +4,6 @@ import useQuery from '../hooks/UseQuery';
 import { Client } from 'common/lib/events';
 import { JoinGameStatus } from 'common/lib/details';
 import { ChatWindow } from '../components';
-import { hasSessionID } from '../contexts/Socket';
 
 const joinStatusToString = (status: JoinGameStatus) => {
   switch (status) {
