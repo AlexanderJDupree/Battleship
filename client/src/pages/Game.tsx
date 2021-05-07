@@ -26,7 +26,7 @@ const Game = () => {
   const roomID = query.get('room');
 
   useEffect(() => {
-    if (roomID && socket.connected) {
+    if (roomID) {
       socket.emit(Client.JoinGame, roomID, (status: JoinGameStatus) => {
         switch (status) {
           case JoinGameStatus.JoinSuccess:
