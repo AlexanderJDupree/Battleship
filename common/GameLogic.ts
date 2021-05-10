@@ -1,6 +1,6 @@
 type Player = {
   username: string;
-  board: number;
+  board: number[][];
   // other properties
 };
 
