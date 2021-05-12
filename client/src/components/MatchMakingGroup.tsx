@@ -82,7 +82,14 @@ const MatchMakingGroup = () => {
     setDisableButtons(false);
   }, []);
 
-  const handleConnectError = useCallback(() => {
+  const handleConnectError = useCallback((err: Error) => {
+    setConnected(false);
+    if (err.message !== 'session not found') {
+      setConnectError(true);
+    }
+  }, []);
+
+  const handleDisconnect = useCallback((reason: String) => {
     setConnected(false);
     setConnectError(true);
   }, []);
@@ -90,13 +97,13 @@ const MatchMakingGroup = () => {
   useEffect(() => {
     socket.on(Server.Connect, handleConnect);
     socket.on(Server.ConnectError, handleConnectError);
-    socket.on(Server.Disconnect, handleConnectError);
+    socket.on(Server.Disconnect, handleDisconnect);
     return () => {
       socket.off(Server.Connect, handleConnect);
       socket.off(Server.ConnectError, handleConnectError);
       socket.off(Server.Disconnect, handleConnectError);
     };
-  });
+  }, [socket, handleConnect, handleConnectError, handleDisconnect]);
 
   const nodeRef = React.createRef<HTMLDivElement>();
 
@@ -110,7 +117,7 @@ const MatchMakingGroup = () => {
           nodeRef={nodeRef}
         >
           <div ref={nodeRef}>
-            {connected || hasSessionID() ? (
+            {connected ? (
               <div>
                 <FindGameButton
                   disabled={connectError || disableButtons}

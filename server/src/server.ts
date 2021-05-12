@@ -185,7 +185,7 @@ app.get('/stats', (req, res) => {
   res.status(200).json({
     playersOnline: io.sockets.sockets.size,
     activeGames: gameStore.length(),
-    gamesPlayed: gameStore.length(), // TODO return actual value
+    gamesPlayed: gameStore.length(), // TODO track number of games played and return that value
   });
 });
 
