@@ -1,17 +1,20 @@
+import { genID } from './utils';
 import { UserID } from './session';
 
 export type GameID = string;
 
 export type GameState = {
-  players: [UserID?, UserID?];
+  players: [UserID, UserID?];
+  isPublic: boolean;
   todo?: 'implement me';
   expiry?: number;
 };
 
 export interface GameStore {
   get: (gid: GameID) => GameState | undefined;
+  create: (host: UserID, isPublic: boolean) => GameID;
   set: (gid: GameID, gameState: GameState) => boolean;
-  all: () => GameState[];
+  all: () => { gid: GameID; game: GameState }[];
   length: () => number;
   destroy: (gid: GameID) => boolean;
   clear: () => void;
@@ -43,6 +46,12 @@ export class MemoryGameStore implements GameStore {
     return undefined;
   }
 
+  create(host: UserID, isPublic: boolean) {
+    let gid = genID();
+    this.set(gid, { players: [host, null], isPublic });
+    return gid;
+  }
+
   set(gid: GameID, gameState: GameState) {
     let expiry = Date.now() + this.opts.ttl;
     this.store.set(gid, { ...gameState, expiry });
@@ -50,7 +59,7 @@ export class MemoryGameStore implements GameStore {
   }
 
   all() {
-    return [...this.store.values()];
+    return Array.from(this.store, ([gid, game]) => ({ gid, game }));
   }
 
   destroy(gid: GameID) {

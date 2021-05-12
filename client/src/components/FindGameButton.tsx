@@ -12,8 +12,6 @@ const FindGameButton: React.FC<FindGameProps> = ({
   disabled,
   onClick,
 }) => {
-  // TODO add a way for user to cancel search after they clicked find game
-
   let label = <>Find Game</>;
   let variant = 'outline-primary';
 

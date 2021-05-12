@@ -1,7 +1,3 @@
-import crypto from 'crypto';
-
-export const genID = () => crypto.randomBytes(10).toString('hex');
-
 export type SessionID = string;
 export type UserID = string;
 
@@ -15,7 +11,7 @@ export type Session = {
 export interface SessionStore {
   get: (sid: SessionID) => Session | undefined;
   set: (sid: SessionID, session: Session) => boolean;
-  all: () => Session[];
+  all: () => { sid: SessionID; session: Session }[];
   length: () => number;
   destroy: (sid: SessionID) => boolean;
   clear: () => void;
@@ -54,7 +50,7 @@ export class MemorySessionStore implements SessionStore {
   }
 
   all() {
-    return [...this.store.values()];
+    return Array.from(this.store, ([sid, session]) => ({ sid, session }));
   }
 
   destroy(sid: SessionID) {

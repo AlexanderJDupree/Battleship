@@ -13,8 +13,7 @@ import {
   RoomStatus,
 } from 'common/lib/details';
 import { Server, Client, Common } from 'common/lib/events';
-import { ExtendedSocket } from './utils';
-import { genID } from './session';
+import { ExtendedSocket, genID } from './utils';
 import * as config from './config';
 import { MemorySessionStore } from './session';
 import { MemoryGameStore } from './game';
@@ -101,11 +100,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
   socket.on(Client.CheckRoom, (roomID, callback) => {
     let game = gameStore.get(roomID);
     if (game) {
-      if (
-        game.players.includes(socket.userID) ||
-        !game.players[0] ||
-        !game.players[1]
-      ) {
+      if (game.players.includes(socket.userID) || !game.players[1]) {
         callback(RoomStatus.Ok);
       } else {
         callback(RoomStatus.RoomFull);
@@ -117,11 +112,33 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   socket.on(Client.LeaveRoom, (roomID) => socket.leave(roomID));
 
-  socket.on(Client.CreateGame, (callback) => {
-    let gameID = genID();
-    console.log(`Created new game: ${gameID}`);
-    gameStore.set(gameID, { players: [socket.userID, null] });
-    callback(gameID);
+  socket.on(Client.CreateGame, (isPublic, callback) => {
+    let gid = gameStore.create(socket.userID, isPublic);
+    console.log(
+      `create_game[${socket.username}:${socket.sessionID}] : ${gid} - ${isPublic}`
+    );
+    callback(gid);
+  });
+
+  socket.on(Client.FindGame, (callback) => {
+    let game = gameStore
+      .all()
+      .find((elem) => elem.game.isPublic && !elem.game.players[1]);
+
+    if (game) {
+      socket.join(game.gid);
+      gameStore.set(game.gid, {
+        ...game.game,
+        players: [game.game.players[0], socket.userID],
+      });
+      callback(game.gid);
+    } else {
+      let gid = gameStore.create(socket.userID, true);
+      console.log(
+        `find_game[${socket.username}:${socket.sessionID}] : Created ${gid}`
+      );
+      callback(gid);
+    }
   });
 
   socket.on(Client.JoinGame, (roomID, callback) => {

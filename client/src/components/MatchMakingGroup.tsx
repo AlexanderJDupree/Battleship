@@ -19,7 +19,7 @@ interface HostGameProps {
   disabled: boolean;
   onClick: () => void;
 }
-const HostGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
+const PrivateGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
   return (
     <Button
       variant='outline-success'
@@ -28,7 +28,7 @@ const HostGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
       disabled={disabled}
       onClick={onClick}
     >
-      Host Game
+      Private Game
     </Button>
   );
 };
@@ -56,10 +56,11 @@ const MatchMakingGroup = () => {
   const handleFindGameClick = useCallback(() => {
     setDisableButtons(true);
     setFindGameState('searching');
-    setTimeout(() => setFindGameState('found'), 3000);
-    setTimeout(() => setFindGameState('error'), 6000);
-    setTimeout(() => setFindGameState('initial'), 9000);
-  }, []);
+    socket.emit(Client.FindGame, (roomID) => {
+      console.log(`Game Found: ${roomID}`);
+      history.push(`/game?room=${roomID}`);
+    });
+  }, [history, socket]);
 
   const handleJoinGame = useCallback(
     (roomCode: string) => {
@@ -69,8 +70,8 @@ const MatchMakingGroup = () => {
     [history]
   );
 
-  const handleHostGameClick = useCallback(() => {
-    socket.emit(Client.CreateGame, (roomID) => {
+  const handlePrivateGameClick = useCallback(() => {
+    socket.emit(Client.CreateGame, false, (roomID) => {
       console.log(`Created Game: ${roomID}`);
       history.push(`/game?room=${roomID}`);
     });
@@ -124,9 +125,9 @@ const MatchMakingGroup = () => {
                   state={findGameState}
                   onClick={handleFindGameClick}
                 />
-                <HostGameButton
+                <PrivateGameButton
                   disabled={connectError || disableButtons}
-                  onClick={handleHostGameClick}
+                  onClick={handlePrivateGameClick}
                 />
                 <JoinGameButton
                   disabled={connectError || disableButtons}
