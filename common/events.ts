@@ -103,9 +103,9 @@ export namespace Client {
   export const CheckRoom = 'check_room';
 
   /**
-   * Request to join matchmaking server
+   * Request to find a game or make a new public game if no games were found
    */
-  export const JoinMatchmaking = 'join_matchmaking';
+  export const FindGame = 'find_game';
 
   /**
    * Request to join a game
@@ -134,7 +134,8 @@ export namespace Client {
     connection: (socket: IOSocket) => void;
     disconnect: (reason: string) => void;
     chat_message: (roomID: string, msg: string) => void;
-    create_game: (ack: (roomID: string) => void) => void;
+    create_game: (isPublic: boolean, ack: (roomID: string) => void) => void;
+    find_game: (ack: (roomID: string) => void) => void;
     // TODO add gamestate type
     join_game: (
       roomID: string,
