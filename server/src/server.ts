@@ -32,21 +32,20 @@ const gameStore = new MemoryGameStore();
 /// Setup Middleware
 app.use(cors(config.CORS_OPTIONS));
 
-// TODO: refactor, lots of if/elses
 io.use((socket: ExtendedSocket, next) => {
+  let error = null;
+
+  // Resume session if it exists
   const sessionID = socket.handshake.auth.sessionID;
   if (sessionID) {
-    // Resume session if it exists
     let session = sessionStore.get(sessionID);
     if (session) {
       socket.username = session.username;
       socket.userID = session.userID;
       socket.sessionID = sessionID;
       return next();
-    } else {
-      // TODO make server errors named constants in the common library
-      return next(new Error('session not found'));
     }
+    error = 'session not found';
   } else {
     // Create new session
     const username = socket.handshake.auth.username;
@@ -55,11 +54,11 @@ io.use((socket: ExtendedSocket, next) => {
       socket.username = username;
       socket.userID = genID();
       socket.sessionID = genID();
-      next();
-    } else {
-      return next(new Error(status));
+      return next();
     }
+    error = status;
   }
+  return next(new Error(error));
 });
 
 /// Socket IO event handlers
@@ -91,6 +90,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       `disconnect[${socket.username}:${socket.sessionID}] : ${reason}`
     );
 
+    // Update session store
     sessionStore.set(socket.sessionID, {
       username: socket.username,
       userID: socket.userID,
@@ -150,11 +150,13 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   socket.on(Client.ChatMessage, (roomID, msg) => {
     let game = gameStore.get(roomID);
-    if (game.players.includes(socket.userID)) {
-      io.to(roomID).emit(Server.ChatMessage, {
-        username: socket.username,
-        msg,
-      });
+    if (game) {
+      if (game.players.includes(socket.userID)) {
+        io.to(roomID).emit(Server.ChatMessage, {
+          username: socket.username,
+          msg,
+        });
+      }
     }
   });
 });
