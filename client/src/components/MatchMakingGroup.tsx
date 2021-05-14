@@ -19,7 +19,7 @@ interface HostGameProps {
   disabled: boolean;
   onClick: () => void;
 }
-const HostGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
+const PrivateGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
   return (
     <Button
       variant='outline-success'
@@ -28,7 +28,7 @@ const HostGameButton: React.FC<HostGameProps> = ({ disabled, onClick }) => {
       disabled={disabled}
       onClick={onClick}
     >
-      Host Game
+      Private Game
     </Button>
   );
 };
@@ -56,10 +56,11 @@ const MatchMakingGroup = () => {
   const handleFindGameClick = useCallback(() => {
     setDisableButtons(true);
     setFindGameState('searching');
-    setTimeout(() => setFindGameState('found'), 3000);
-    setTimeout(() => setFindGameState('error'), 6000);
-    setTimeout(() => setFindGameState('initial'), 9000);
-  }, []);
+    socket.emit(Client.FindGame, (roomID) => {
+      console.log(`Game Found: ${roomID}`);
+      history.push(`/game?room=${roomID}`);
+    });
+  }, [history, socket]);
 
   const handleJoinGame = useCallback(
     (roomCode: string) => {
@@ -69,8 +70,8 @@ const MatchMakingGroup = () => {
     [history]
   );
 
-  const handleHostGameClick = useCallback(() => {
-    socket.emit(Client.CreateGame, (roomID) => {
+  const handlePrivateGameClick = useCallback(() => {
+    socket.emit(Client.CreateGame, false, (roomID) => {
       console.log(`Created Game: ${roomID}`);
       history.push(`/game?room=${roomID}`);
     });
@@ -82,7 +83,14 @@ const MatchMakingGroup = () => {
     setDisableButtons(false);
   }, []);
 
-  const handleConnectError = useCallback(() => {
+  const handleConnectError = useCallback((err: Error) => {
+    setConnected(false);
+    if (err.message !== 'session not found') {
+      setConnectError(true);
+    }
+  }, []);
+
+  const handleDisconnect = useCallback((reason: String) => {
     setConnected(false);
     setConnectError(true);
   }, []);
@@ -90,13 +98,13 @@ const MatchMakingGroup = () => {
   useEffect(() => {
     socket.on(Server.Connect, handleConnect);
     socket.on(Server.ConnectError, handleConnectError);
-    socket.on(Server.Disconnect, handleConnectError);
+    socket.on(Server.Disconnect, handleDisconnect);
     return () => {
       socket.off(Server.Connect, handleConnect);
       socket.off(Server.ConnectError, handleConnectError);
       socket.off(Server.Disconnect, handleConnectError);
     };
-  });
+  }, [socket, handleConnect, handleConnectError, handleDisconnect]);
 
   const nodeRef = React.createRef<HTMLDivElement>();
 
@@ -110,16 +118,16 @@ const MatchMakingGroup = () => {
           nodeRef={nodeRef}
         >
           <div ref={nodeRef}>
-            {connected || hasSessionID() ? (
+            {connected ? (
               <div>
                 <FindGameButton
                   disabled={connectError || disableButtons}
                   state={findGameState}
                   onClick={handleFindGameClick}
                 />
-                <HostGameButton
+                <PrivateGameButton
                   disabled={connectError || disableButtons}
-                  onClick={handleHostGameClick}
+                  onClick={handlePrivateGameClick}
                 />
                 <JoinGameButton
                   disabled={connectError || disableButtons}

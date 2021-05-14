@@ -13,8 +13,7 @@ import {
   RoomStatus,
 } from 'common/lib/details';
 import { Server, Client, Common } from 'common/lib/events';
-import { ExtendedSocket } from './utils';
-import { genID } from './session';
+import { ExtendedSocket, genID } from './utils';
 import * as config from './config';
 import { MemorySessionStore } from './session';
 import { MemoryGameStore } from './game';
@@ -32,21 +31,20 @@ const gameStore = new MemoryGameStore();
 /// Setup Middleware
 app.use(cors(config.CORS_OPTIONS));
 
-// TODO: refactor, lots of if/elses
 io.use((socket: ExtendedSocket, next) => {
+  let error = null;
+
+  // Resume session if it exists
   const sessionID = socket.handshake.auth.sessionID;
   if (sessionID) {
-    // Resume session if it exists
     let session = sessionStore.get(sessionID);
     if (session) {
       socket.username = session.username;
       socket.userID = session.userID;
       socket.sessionID = sessionID;
       return next();
-    } else {
-      // TODO make server errors named constants in the common library
-      return next(new Error('session not found'));
     }
+    error = 'session not found';
   } else {
     // Create new session
     const username = socket.handshake.auth.username;
@@ -55,11 +53,11 @@ io.use((socket: ExtendedSocket, next) => {
       socket.username = username;
       socket.userID = genID();
       socket.sessionID = genID();
-      next();
-    } else {
-      return next(new Error(status));
+      return next();
     }
+    error = status;
   }
+  return next(new Error(error));
 });
 
 /// Socket IO event handlers
@@ -91,6 +89,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       `disconnect[${socket.username}:${socket.sessionID}] : ${reason}`
     );
 
+    // Update session store
     sessionStore.set(socket.sessionID, {
       username: socket.username,
       userID: socket.userID,
@@ -101,11 +100,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
   socket.on(Client.CheckRoom, (roomID, callback) => {
     let game = gameStore.get(roomID);
     if (game) {
-      if (
-        game.players.includes(socket.userID) ||
-        !game.players[0] ||
-        !game.players[1]
-      ) {
+      if (game.players.includes(socket.userID) || !game.players[1]) {
         callback(RoomStatus.Ok);
       } else {
         callback(RoomStatus.RoomFull);
@@ -117,11 +112,33 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   socket.on(Client.LeaveRoom, (roomID) => socket.leave(roomID));
 
-  socket.on(Client.CreateGame, (callback) => {
-    let gameID = genID();
-    console.log(`Created new game: ${gameID}`);
-    gameStore.set(gameID, { players: [socket.userID, null] });
-    callback(gameID);
+  socket.on(Client.CreateGame, (isPublic, callback) => {
+    let gid = gameStore.create(socket.userID, isPublic);
+    console.log(
+      `create_game[${socket.username}:${socket.sessionID}] : ${gid} - ${isPublic}`
+    );
+    callback(gid);
+  });
+
+  socket.on(Client.FindGame, (callback) => {
+    let game = gameStore
+      .all()
+      .find((elem) => elem.game.isPublic && !elem.game.players[1]);
+
+    if (game) {
+      socket.join(game.gid);
+      gameStore.set(game.gid, {
+        ...game.game,
+        players: [game.game.players[0], socket.userID],
+      });
+      callback(game.gid);
+    } else {
+      let gid = gameStore.create(socket.userID, true);
+      console.log(
+        `find_game[${socket.username}:${socket.sessionID}] : Created ${gid}`
+      );
+      callback(gid);
+    }
   });
 
   socket.on(Client.JoinGame, (roomID, callback) => {
@@ -150,11 +167,13 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   socket.on(Client.ChatMessage, (roomID, msg) => {
     let game = gameStore.get(roomID);
-    if (game.players.includes(socket.userID)) {
-      io.to(roomID).emit(Server.ChatMessage, {
-        username: socket.username,
-        msg,
-      });
+    if (game) {
+      if (game.players.includes(socket.userID)) {
+        io.to(roomID).emit(Server.ChatMessage, {
+          username: socket.username,
+          msg,
+        });
+      }
     }
   });
 });
@@ -183,7 +202,7 @@ app.get('/stats', (req, res) => {
   res.status(200).json({
     playersOnline: io.sockets.sockets.size,
     activeGames: gameStore.length(),
-    gamesPlayed: gameStore.length(), // TODO return actual value
+    gamesPlayed: gameStore.length(), // TODO track number of games played and return that value
   });
 });
 
