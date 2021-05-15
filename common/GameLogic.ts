@@ -79,22 +79,13 @@ function constructBoard(): number[][] {
 }
 
 export class GameLogic {
-
-  player1: Player;
-  player2: Player;
-
   constructor() {
-    this.player1 = {username: 'Josh', board: constructBoard()};
-    this.player2 = {username: 'Pieper', board: constructBoard()};
-  }
-
-  addPlayer(player: Player) {
   }
 
   setBoard(board: number[][]) {
   }
 
-  processHit(player: Player, hit: GridCoor) {
+  processHit(player: PLAYER, hit: GridCoor) {
   }
 
 }
