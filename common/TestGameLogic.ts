@@ -8,5 +8,3 @@ function printBoard(board: Number[][]) {
 
 let GL = new GameLogic();
 console.log(GL);
-console.log(GL.player1);
-console.log(GL.player2);
