@@ -1,9 +1,3 @@
-interface Player {
-  username: string;
-  board: number[][];
-  // other properties
-};
-
 interface GridCoor {
   x: number;
   y: number;
