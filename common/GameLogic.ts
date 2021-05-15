@@ -1,12 +1,69 @@
-type Player = {
+interface Player {
   username: string;
   board: number[][];
   // other properties
 };
 
-type Hit = {
+interface GridCoor {
   x: number;
   y: number;
+};
+
+enum PLAYER {
+  PLAYER_1,
+  PLAYER_2
+};
+
+enum PHASE {
+  SETUP,
+  PLAY,
+  GAME_OVER
+};
+
+// TS doesnt restrict enums to unique values, fortunate for us because
+// submarine and cruiser are longth 3, hope this doesnt cause problems later...
+enum SHIP_TYPE {
+  DESTROYER = 2,
+  SUBMARINE = 3,
+  CRUISER = 3,
+  BATTLE = 4,
+  CARRIER = 5
+};
+
+enum DIR {
+  NORTH,
+  EAST,
+  SOUTH,
+  WEST
+};
+
+interface Ship {
+  type: SHIP_TYPE;
+  cells: Cell[];
+  isSunk: boolean;
+  orientation: DIR;
+};
+
+interface Cell {
+  hasShip: boolean;
+  ship: SHIP_TYPE;
+  isHit: boolean;
+};
+
+interface GameBoard {
+  grid: Cell[][];
+};
+
+interface SetupBoard extends GameBoard {
+  // setup specific things go here...
+};
+
+interface GameState {
+  playerBoard: GameBoard;
+  playerTurn: PLAYER;
+  gamePhase: PHASE
+  shotsMade: GridCoor;
+  ship_list: Ship[];
 };
 
 function constructBoard(): number[][] {
@@ -38,7 +95,7 @@ export class GameLogic {
   setBoard(board: number[][]) {
   }
 
-  processHit(player: Player, hit: Hit) {
+  processHit(player: Player, hit: GridCoor) {
   }
 
 }
