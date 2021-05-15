@@ -10,7 +10,8 @@ enum PLAYER {
 
 enum PHASE {
   SETUP,
-  PLAY,
+  PLAYER1_TURN,
+  PLAYER2_TURN,
   GAME_OVER
 };
 
@@ -35,6 +36,7 @@ interface Ship {
   type: SHIP_TYPE;
   cells: Cell[];
   isSunk: boolean;
+  locationOfFront: GridCoor;
   orientation: DIR;
 };
 
@@ -52,12 +54,15 @@ interface SetupBoard extends GameBoard {
   // setup specific things go here...
 };
 
+// encapsulate player into struct?
 interface GameState {
-  playerBoard: GameBoard;
-  playerTurn: PLAYER;
   gamePhase: PHASE
-  shotsMade: GridCoor;
-  ship_list: Ship[];
+  playerBoard1: GameBoard;
+  playerBoard2: GameBoard;
+  player1Shots: GridCoor;
+  player2Shots: GridCoor;
+  player1Ships: Ship[];
+  player2Ships: Ship[];
 };
 
 function constructBoard(): number[][] {
