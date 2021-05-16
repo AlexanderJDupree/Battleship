@@ -60,7 +60,6 @@ export interface GridCoor {
 };
 
 interface Cell {
-  hasShip: boolean;
   ship: SHIP;
   isHit: boolean;
 };
@@ -81,7 +80,6 @@ export class Ship {
     let cells = [];
     for (let i = 0; i < SHIP_SIZES[type]; i++) {
       let newCell = {
-        hasShip: true,
         ship: type,
         isHit: false
       };
@@ -112,7 +110,6 @@ export class GameBoard {
       this.grid[j] = new Array(BOARD_SIZE);
       for (let i = 0; i < BOARD_SIZE; i++) {
         let newCell = {
-          hasShip: false,
           ship: SHIP.NONE,
           isHit: false
         };
@@ -132,7 +129,7 @@ export class GameBoard {
       if (!this.isOnBoard(curCoor)) {
         return false;
       }
-      if (this.grid[curCoor.y][curCoor.x].hasShip) {
+      if (this.grid[curCoor.y][curCoor.x].ship != SHIP.NONE) {
         return false;
       }
       curCoor = this.nextCellOfShip(curCoor, dir);
@@ -149,26 +146,26 @@ export class GameBoard {
     return true;
   }
 
-  nextCellOfShip(curCell: GridCoor, shipFacing: DIR): GridCoor {
-    let nextCell: GridCoor;
+  nextCellOfShip(curCoor: GridCoor, shipFacing: DIR): GridCoor {
+    let nextCoor: GridCoor;
     switch (shipFacing) {
       case DIR.NORTH:
-        nextCell = {x: curCell.x, y: curCell.y + 1};
+        nextCoor = {x: curCoor.x, y: curCoor.y + 1};
       break;
       case DIR.EAST:
-        nextCell = {x: curCell.x - 1, y: curCell.y};
+        nextCoor = {x: curCoor.x - 1, y: curCoor.y};
       break;
       case DIR.SOUTH:
-        nextCell = {x: curCell.x, y: curCell.y - 1};
+        nextCoor = {x: curCoor.x, y: curCoor.y - 1};
       break;
       case DIR.WEST:
-        nextCell = {x: curCell.x + 1, y: curCell.y};
+        nextCoor = {x: curCoor.x + 1, y: curCoor.y};
       break;
       default:
         break;
     }
 
-    return nextCell;
+    return nextCoor;
   }
 
   isOnBoard(coor: GridCoor): boolean {
