@@ -1,7 +1,7 @@
 // game state data and game logic functions
 
 /*****************************************************************************
-* Constants
+* Constants and utility types
 *****************************************************************************/
 
 const BOARD_SIZE = 10;
@@ -18,13 +18,34 @@ enum PLAYER {
   PLAYER_2
 };
 
-// TS doesnt restrict enums to unique values, fortunate for us because
-// submarine and cruiser are longth 3, hope this doesnt cause problems later...
-export const DESTROYER_SIZE = 2;
-export const SUBMARINE_SIZE = 3;
-export const CRUISER_SIZE = 3;
-export const BATTLE_SIZE = 4;
-export const CARRIER_SIZE = 5;
+export enum SHIP {
+  DESTROYER,
+  SUBMARINE,
+  CRUISER,
+  BATTLESHIP,
+  CARRIER,
+  NONE
+};
+
+// index with SHIP enum
+export const SHIP_SIZES = [
+  2, // destroyer
+  3, // submarine
+  3, // cruiser
+  4, // battleship
+  5, // carrier
+  0  // none
+];
+
+// index with SHIP enum
+export const SHIP_NAMES = [
+  'destroyer',
+  'submarine',
+  'cruiser',
+  'battleship',
+  'carrier',
+  'none'
+];
 
 export enum DIR {
   NORTH,
@@ -33,22 +54,32 @@ export enum DIR {
   WEST
 };
 
+export interface GridCoor {
+  x: number;
+  y: number;
+};
+
+interface Cell {
+  hasShip: boolean;
+  ship: SHIP;
+  isHit: boolean;
+};
+
+
 /*****************************************************************************
 * Ship
 *****************************************************************************/
 
 export class Ship {
-  type: number;
+  type: SHIP;
   cells: Cell[];
   isSunk: boolean;
   locationOfFront: GridCoor;
   orientation: DIR;
 
-  constructor(type: number, position: GridCoor, orientation: DIR) {
-
+  constructor(type: SHIP, position: GridCoor, orientation: DIR) {
     let cells = [];
-
-    for (let i = 0; i < type; i++) {
+    for (let i = 0; i < SHIP_SIZES[type]; i++) {
       let newCell = {
         hasShip: true,
         ship: type,
@@ -57,12 +88,13 @@ export class Ship {
       cells.push(newCell);
     }
 
-     this.type = type;
-     this.cells = cells;
-     this.isSunk = false;
-     this.locationOfFront = position;
-     this.orientation = orientation;
+    this.type = type;
+    this.cells = cells;
+    this.isSunk = false;
+    this.locationOfFront = position;
+    this.orientation = orientation;
   }
+
 };
 
 
@@ -70,39 +102,70 @@ export class Ship {
 * Game board
 *****************************************************************************/
 
-export interface GridCoor {
-  x: number;
-  y: number;
-};
-
-let myCoor: GridCoor = {x:12,y:23};
-
-interface Cell {
-  hasShip: boolean;
-  ship: number;
-  isHit: boolean;
-};
-
-interface GameBoard {
+export class GameBoard {
   grid: Cell[][];
-};
 
-function constructBoard(): number[][] {
-  let board = new Array(10);
+  constructor() {
+    this.grid = new Array(BOARD_SIZE);
 
-  for (let j = 0; j < 10; j++) {
-    board[j] = new Array(10);
-    for (let i = 0; i < 10; i++) {
-      board[j][i] = 0;
+    for (let j = 0; j < BOARD_SIZE; j++) {
+      this.grid[j] = new Array(BOARD_SIZE);
+      for (let i = 0; i < BOARD_SIZE; i++) {
+        let newCell = {
+          hasShip: false,
+          ship: SHIP.NONE,
+          isHit: false
+        };
+        this.grid[j][i] = newCell;
+      }
     }
   }
 
-  return board;
-}
+  placeShip(ship: Ship): boolean {
+    let start = ship.locationOfFront;
+    let dir = ship.orientation;
+    let length = SHIP_SIZES[ship.type];
+
+    let curCoor = start;
+    for (let i = 0; i < length; i++) {
+      let coorNextCell = this.nextCellOfShip(curCoor, dir);
+      if (!this.isOnBoard(coorNextCell)) {
+        return false;
+      }
+    }
+
+    return true;
+  }
+
+  nextCellOfShip(curCell: GridCoor, shipFacing: DIR): GridCoor {
+    let nextCell: GridCoor;
+    switch (shipFacing) {
+      case DIR.NORTH:
+        nextCell = {x: curCell.x, y: curCell.y + 1};
+      break;
+      case DIR.EAST:
+        nextCell = {x: curCell.x - 1, y: curCell.y};
+      break;
+      case DIR.SOUTH:
+        nextCell = {x: curCell.x, y: curCell.y - 1};
+      break;
+      case DIR.WEST:
+        nextCell = {x: curCell.x + 1, y: curCell.y};
+      break;
+      default:
+        break;
+    }
+
+    return nextCell;
+  }
+
+  isOnBoard(coor: GridCoor): boolean {
+    return (0 <= coor.x && coor.x < BOARD_SIZE) && (0 <= coor.y && coor.y < BOARD_SIZE);
+  }
+};
+
 
 // Returns true of the ship was placed, false if the ship could not be placed.
-function placeShip(board: GameBoard, ship: Ship) {
-}
 
 /*****************************************************************************
 * Player state
