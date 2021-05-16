@@ -126,12 +126,24 @@ export class GameBoard {
     let dir = ship.orientation;
     let length = SHIP_SIZES[ship.type];
 
+    // check if we can place ship
     let curCoor = start;
     for (let i = 0; i < length; i++) {
-      curCoor = this.nextCellOfShip(curCoor, dir);
       if (!this.isOnBoard(curCoor)) {
         return false;
       }
+      if (this.grid[curCoor.y][curCoor.x].hasShip) {
+        return false;
+      }
+      curCoor = this.nextCellOfShip(curCoor, dir);
+    }
+
+    // if we make it here, we can place the ship...
+    // place ship
+    curCoor = start;
+    for (let i = 0; i < length; i++) {
+      this.grid[curCoor.y][curCoor.x] = ship.cells[i];
+      curCoor = this.nextCellOfShip(curCoor, dir);
     }
 
     return true;
