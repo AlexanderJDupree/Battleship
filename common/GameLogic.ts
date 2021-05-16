@@ -146,7 +146,7 @@ export class GameBoard {
     return true;
   }
 
-  nextCellOfShip(curCoor: GridCoor, shipFacing: DIR): GridCoor {
+  private nextCellOfShip(curCoor: GridCoor, shipFacing: DIR): GridCoor {
     let nextCoor: GridCoor;
     switch (shipFacing) {
       case DIR.NORTH:
@@ -168,7 +168,7 @@ export class GameBoard {
     return nextCoor;
   }
 
-  isOnBoard(coor: GridCoor): boolean {
+  private isOnBoard(coor: GridCoor): boolean {
     return (0 <= coor.x && coor.x < BOARD_SIZE) && (0 <= coor.y && coor.y < BOARD_SIZE);
   }
 };
