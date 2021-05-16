@@ -128,8 +128,8 @@ export class GameBoard {
 
     let curCoor = start;
     for (let i = 0; i < length; i++) {
-      let coorNextCell = this.nextCellOfShip(curCoor, dir);
-      if (!this.isOnBoard(coorNextCell)) {
+      curCoor = this.nextCellOfShip(curCoor, dir);
+      if (!this.isOnBoard(curCoor)) {
         return false;
       }
     }
