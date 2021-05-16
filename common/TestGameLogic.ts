@@ -35,15 +35,17 @@ function printBoard(board: GameBoard) {
   }
 }
 
+function placeShip(board: GameBoard, ship: Ship) {
+  if (board.placeShip(ship)) {
+    console.log('placed ship');
+  } else {
+    console.log('could not place ship');
+  }
+}
+
 let board = new GameBoard();
 let ship = new Ship(SHIP.BATTLESHIP, {x:5, y:6}, DIR.SOUTH);
 
 printBoard(board);
-
-if (board.placeShip(ship)) {
-  console.log('placed ship');
-} else {
-  console.log('could not place ship');
-}
-
+placeShip(board, ship);
 printBoard(board);
