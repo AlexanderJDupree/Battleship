@@ -4,7 +4,7 @@
 * Constants and utility types
 *****************************************************************************/
 
-const BOARD_SIZE = 10;
+export const BOARD_SIZE = 10;
 
 enum PHASE {
   SETUP,
