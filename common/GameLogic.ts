@@ -54,15 +54,19 @@ interface SetupBoard extends GameBoard {
   // setup specific things go here...
 };
 
-// encapsulate player into struct?
+// this is sent by the server to the client every time the game state changes.
+// should contain all the info needed for the client to render the game.
+interface PlayerState {
+  phase: PHASE
+  board: GameBoard;
+  shots: GridCoor[];  // list of shots this player has taken
+  ships: Ship[];
+}
+
 interface GameState {
-  gamePhase: PHASE
-  playerBoard1: GameBoard;
-  playerBoard2: GameBoard;
-  player1Shots: GridCoor;
-  player2Shots: GridCoor;
-  player1Ships: Ship[];
-  player2Ships: Ship[];
+  phase: PHASE;
+  player1: PlayerState;
+  player2: PlayerState;
 };
 
 function constructBoard(): number[][] {
