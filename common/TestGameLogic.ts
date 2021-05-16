@@ -1,10 +1,8 @@
-import {GameLogic} from "./GameLogic";
+import {Ship} from "./GameLogic";
+import {DESTROYER_SIZE} from "./GameLogic";
+import {DIR} from "./GameLogic";
+import {GridCoor} from "./GameLogic";
 
-function printBoard(board: Number[][]) {
-  let j = board.length;
-  let i = board[0].length;
-  console.log(j + ', ' + i);
-}
+let ship = new Ship(DESTROYER_SIZE, {x:1, y:12}, DIR.NORTH);
 
-let GL = new GameLogic();
-console.log(GL);
+console.log(ship);

@@ -1,12 +1,10 @@
-interface GridCoor {
-  x: number;
-  y: number;
-};
+// game state data and game logic functions
 
-enum PLAYER {
-  PLAYER_1,
-  PLAYER_2
-};
+/*****************************************************************************
+* Constants
+*****************************************************************************/
+
+const BOARD_SIZE = 10;
 
 enum PHASE {
   SETUP,
@@ -15,58 +13,78 @@ enum PHASE {
   GAME_OVER
 };
 
-// TS doesnt restrict enums to unique values, fortunate for us because
-// submarine and cruiser are longth 3, hope this doesnt cause problems later...
-enum SHIP_TYPE {
-  DESTROYER = 2,
-  SUBMARINE = 3,
-  CRUISER = 3,
-  BATTLE = 4,
-  CARRIER = 5
+enum PLAYER {
+  PLAYER_1,
+  PLAYER_2
 };
 
-enum DIR {
+// TS doesnt restrict enums to unique values, fortunate for us because
+// submarine and cruiser are longth 3, hope this doesnt cause problems later...
+export const DESTROYER_SIZE = 2;
+export const SUBMARINE_SIZE = 3;
+export const CRUISER_SIZE = 3;
+export const BATTLE_SIZE = 4;
+export const CARRIER_SIZE = 5;
+
+export enum DIR {
   NORTH,
   EAST,
   SOUTH,
   WEST
 };
 
-interface Ship {
-  type: SHIP_TYPE;
+/*****************************************************************************
+* Ship
+*****************************************************************************/
+
+export class Ship {
+  type: number;
   cells: Cell[];
   isSunk: boolean;
   locationOfFront: GridCoor;
   orientation: DIR;
+
+  constructor(type: number, position: GridCoor, orientation: DIR) {
+
+    let cells = [];
+
+    for (let i = 0; i < type; i++) {
+      let newCell = {
+        hasShip: true,
+        ship: type,
+        isHit: false
+      };
+      cells.push(newCell);
+    }
+
+     this.type = type;
+     this.cells = cells;
+     this.isSunk = false;
+     this.locationOfFront = position;
+     this.orientation = orientation;
+  }
 };
+
+
+/*****************************************************************************
+* Game board
+*****************************************************************************/
+
+export interface GridCoor {
+  x: number;
+  y: number;
+};
+
+let myCoor: GridCoor = {x:12,y:23};
 
 interface Cell {
   hasShip: boolean;
-  ship: SHIP_TYPE;
+  ship: number;
   isHit: boolean;
 };
 
 interface GameBoard {
   grid: Cell[][];
-};
-
-interface SetupBoard extends GameBoard {
-  // setup specific things go here...
-};
-
-// this is sent by the server to the client every time the game state changes.
-// should contain all the info needed for the client to render the game.
-interface PlayerState {
-  phase: PHASE
-  board: GameBoard;
-  shots: GridCoor[];  // list of shots this player has taken
-  ships: Ship[];
-}
-
-interface GameState {
-  phase: PHASE;
-  player1: PlayerState;
-  player2: PlayerState;
 };
 
 function constructBoard(): number[][] {
@@ -82,14 +100,36 @@ function constructBoard(): number[][] {
   return board;
 }
 
-export class GameLogic {
-  constructor() {
-  }
+// Returns true of the ship was placed, false if the ship could not be placed.
+function placeShip(board: GameBoard, ship: Ship) {
+}
 
-  setBoard(board: number[][]) {
-  }
+/*****************************************************************************
+* Player state
+*****************************************************************************/
 
-  processHit(player: PLAYER, hit: GridCoor) {
-  }
 
+// this is sent by the server to the client every time the game state changes.
+// should contain all the info needed for the client to render the game.
+interface PlayerState {
+  phase: PHASE
+  board: GameBoard;
+  shots: GridCoor[];  // list of shots this player has taken
+  ships: Ship[];
+}
+
+function initPlayerState(player: PlayerState) {
+  player.phase = PHASE.SETUP;
+}
+
+/*****************************************************************************
+* Game state
+*****************************************************************************/
+
+interface GameState {
+  phase: PHASE;
+  players: PlayerState[];
+}
+
+function initGameState(gamestate: GameState) {
 }
