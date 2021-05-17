@@ -28,7 +28,7 @@ function printBoard(board: GameBoard) {
       if (board.grid[j][i].ship == SHIP.NONE) {
         rowString += '0 ';
       } else {
-        rowString += 'x ';
+        rowString += '. ';
       }
     }
     console.log(rowString);
@@ -44,7 +44,7 @@ function placeShip(board: GameBoard, ship: Ship) {
 }
 
 let board = new GameBoard();
-let ship = new Ship(SHIP.BATTLESHIP, {x:5, y:6}, DIR.SOUTH);
+let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.SOUTH);
 
 printBoard(board);
 placeShip(board, ship);

@@ -61,7 +61,7 @@ export interface GridCoor {
 
 interface Cell {
   ship: SHIP;
-  isHit: boolean;
+  firedUpon: boolean;
 };
 
 
@@ -71,26 +71,17 @@ interface Cell {
 
 export class Ship {
   type: SHIP;
-  cells: Cell[];
   isSunk: boolean;
   locationOfFront: GridCoor;
   orientation: DIR;
+  numHits: number;
 
   constructor(type: SHIP, position: GridCoor, orientation: DIR) {
-    let cells = [];
-    for (let i = 0; i < SHIP_SIZES[type]; i++) {
-      let newCell = {
-        ship: type,
-        isHit: false
-      };
-      cells.push(newCell);
-    }
-
     this.type = type;
-    this.cells = cells;
     this.isSunk = false;
     this.locationOfFront = position;
     this.orientation = orientation;
+    this.numHits = 0;
   }
 
 };
@@ -111,7 +102,7 @@ export class GameBoard {
       for (let i = 0; i < BOARD_SIZE; i++) {
         let newCell = {
           ship: SHIP.NONE,
-          isHit: false
+          firedUpon: false
         };
         this.grid[j][i] = newCell;
       }
@@ -139,7 +130,7 @@ export class GameBoard {
     // place ship
     curCoor = start;
     for (let i = 0; i < length; i++) {
-      this.grid[curCoor.y][curCoor.x] = ship.cells[i];
+      this.grid[curCoor.y][curCoor.x] = {ship: ship.type, firedUpon: false};
       curCoor = this.nextCellOfShip(curCoor, dir);
     }
 
@@ -180,18 +171,45 @@ export class GameBoard {
 * Player state
 *****************************************************************************/
 
-
 // this is sent by the server to the client every time the game state changes.
 // should contain all the info needed for the client to render the game.
-interface PlayerState {
+export class PlayerState {
   phase: PHASE
   board: GameBoard;
   shots: GridCoor[];  // list of shots this player has taken
-  ships: Ship[];
-}
+  ships: Ship[]; // used mainly for setup
 
-function initPlayerState(player: PlayerState) {
-  player.phase = PHASE.SETUP;
+  constructor() {
+    this.phase = PHASE.SETUP;
+    this.board = new GameBoard;
+    this.shots = [];
+    this.ships = [
+      new Ship(SHIP.DESTROYER, {x:0, y:0}, DIR.NORTH),
+      new Ship(SHIP.SUBMARINE, {x:0, y:0}, DIR.NORTH),
+      new Ship(SHIP.CRUISER, {x:0, y:0}, DIR.NORTH),
+      new Ship(SHIP.BATTLESHIP, {x:0, y:0}, DIR.NORTH),
+      new Ship(SHIP.CARRIER, {x:0, y:0}, DIR.NORTH),
+    ];
+  }
+
+  // returns the ship type if it was a hit, SHIP.NONE if miss
+  fireAtPlayer(coor: GridCoor): SHIP {
+    let cellLabel: SHIP;
+
+    cellLabel = this.board[coor.y][coor.x].ship;
+    if (cellLabel != SHIP.NONE) {
+      let targetShip = this.ships[cellLabel];
+      targetShip.numHits++;
+      if (targetShip.numHits >= SHIP_SIZES[cellLabel]) {
+        targetShip.isSunk = true;
+      }
+    }
+
+    this.board[coor.y][coor.x].firedUpon = true;
+
+    return cellLabel
+  }
+
 }
 
 /*****************************************************************************
