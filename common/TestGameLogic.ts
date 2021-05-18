@@ -44,8 +44,18 @@ function placeShip(board: GameBoard, ship: Ship) {
 }
 
 let board = new GameBoard();
-let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.SOUTH);
-
+let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.WEST);
+console.log(ship);
 printBoard(board);
 placeShip(board, ship);
+console.log(ship);
+
 printBoard(board);
+
+let obj1 = {x: 1, y: 2};
+let obj2 = obj1;
+obj2.x++;
+
+console.log(obj2);
+console.log(obj1);
+// therefore, javascript objects are references...
