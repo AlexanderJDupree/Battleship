@@ -244,5 +244,8 @@ class GameState {
   players: PlayerState[];
 
   constructor() {
+      this.phase = PHASE.SETUP;
+      this.players.push(new PlayerState());
+      this.players.push(new PlayerState());
   }
 }
