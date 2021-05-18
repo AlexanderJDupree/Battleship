@@ -73,6 +73,7 @@ export class Ship {
   locationOfFront: GridCoor;
   orientation: DIR;
   numHits: number;
+  placed: boolean
 
   constructor(type: SHIP, position: GridCoor, orientation: DIR) {
     this.type = type;
@@ -80,6 +81,7 @@ export class Ship {
     this.locationOfFront = position;
     this.orientation = orientation;
     this.numHits = 0;
+    this.placed = false;
   }
 
 };
@@ -116,10 +118,13 @@ export class GameBoard {
     let dir = ship.orientation;
     let length = SHIP_SIZES[ship.type];
     let curCoor = {x:start.x, y:start.y}
+
     for (let i = 0; i < length; i++) {
       this.grid[curCoor.y][curCoor.x] = {ship: ship.type, firedUpon: false};
       curCoor = this.nextCellOfShip(curCoor, dir);
     }
+
+    ship.placed = true;
 
     return true;
   }
@@ -180,8 +185,9 @@ export class GameBoard {
 // should contain all the info needed for the client to render the game.
 export class PlayerState {
   phase:        PHASE
-  setupBoard:   GameBoard;
   board:        GameBoard;
+  setupBoard:   GameBoard;
+  setupValid:   boolean;
   shots:        GridCoor[];  // list of shots this player has taken
   ships:        Ship[]; // index with SHIP enum
 
@@ -189,6 +195,7 @@ export class PlayerState {
     this.phase = PHASE.SETUP;
     this.board = new GameBoard;
     this.setupBoard = new GameBoard;
+    this.setupValid = false;
     this.shots = [];
     this.ships = [
       new Ship(SHIP.DESTROYER, {x:0, y:0}, DIR.NORTH),
@@ -214,6 +221,16 @@ export class PlayerState {
     this.board[coor.y][coor.x].firedUpon = true;
 
     return cellLabel
+  }
+
+  allShipsPlaced(): boolean {
+      for (let i = 0; i < 5; i++) {
+        if (!this.ships[i].placed) {
+            return false;
+        }
+      }
+
+      return true;
   }
 
 }
