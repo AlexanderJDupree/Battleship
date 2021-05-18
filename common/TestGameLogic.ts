@@ -44,7 +44,7 @@ function placeShip(board: GameBoard, ship: Ship) {
 }
 
 let board = new GameBoard();
-let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.WEST);
+let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.EAST);
 console.log(ship);
 printBoard(board);
 placeShip(board, ship);
