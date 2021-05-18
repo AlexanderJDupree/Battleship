@@ -1,8 +1,6 @@
-// game state data and game logic functions
-
 /*****************************************************************************
-* Constants and utility types
-*****************************************************************************/
+ * Constants and utility types
+ *****************************************************************************/
 
 export const BOARD_SIZE = 10;
 
@@ -66,8 +64,8 @@ interface Cell {
 
 
 /*****************************************************************************
-* Ship
-*****************************************************************************/
+ * Ship
+ *****************************************************************************/
 
 export class Ship {
   type: SHIP;
@@ -88,8 +86,8 @@ export class Ship {
 
 
 /*****************************************************************************
-* Game board
-*****************************************************************************/
+ * Game board
+ *****************************************************************************/
 
 export class GameBoard {
   grid: Cell[][];
@@ -110,12 +108,29 @@ export class GameBoard {
   }
 
   placeShip(ship: Ship): boolean {
+    if (!this.canPlaceShip(ship)) {
+        return false;
+    }
+
+    let start = ship.locationOfFront;
+    let dir = ship.orientation;
+    let length = SHIP_SIZES[ship.type];
+    let curCoor = {x:start.x, y:start.y}
+    for (let i = 0; i < length; i++) {
+      this.grid[curCoor.y][curCoor.x] = {ship: ship.type, firedUpon: false};
+      curCoor = this.nextCellOfShip(curCoor, dir);
+    }
+
+    return true;
+  }
+
+  canPlaceShip(ship: Ship): boolean {
     let start = ship.locationOfFront;
     let dir = ship.orientation;
     let length = SHIP_SIZES[ship.type];
 
     // check if we can place ship
-    let curCoor = start;
+    let curCoor = {x:start.x, y:start.y}
     for (let i = 0; i < length; i++) {
       if (!this.isOnBoard(curCoor)) {
         return false;
@@ -123,14 +138,6 @@ export class GameBoard {
       if (this.grid[curCoor.y][curCoor.x].ship != SHIP.NONE) {
         return false;
       }
-      curCoor = this.nextCellOfShip(curCoor, dir);
-    }
-
-    // if we make it here, we can place the ship...
-    // place ship
-    curCoor = start;
-    for (let i = 0; i < length; i++) {
-      this.grid[curCoor.y][curCoor.x] = {ship: ship.type, firedUpon: false};
       curCoor = this.nextCellOfShip(curCoor, dir);
     }
 
@@ -142,16 +149,16 @@ export class GameBoard {
     switch (shipFacing) {
       case DIR.NORTH:
         nextCoor = {x: curCoor.x, y: curCoor.y + 1};
-      break;
+        break;
       case DIR.EAST:
         nextCoor = {x: curCoor.x - 1, y: curCoor.y};
-      break;
+        break;
       case DIR.SOUTH:
         nextCoor = {x: curCoor.x, y: curCoor.y - 1};
-      break;
+        break;
       case DIR.WEST:
         nextCoor = {x: curCoor.x + 1, y: curCoor.y};
-      break;
+        break;
       default:
         break;
     }
@@ -165,23 +172,23 @@ export class GameBoard {
 };
 
 
-// Returns true of the ship was placed, false if the ship could not be placed.
-
 /*****************************************************************************
-* Player state
-*****************************************************************************/
+ * Player state
+ *****************************************************************************/
 
 // this is sent by the server to the client every time the game state changes.
 // should contain all the info needed for the client to render the game.
 export class PlayerState {
-  phase: PHASE
-  board: GameBoard;
-  shots: GridCoor[];  // list of shots this player has taken
-  ships: Ship[]; // used mainly for setup
+  phase:        PHASE
+  setupBoard:   GameBoard;
+  board:        GameBoard;
+  shots:        GridCoor[];  // list of shots this player has taken
+  ships:        Ship[]; // index with SHIP enum
 
   constructor() {
     this.phase = PHASE.SETUP;
     this.board = new GameBoard;
+    this.setupBoard = new GameBoard;
     this.shots = [];
     this.ships = [
       new Ship(SHIP.DESTROYER, {x:0, y:0}, DIR.NORTH),
@@ -192,11 +199,10 @@ export class PlayerState {
     ];
   }
 
+  // check for repeat shots or shots out of bounds
   // returns the ship type if it was a hit, SHIP.NONE if miss
   fireAtPlayer(coor: GridCoor): SHIP {
-    let cellLabel: SHIP;
-
-    cellLabel = this.board[coor.y][coor.x].ship;
+    let cellLabel = this.board[coor.y][coor.x].ship;
     if (cellLabel != SHIP.NONE) {
       let targetShip = this.ships[cellLabel];
       targetShip.numHits++;
@@ -213,13 +219,13 @@ export class PlayerState {
 }
 
 /*****************************************************************************
-* Game state
-*****************************************************************************/
+ * Game state
+ *****************************************************************************/
 
-interface GameState {
+class GameState {
   phase: PHASE;
   players: PlayerState[];
-}
 
-function initGameState(gamestate: GameState) {
+  constructor() {
+  }
 }
