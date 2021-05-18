@@ -20,7 +20,7 @@ export default function Navigation() {
         <LinkContainer to='/'>
           <Navbar.Brand>
             <FA icon={faAnchor} className='brand-icon mr-2' />
-            Battleship
+            <span className='brand-text'>Battleship</span>
           </Navbar.Brand>
         </LinkContainer>
         <Navbar.Toggle aria-controls='responsive-navbar-nav' />

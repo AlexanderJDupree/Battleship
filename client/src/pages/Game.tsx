@@ -1,65 +1,112 @@
-import { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { SocketContext, RoomContext } from '../contexts';
 import useQuery from '../hooks/UseQuery';
 import { Client } from 'common/lib/events';
 import { JoinGameStatus } from 'common/lib/details';
-import { ChatWindow } from '../components';
-
-const joinStatusToString = (status: JoinGameStatus) => {
-  switch (status) {
-    case JoinGameStatus.GameNotFound:
-      return 'Game Not Found';
-
-    case JoinGameStatus.Error:
-      return 'Failed to Join game, an error occured';
-
-    case JoinGameStatus.JoinSuccess:
-      return 'Join Successful!';
-  }
-};
+import { ChatWindow, GameBoard, SetupBar, StatusBar } from '../components';
+import {
+  GameContext,
+  GamePhase,
+  GameState,
+  Direction,
+  InitialGameState,
+} from '../contexts/Game';
 
 const Game = () => {
-  const [error, setError] = useState<string | null>(null);
+  const [isReady, setIsReady] = useState(false);
+  const [placementDir, setPlacementDir] = useState(Direction.East);
+  const [selected, setSelected] = useState('');
+  const [gameState, setGameState] = useState<GameState>({
+    ...InitialGameState,
+  });
+
   const socket = useContext(SocketContext);
   const query = useQuery();
+  const gameID = query.get('gid');
 
-  const roomID = query.get('room');
+  const handleReady = useCallback(() => {
+    // TODO submit finalized board to server
+    setIsReady(true);
+    setGameState({ ...gameState, phase: GamePhase.Battle });
+  }, [gameState]);
+
+  const handleRotate = useCallback(() => {
+    setPlacementDir((dir) =>
+      dir === Direction.North ? Direction.East : Direction.North
+    );
+  }, []);
+
+  const handlePlayerBoardClick = useCallback(() => {
+    if (gameState.phase === GamePhase.Setup) {
+      // Do something with the board
+    }
+  }, [gameState]);
+
+  const handleOpponentBoardClick = useCallback(() => {
+    if (gameState.phase === GamePhase.Battle) {
+      // TODO and it's THIS players turn
+      setGameState({ ...gameState, turn: gameState.turn + 1 });
+    }
+  }, [gameState]);
+
+  const handleSelect = useCallback(
+    (ship: string) => {
+      if (ship === selected) {
+        setSelected('');
+      } else {
+        setSelected(ship);
+      }
+    },
+    [selected]
+  );
 
   useEffect(() => {
-    if (roomID) {
-      socket.emit(Client.JoinGame, roomID, (status: JoinGameStatus) => {
+    if (gameID) {
+      socket.emit(Client.JoinGame, gameID, (status: JoinGameStatus) => {
         switch (status) {
           case JoinGameStatus.JoinSuccess:
-            console.log(`Joined Game Room: ${roomID}`);
+            console.log(`Joined Game Room: ${gameID}`);
             break;
-
           case JoinGameStatus.GameNotFound:
+            console.log(`Game ${gameID} not found`);
+            break;
           case JoinGameStatus.Error:
-            setError(joinStatusToString(status));
-            console.log(`Error joining room ${roomID}`);
+            console.log(`Error joining room ${gameID}`);
             break;
         }
       });
     } else {
-      setError(`Can't join game`);
+      console.log('Invalid game id');
     }
     return () => {
-      socket.emit(Client.LeaveRoom, roomID || 'unknown');
+      socket.emit(Client.LeaveRoom, gameID || 'unknown');
     };
-  }, [query, socket, roomID]);
+  }, [query, socket, gameID]);
 
   return (
-    <div className='game'>
-      <RoomContext.Provider value={roomID || 'unknown'}>
-        <h1 className='text-center'>Game board and stuff goes here</h1>
-        {error ? (
-          <h2 className='text-center'>{error}</h2>
-        ) : (
-          <h2 className='text-center'>Room ID: {roomID}</h2>
-        )}
-        <ChatWindow />
+    <section className='game'>
+      <RoomContext.Provider value={gameID || 'unknown'}>
+        <GameContext.Provider value={gameState}>
+          <StatusBar />
+          <div className='box-container'>
+            <GameBoard variant='player' onClick={handlePlayerBoardClick} />
+            <GameBoard variant='opponent' onClick={handleOpponentBoardClick} />
+          </div>
+          {gameState.phase === GamePhase.Setup ? (
+            <SetupBar
+              handleReady={handleReady}
+              handleRotate={handleRotate}
+              handleSelect={handleSelect}
+              selected={selected}
+              placementDir={placementDir}
+            />
+          ) : (
+            <></>
+          )}
+          <ChatWindow />
+        </GameContext.Provider>
       </RoomContext.Provider>
-    </div>
+    </section>
   );
 };
 

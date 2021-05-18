@@ -43,3 +43,5 @@ export const validateUsername = (username?: string): true | UsernameError => {
   }
   return true;
 };
+
+export const ServerName = 'server';

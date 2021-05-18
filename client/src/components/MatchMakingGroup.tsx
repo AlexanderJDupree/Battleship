@@ -56,24 +56,24 @@ const MatchMakingGroup = () => {
   const handleFindGameClick = useCallback(() => {
     setDisableButtons(true);
     setFindGameState('searching');
-    socket.emit(Client.FindGame, (roomID) => {
-      console.log(`Game Found: ${roomID}`);
-      history.push(`/game?room=${roomID}`);
+    socket.emit(Client.FindGame, (gameID) => {
+      console.log(`Game Found: ${gameID}`);
+      history.push(`/game?gid=${gameID}`);
     });
   }, [history, socket]);
 
   const handleJoinGame = useCallback(
-    (roomCode: string) => {
+    (gid: string) => {
       // TODO this is a hack to delay the transition to the next page.
-      setTimeout(() => history.push(`/game?room=${roomCode}`), 1000);
+      setTimeout(() => history.push(`/game?gid=${gid}`), 1000);
     },
     [history]
   );
 
   const handlePrivateGameClick = useCallback(() => {
-    socket.emit(Client.CreateGame, false, (roomID) => {
-      console.log(`Created Game: ${roomID}`);
-      history.push(`/game?room=${roomID}`);
+    socket.emit(Client.CreateGame, false, (gameID) => {
+      console.log(`Created Game: ${gameID}`);
+      history.push(`/game?gid=${gameID}`);
     });
   }, [history, socket]);
 

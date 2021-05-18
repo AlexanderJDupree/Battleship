@@ -133,15 +133,15 @@ export namespace Client {
   export interface Events extends Common.Events {
     connection: (socket: IOSocket) => void;
     disconnect: (reason: string) => void;
-    chat_message: (roomID: string, msg: string) => void;
+    chat_message: (gameID: string, msg: string) => void;
     create_game: (isPublic: boolean, ack: (roomID: string) => void) => void;
-    find_game: (ack: (roomID: string) => void) => void;
+    find_game: (ack: (gameID: string) => void) => void;
     // TODO add gamestate type
     join_game: (
-      roomID: string,
+      gameID: string,
       ack: (status: JoinGameStatus, gamestate?: {}) => void
     ) => void;
-    leave_room: (roomID: string) => void;
-    check_room: (roomID: string, ack: (roomStatus: RoomStatus) => void) => void;
+    leave_room: (gameID: string) => void;
+    check_room: (gameID: string, ack: (roomStatus: RoomStatus) => void) => void;
   }
 }
