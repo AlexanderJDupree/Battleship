@@ -12,6 +12,7 @@ import {
   validateUsername,
   RoomStatus,
 } from 'common/lib/details';
+import { ServerName } from 'common/lib/details';
 import { Server, Client, Common } from 'common/lib/events';
 import { ExtendedSocket, genID } from './utils';
 import * as config from './config';
@@ -114,6 +115,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   socket.on(Client.CreateGame, (isPublic, callback) => {
     let gid = gameStore.create(socket.userID, isPublic);
+    socket.join(gid);
     console.log(
       `create_game[${socket.username}:${socket.sessionID}] : ${gid} - ${isPublic}`
     );
@@ -134,25 +136,27 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       callback(game.gid);
     } else {
       let gid = gameStore.create(socket.userID, true);
+      socket.join(gid);
+      callback(gid);
       console.log(
         `find_game[${socket.username}:${socket.sessionID}] : Created ${gid}`
       );
-      callback(gid);
     }
   });
 
-  socket.on(Client.JoinGame, (roomID, callback) => {
+  // TODO refactor this mess.
+  socket.on(Client.JoinGame, (gameID, callback) => {
     // Resume game from session store if it exists
-    let game = gameStore.get(roomID);
+    let game = gameStore.get(gameID);
     if (game) {
       if (game.players.includes(socket.userID)) {
         // Player is reconnecting to room
-        socket.join(roomID);
+        socket.join(gameID);
         callback(JoinGameStatus.JoinSuccess);
       } else if (!game.players[1]) {
         // Room has a vacant slot, join game
-        socket.join(roomID);
-        gameStore.set(roomID, {
+        socket.join(gameID);
+        gameStore.set(gameID, {
           ...game,
           players: [game.players[0], socket.userID],
         });
@@ -165,11 +169,11 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     }
   });
 
-  socket.on(Client.ChatMessage, (roomID, msg) => {
-    let game = gameStore.get(roomID);
+  socket.on(Client.ChatMessage, (gameID, msg) => {
+    let game = gameStore.get(gameID);
     if (game) {
       if (game.players.includes(socket.userID)) {
-        io.to(roomID).emit(Server.ChatMessage, {
+        io.to(gameID).emit(Server.ChatMessage, {
           username: socket.username,
           msg,
         });
