@@ -1,20 +1,29 @@
 import { useContext } from 'react';
-import { GameContext, GamePhase } from '../contexts/Game';
+import { PHASE, PLAYER } from 'common/lib/GameLogic';
+import { PlayerContext } from '../contexts/Player';
 
 const StatusBar = () => {
-  const gameState = useContext(GameContext);
+  const playerState = useContext(PlayerContext);
 
   let statusText = () => {
-    switch (gameState.phase) {
-      case GamePhase.Setup:
+    switch (playerState.phase) {
+      case PHASE.SETUP:
         return 'Place Your Ships';
-      case GamePhase.Battle:
-        if (gameState.turn % 2 === 0) {
+      case PHASE.PLAYER1_TURN:
+        if (playerState.player === PLAYER.PLAYER_1) {
           return 'Your Turn';
         } else {
           return 'Opponents Turn';
         }
-      case GamePhase.Won:
+
+      case PHASE.PLAYER2_TURN:
+        if (playerState.player === PLAYER.PLAYER_2) {
+          return 'Your Turn';
+        } else {
+          return 'Opponents Turn';
+        }
+
+      case PHASE.GAME_OVER:
         return 'You Won!';
       default:
         return '';

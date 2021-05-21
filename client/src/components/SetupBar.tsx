@@ -1,22 +1,33 @@
 import { Button } from 'react-bootstrap';
 import { Ship } from '../components';
-import { Direction, ShipNames } from '../contexts/Game';
+import { DIR, SHIP, Ship as ShipClass } from 'common/lib/GameLogic';
+import { useState } from 'react';
 
 export interface SetupBarProps {
-  handleReady: () => void;
+  onReady: () => boolean;
   handleRotate: () => void;
-  placementDir: Direction;
-  selected: string;
-  handleSelect: (variant: string) => void;
+  placementDir: DIR;
+  selected: SHIP;
+  handleSelect: (variant: SHIP) => void;
+  ships: ShipClass[];
 }
 
 const SetupBar = ({
-  handleReady,
+  onReady,
   handleRotate,
   placementDir,
   selected,
   handleSelect,
+  ships,
 }: SetupBarProps) => {
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const handleReady = () => {
+    if (!onReady()) {
+      setErrorMsg('You must place all your ships');
+    }
+  };
+
   return (
     <div className='setup-bar m-2'>
       <div className='setup-btn-bar m-2'>
@@ -37,13 +48,18 @@ const SetupBar = ({
           Rotate Ships
         </Button>
       </div>
+      {errorMsg && (
+        <div>
+          <p className='text-center text-danger'>{errorMsg}</p>
+        </div>
+      )}
       <div className='ship-container m-2'>
-        {ShipNames.map((variant, i) => (
+        {ships.map((ship, i) => (
           <Ship
-            variant={variant}
+            variant={ship.type}
             key={i}
-            isPlaced={false}
-            isSelected={selected === variant}
+            isPlaced={ship.placed}
+            isSelected={selected === ship.type}
             orientation={placementDir}
             handleSelect={handleSelect}
           />

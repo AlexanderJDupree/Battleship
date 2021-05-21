@@ -1,12 +1,12 @@
 import { useCallback } from 'react';
-import { Direction } from '../contexts/Game';
+import { DIR, SHIP, SHIP_NAMES } from 'common/lib/GameLogic';
 
 export interface ShipProps {
-  orientation: Direction;
-  variant: string;
+  orientation: DIR;
+  variant: SHIP;
   isSelected: boolean;
   isPlaced: boolean;
-  handleSelect: (variant: string) => void;
+  handleSelect: (variant: SHIP) => void;
 }
 
 const Ship = ({
@@ -17,11 +17,12 @@ const Ship = ({
   handleSelect,
 }: ShipProps) => {
   let directionClass =
-    orientation === Direction.North || orientation === Direction.South
+    orientation === DIR.NORTH || orientation === DIR.SOUTH
       ? 'vertical'
       : 'horizontal';
   let selected = isSelected ? 'selected' : '';
   let placed = isPlaced ? 'placed' : '';
+  let shipName = variant !== SHIP.NONE ? SHIP_NAMES[variant] : '';
 
   const onClick = useCallback(() => {
     handleSelect(variant);
@@ -29,7 +30,7 @@ const Ship = ({
 
   return (
     <div
-      className={`ship ${variant} ${directionClass} ${selected} ${placed}`}
+      className={`ship ${shipName} ${directionClass} ${selected} ${placed}`}
       onClick={onClick}
     ></div>
   );

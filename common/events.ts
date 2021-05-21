@@ -4,6 +4,7 @@
  */
 import { Socket as IOSocket } from 'socket.io';
 import { JoinGameStatus, RoomStatus } from './details';
+import { GameBoard } from './GameLogic';
 
 /**
  * Events that can be sent by either the server or client
@@ -127,6 +128,8 @@ export namespace Client {
    */
   export const ChatMessage = 'chat_message';
 
+  export const ReadyUp = 'ready_up';
+
   /**
    * Typed events interface for Client to Server
    */
@@ -143,5 +146,6 @@ export namespace Client {
     ) => void;
     leave_room: (gameID: string) => void;
     check_room: (gameID: string, ack: (roomStatus: RoomStatus) => void) => void;
+    ready_up: (setupBoard: GameBoard, gameID: string) => void;
   }
 }

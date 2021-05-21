@@ -5,59 +5,119 @@ import { Client } from 'common/lib/events';
 import { JoinGameStatus } from 'common/lib/details';
 import { ChatWindow, GameBoard, SetupBar, StatusBar } from '../components';
 import {
-  GameContext,
-  GamePhase,
-  GameState,
-  Direction,
-  InitialGameState,
-} from '../contexts/Game';
+  SHIP,
+  PlayerState,
+  DIR,
+  PHASE,
+  PLAYER,
+  GridCoor,
+  Ship,
+} from 'common/lib/GameLogic';
+import { PlayerContext } from '../contexts/Player';
+import { HoverStyle } from '../components/GameBoard';
 
 const Game = () => {
-  const [isReady, setIsReady] = useState(false);
-  const [placementDir, setPlacementDir] = useState(Direction.East);
-  const [selected, setSelected] = useState('');
-  const [gameState, setGameState] = useState<GameState>({
-    ...InitialGameState,
-  });
+  const [placementDir, setPlacementDir] = useState(DIR.WEST);
+  const [selected, setSelected] = useState(SHIP.NONE);
+  const [playerState, setPlayerState] = useState(
+    new PlayerState(PLAYER.PLAYER_1)
+  );
+
+  // TODO this is a hack to get react to re-render a component
+  const [trigger, setTrigger] = useState(false);
 
   const socket = useContext(SocketContext);
   const query = useQuery();
   const gameID = query.get('gid');
 
   const handleReady = useCallback(() => {
-    // TODO submit finalized board to server
-    setIsReady(true);
-    setGameState({ ...gameState, phase: GamePhase.Battle });
-  }, [gameState]);
+    if (playerState.allShipsPlaced()) {
+      // TODO submit finalized board to server
+      playerState.phase = PHASE.PLAYER1_TURN;
+      setPlayerState(playerState);
+      setTrigger(!trigger);
+      return true;
+    } else {
+      return false;
+    }
+  }, [playerState, trigger]);
 
   const handleRotate = useCallback(() => {
-    setPlacementDir((dir) =>
-      dir === Direction.North ? Direction.East : Direction.North
-    );
+    setPlacementDir((dir) => (dir === DIR.NORTH ? DIR.WEST : DIR.NORTH));
   }, []);
 
-  const handlePlayerBoardClick = useCallback(() => {
-    if (gameState.phase === GamePhase.Setup) {
-      // Do something with the board
-    }
-  }, [gameState]);
-
-  const handleOpponentBoardClick = useCallback(() => {
-    if (gameState.phase === GamePhase.Battle) {
-      // TODO and it's THIS players turn
-      setGameState({ ...gameState, turn: gameState.turn + 1 });
-    }
-  }, [gameState]);
-
-  const handleSelect = useCallback(
-    (ship: string) => {
-      if (ship === selected) {
-        setSelected('');
-      } else {
-        setSelected(ship);
+  const handlePlayerBoardClick = useCallback(
+    (pos: GridCoor) => {
+      if (playerState.phase === PHASE.SETUP) {
+        if (selected !== SHIP.NONE) {
+          let ship = playerState.ships[selected];
+          ship.orientation = placementDir;
+          ship.locationOfFront = pos;
+          if (playerState.setupBoard.placeShip(ship)) {
+            setPlayerState(playerState);
+            setSelected(SHIP.NONE);
+          }
+        }
       }
     },
-    [selected]
+    [playerState, selected, placementDir]
+  );
+
+  const handlePlayerBoardHover = useCallback(
+    (pos: GridCoor) => {
+      if (playerState.phase === PHASE.SETUP) {
+        if (selected !== SHIP.NONE) {
+          let ship = new Ship(selected, pos, placementDir);
+          if (playerState.setupBoard.canPlaceShip(ship)) {
+            return HoverStyle.Action;
+          } else {
+            return HoverStyle.Error;
+          }
+        }
+        return HoverStyle.Default;
+      }
+      return HoverStyle.None;
+    },
+    [playerState, placementDir, selected]
+  );
+
+  const handleOpponentBoardClick = useCallback(
+    (pos: GridCoor) => {
+      if (
+        playerState.phase === PHASE.PLAYER1_TURN ||
+        playerState.phase === PHASE.PLAYER2_TURN
+      ) {
+      }
+    },
+    [playerState]
+  );
+
+  const handleOpponentBoardHover = useCallback(
+    (pos: GridCoor) => {
+      if (playerState.isPlayersTurn()) {
+        return HoverStyle.Default;
+      }
+      return HoverStyle.None;
+    },
+    [playerState]
+  );
+
+  const handleSelect = useCallback(
+    (ship: SHIP) => {
+      if (ship === selected) {
+        setSelected(SHIP.NONE);
+      } else {
+        if (playerState.ships[ship].placed) {
+          playerState.setupBoard.removeShip(playerState.ships[ship]);
+          setPlayerState(playerState);
+          setSelected(SHIP.NONE);
+          setTrigger(!trigger);
+        } else {
+          setSelected(ship);
+        }
+      }
+    },
+    [selected, playerState, trigger]
   );
 
   useEffect(() => {
@@ -86,25 +146,36 @@ const Game = () => {
   return (
     <section className='game'>
       <RoomContext.Provider value={gameID || 'unknown'}>
-        <GameContext.Provider value={gameState}>
+        <PlayerContext.Provider value={playerState}>
           <StatusBar />
           <div className='box-container'>
-            <GameBoard variant='player' onClick={handlePlayerBoardClick} />
-            <GameBoard variant='opponent' onClick={handleOpponentBoardClick} />
+            <GameBoard
+              variant='player'
+              onClick={handlePlayerBoardClick}
+              onHover={handlePlayerBoardHover}
+              gameBoard={playerState.setupBoard}
+            />
+            <GameBoard
+              variant='opponent'
+              onClick={handleOpponentBoardClick}
+              onHover={handleOpponentBoardHover}
+              gameBoard={playerState.setupBoard}
+            />
           </div>
-          {gameState.phase === GamePhase.Setup ? (
+          {playerState.phase === PHASE.SETUP ? (
             <SetupBar
-              handleReady={handleReady}
+              onReady={handleReady}
               handleRotate={handleRotate}
               handleSelect={handleSelect}
               selected={selected}
+              ships={playerState.ships}
               placementDir={placementDir}
             />
           ) : (
             <></>
           )}
           <ChatWindow />
-        </GameContext.Provider>
+        </PlayerContext.Provider>
       </RoomContext.Provider>
     </section>
   );
