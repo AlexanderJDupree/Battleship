@@ -1,12 +1,24 @@
 export default function About() {
   return (
     <section className='about'>
-      <h1 className='bg-info text-dark text-center'>About Us</h1>
-      <div className='ml-5 mr-5'>
-        <p>Our project and why we did it</p>
+      <h1 className='bg-info text-dark text-center pt-2 pb-2'>The Project</h1>
+      <div className='m-5'>
+        <p>
+          playbattleship.com is a full-stack web application for playing the classic 
+          strategy game, Battleship, in the browser. This application was developed as
+          part of the Full-Stack Web Development course at Portland State University.
+        </p>
+        <p> <br></br>This application was built with the following:</p>
+        <ul>
+          <li>React - Front end Framework</li>
+          <li>Express - Backend Server</li>
+          <li>Typescript - Typed Javascript</li>
+          <li>Socket.io - Web socket library</li>
+          <li>Firebase - Hosting and platform service</li>
+        </ul>
       </div>
       
-      <h2 className='bg-info text-dark text-center'>Our Team</h2>
+      <h2 className='bg-info text-dark text-center pt-1 pb-1'>Our Team</h2>
       <div className="row ml-5 mr-5">
 
         <div className="column">
@@ -17,7 +29,7 @@ export default function About() {
               <p>
                 I'm in my senior year at portland state for computer science. 
                 I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                I like video games, star wars, and dontI have the high ground anakin. 
+                I like video games, star wars, and I have the high ground Anakin. 
               </p>
               <p>kkagawa@pdx.edu</p>
               <p><button className="button"><a href="https://github.com/kkagawa88" className="text-decoration-none">Github</a></button></p>
