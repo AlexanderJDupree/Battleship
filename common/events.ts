@@ -5,6 +5,7 @@
 import { Socket as IOSocket } from 'socket.io';
 import { JoinGameStatus, RoomStatus } from './details';
 import { GameBoard } from './GameLogic';
+import { GridCoor } from './GameLogic';
 
 /**
  * Events that can be sent by either the server or client
@@ -128,10 +129,18 @@ export namespace Client {
    */
   export const ChatMessage = 'chat_message';
 
+  /**
+   * Signal that the player is ready to start
+   */
   export const ReadyUp = 'ready_up';
 
   /**
-   * Typed events interface for Client to Server
+   * Send the player's next shot location
+   */
+  export const TakeShot = 'take_shot';
+
+  /**
+   * Typed events interface for Client to Server event handlers
    */
   export interface Events extends Common.Events {
     connection: (socket: IOSocket) => void;
@@ -147,5 +156,6 @@ export namespace Client {
     leave_room: (gameID: string) => void;
     check_room: (gameID: string, ack: (roomStatus: RoomStatus) => void) => void;
     ready_up: (setupBoard: GameBoard, gameID: string) => void;
+    take_shot: (location: GridCoor) => void;
   }
 }
