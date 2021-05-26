@@ -406,53 +406,56 @@ body {
   About page for card layout
 **********************************************/
 
-/* If screen is small, make cards go from collumns to rows */
-@media screen and (max-width: 414px) {
-  .cards {
-    display: flex;
-    flex-direction: column;
-    
-    .card {
-      margin-bottom: $card-deck-margin;
-    }
+.cards{
+  display: flex;
+  justify-content: center;
+  /*flex-wrap: wrap;*/
+}
 
-    .tabs{
-      margin-bottom: 1.25rem
-    }
-  
-    @include media-breakpoint-up(sm) 
-    {
-      flex-flow: row wrap;
-      margin-right: -$card-deck-margin;
-      margin-left: -$card-deck-margin;
-      
-      .card {
-        display: flex;
-        flex: 1 0 0%;
-        flex-direction: column;
-        margin-right: $card-deck-margin;
-        margin-bottom: 0; 
-        margin-left: $card-deck-margin;
-      }
-    }
+/* If screen is small, make cards go from collumns to rows */
+
+@media screen and (max-width: 414px) 
+{  
+  .card{
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .tabs {
+    margin-bottom: 1.25rem
   }
 }
 
-/* if screen is big, put more space between profiles*/
+/* if screen is big, make */
+@media screen and (min-width: 1024px){
+  .card-deck{
+    display: flex;
+    flex-direction: center;
+  }
+  .card{
+    width: 25%;
+  }
+}
+
+
+
+/*
 @media screen and (min-width: 1024px){
   .cards{
-    justify-content: space-around;
-
-    .card {
-      position: absolute;
-
-      .profile{
-        width: fixed;
-      }
-    }
-    
+    display: grid;
+    justify-content: space-evenly;
   }
+  .card{
+
+    flex-grow: 0;
+  }
+  .profile{
+    box-sizing: border-box;
+  }
+
 }
+*/
+
   
 
 /**********************************************
