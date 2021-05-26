@@ -103,7 +103,7 @@ export interface GameBoard {
   grid: Cell[][];
 }
 
-export function newGameBoard() {
+export function newGameBoard(): GameBoard {
   let newBoard: GameBoard;
   newBoard = {
     grid: new Array(BOARD_SIZE),
@@ -227,7 +227,7 @@ export interface PlayerState {
   ships: Ship[]; // index with SHIP enum
 }
 
-export function newPlayerState(player: PLAYER) {
+export function newPlayerState(player: PLAYER): PlayerState {
   let newPlayer;
   newPlayer = {
     phase: PHASE.SETUP,
@@ -288,13 +288,21 @@ export function allShipsPlaced(player: PlayerState): boolean {
  * Game state
  *****************************************************************************/
 
-export class GameState {
+export interface GameState {
   phase: PHASE;
   players: PlayerState[];
 
-  constructor() {
-    this.phase = PHASE.SETUP;
-    this.players.push(newPlayerState(PLAYER.PLAYER_1));
-    this.players.push(newPlayerState(PLAYER.PLAYER_2));
-  }
+}
+
+export function newGameState(): GameState {
+  let newGame: GameState;
+  newGame = {
+    phase: PHASE.SETUP,
+    players: new Array(2),
+  };
+
+  newGame.players[PLAYER.PLAYER_1] = newPlayerState(PLAYER.PLAYER_1);
+  newGame.players[PLAYER.PLAYER_1] = newPlayerState(PLAYER.PLAYER_2);
+
+  return newGame;
 }
