@@ -1,6 +1,7 @@
 /*****************************************************************************
  * Constants and utility types
  *****************************************************************************/
+type UserID = string;
 
 export const BOARD_SIZE = 10;
 
@@ -290,19 +291,26 @@ export function allShipsPlaced(player: PlayerState): boolean {
 
 export interface GameState {
   phase: PHASE;
-  players: PlayerState[];
-
+  playerStates: PlayerState[];
+  playerIDs: UserID[];
+  isPublic: boolean;
+  todo?: 'implement me';
+  expiry?: number;
 }
 
 export function newGameState(): GameState {
   let newGame: GameState;
   newGame = {
     phase: PHASE.SETUP,
-    players: new Array(2),
+    playerStates: new Array(2),
+    playerIDs: new Array(2),
+    isPublic: true,
   };
 
-  newGame.players[PLAYER.PLAYER_1] = newPlayerState(PLAYER.PLAYER_1);
-  newGame.players[PLAYER.PLAYER_1] = newPlayerState(PLAYER.PLAYER_2);
+  newGame.playerStates[0] = newPlayerState(PLAYER.PLAYER_1);
+  newGame.playerStates[1] = newPlayerState(PLAYER.PLAYER_2);
+  newGame.playerIDs[0] = '';
+  newGame.playerIDs[1] = '';
 
   return newGame;
 }
