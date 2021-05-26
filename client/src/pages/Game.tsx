@@ -13,6 +13,9 @@ import {
   GridCoor,
   Ship,
   newShip,
+  placeShip,
+  canPlaceShip,
+  removeShip,
 } from 'common/lib/GameLogic';
 import { PlayerContext } from '../contexts/Player';
 import { HoverStyle } from '../components/GameBoard';
@@ -54,7 +57,7 @@ const Game = () => {
           let ship = playerState.ships[selected];
           ship.orientation = placementDir;
           ship.locationOfFront = pos;
-          if (playerState.setupBoard.placeShip(ship)) {
+          if (placeShip(playerState.setupBoard, ship)) {
             setPlayerState(playerState);
             setSelected(SHIP.NONE);
           }
@@ -69,7 +72,7 @@ const Game = () => {
       if (playerState.phase === PHASE.SETUP) {
         if (selected !== SHIP.NONE) {
           let ship = newShip(selected, pos, placementDir);
-          if (playerState.setupBoard.canPlaceShip(ship)) {
+          if (canPlaceShip(playerState.setupBoard, ship)) {
             return HoverStyle.Action;
           } else {
             return HoverStyle.Error;
@@ -109,7 +112,7 @@ const Game = () => {
         setSelected(SHIP.NONE);
       } else {
         if (playerState.ships[ship].placed) {
-          playerState.setupBoard.removeShip(playerState.ships[ship]);
+          removeShip(playerState.setupBoard, playerState.ships[ship]);
           setPlayerState(playerState);
           setSelected(SHIP.NONE);
           setTrigger(!trigger);

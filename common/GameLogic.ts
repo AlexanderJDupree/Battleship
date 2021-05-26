@@ -99,113 +99,116 @@ export function newShip(type: SHIP, position: GridCoor, orientation: DIR): Ship 
  * Game board
  *****************************************************************************/
 
-export class GameBoard {
+export interface GameBoard {
   grid: Cell[][];
+}
 
-  constructor() {
-    this.grid = new Array(BOARD_SIZE);
-
-    for (let j = 0; j < BOARD_SIZE; j++) {
-      this.grid[j] = new Array(BOARD_SIZE);
-      for (let i = 0; i < BOARD_SIZE; i++) {
-        let newCell = {
-          ship: SHIP.NONE,
-          firedUpon: false,
-        };
-        this.grid[j][i] = newCell;
-      }
+export function newGameBoard() {
+  let newBoard: GameBoard;
+  newBoard = {
+    grid: new Array(BOARD_SIZE),
+  };
+  for (let j = 0; j < BOARD_SIZE; j++) {
+    newBoard.grid[j] = new Array(BOARD_SIZE);
+    for (let i = 0; i < BOARD_SIZE; i++) {
+      let newCell = {
+        ship: SHIP.NONE,
+        firedUpon: false,
+      };
+      newBoard.grid[j][i] = newCell;
     }
   }
+  return newBoard;
+}
 
-  placeShip(ship: Ship): boolean {
-    if (!this.canPlaceShip(ship)) {
+export function placeShip(board: GameBoard, ship: Ship): boolean {
+  if (!canPlaceShip(board, ship)) {
+    return false;
+  }
+
+  let start = ship.locationOfFront;
+  let dir = ship.orientation;
+  let length = SHIP_SIZES[ship.type];
+  let curCoor = { x: start.x, y: start.y };
+
+  for (let i = 0; i < length; i++) {
+    board.grid[curCoor.y][curCoor.x] = { ship: ship.type, firedUpon: false };
+    curCoor = nextCellOfShip(curCoor, dir);
+  }
+
+  ship.placed = true;
+
+  return true;
+}
+
+export function canPlaceShip(board: GameBoard, ship: Ship): boolean {
+  let start = ship.locationOfFront;
+  let dir = ship.orientation;
+  let length = SHIP_SIZES[ship.type];
+
+  // check if we can place ship
+  let curCoor = { x: start.x, y: start.y };
+  for (let i = 0; i < length; i++) {
+    if (!isOnBoard(curCoor)) {
       return false;
     }
-
-    let start = ship.locationOfFront;
-    let dir = ship.orientation;
-    let length = SHIP_SIZES[ship.type];
-    let curCoor = { x: start.x, y: start.y };
-
-    for (let i = 0; i < length; i++) {
-      this.grid[curCoor.y][curCoor.x] = { ship: ship.type, firedUpon: false };
-      curCoor = this.nextCellOfShip(curCoor, dir);
-    }
-
-    ship.placed = true;
-
-    return true;
-  }
-
-  canPlaceShip(ship: Ship): boolean {
-    let start = ship.locationOfFront;
-    let dir = ship.orientation;
-    let length = SHIP_SIZES[ship.type];
-
-    // check if we can place ship
-    let curCoor = { x: start.x, y: start.y };
-    for (let i = 0; i < length; i++) {
-      if (!this.isOnBoard(curCoor)) {
-        return false;
-      }
-      if (this.grid[curCoor.y][curCoor.x].ship != SHIP.NONE) {
-        return false;
-      }
-      curCoor = this.nextCellOfShip(curCoor, dir);
-    }
-
-    return true;
-  }
-
-  removeShip(ship: Ship): boolean {
-    if (!ship.placed) {
+    if (board.grid[curCoor.y][curCoor.x].ship != SHIP.NONE) {
       return false;
     }
+    curCoor = nextCellOfShip(curCoor, dir);
+  }
 
-    let start = ship.locationOfFront;
-    let dir = ship.orientation;
-    let length = SHIP_SIZES[ship.type];
+  return true;
+}
 
-    let curCoor = { x: start.x, y: start.y };
-    for (let i = 0; i < length; ++i) {
-      if (this.isOnBoard(curCoor)) {
-        this.grid[curCoor.y][curCoor.x] = { ship: SHIP.NONE, firedUpon: false };
-      }
-      curCoor = this.nextCellOfShip(curCoor, dir);
+export function removeShip(board: GameBoard, ship: Ship): boolean {
+  if (!ship.placed) {
+    return false;
+  }
+
+  let start = ship.locationOfFront;
+  let dir = ship.orientation;
+  let length = SHIP_SIZES[ship.type];
+
+  let curCoor = { x: start.x, y: start.y };
+  for (let i = 0; i < length; ++i) {
+    if (isOnBoard(curCoor)) {
+      board.grid[curCoor.y][curCoor.x] = { ship: SHIP.NONE, firedUpon: false };
     }
-
-    ship.placed = false;
-
-    return true;
+    curCoor = nextCellOfShip(curCoor, dir);
   }
 
-  private nextCellOfShip(curCoor: GridCoor, shipFacing: DIR): GridCoor {
-    let nextCoor: GridCoor;
-    switch (shipFacing) {
-      case DIR.NORTH:
-        nextCoor = { x: curCoor.x, y: curCoor.y + 1 };
-        break;
-      case DIR.EAST:
-        nextCoor = { x: curCoor.x - 1, y: curCoor.y };
-        break;
-      case DIR.SOUTH:
-        nextCoor = { x: curCoor.x, y: curCoor.y - 1 };
-        break;
-      case DIR.WEST:
-        nextCoor = { x: curCoor.x + 1, y: curCoor.y };
-        break;
-      default:
-        break;
-    }
+  ship.placed = false;
 
-    return nextCoor;
+  return true;
+}
+
+export function nextCellOfShip(curCoor: GridCoor, shipFacing: DIR): GridCoor {
+  let nextCoor: GridCoor;
+  switch (shipFacing) {
+    case DIR.NORTH:
+      nextCoor = { x: curCoor.x, y: curCoor.y + 1 };
+      break;
+    case DIR.EAST:
+      nextCoor = { x: curCoor.x - 1, y: curCoor.y };
+      break;
+    case DIR.SOUTH:
+      nextCoor = { x: curCoor.x, y: curCoor.y - 1 };
+      break;
+    case DIR.WEST:
+      nextCoor = { x: curCoor.x + 1, y: curCoor.y };
+      break;
+    default:
+      break;
   }
 
-  private isOnBoard(coor: GridCoor): boolean {
-    return (
-      0 <= coor.x && coor.x < BOARD_SIZE && 0 <= coor.y && coor.y < BOARD_SIZE
-    );
-  }
+  return nextCoor;
+}
+
+export function isOnBoard(coor: GridCoor): boolean {
+  return (
+    0 <= coor.x && coor.x < BOARD_SIZE && 0 <= coor.y && coor.y < BOARD_SIZE
+  );
 }
 
 /*****************************************************************************
@@ -225,8 +228,8 @@ export class PlayerState {
 
   constructor(player: PLAYER) {
     this.phase = PHASE.SETUP;
-    this.board = new GameBoard();
-    this.setupBoard = new GameBoard();
+    this.board = newGameBoard();
+    this.setupBoard = newGameBoard();
     this.setupValid = false;
     this.player = player;
     this.shots = [];
