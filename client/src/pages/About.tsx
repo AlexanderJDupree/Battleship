@@ -23,11 +23,6 @@ export default function About() {
       <h2 className='bg-info text-dark text-center pt-2 pb-2'>About Us</h2>
       <CardDeck className="pl-3 pr-3">
         <Card>
-              <Nav.Item >
-                <Nav.Link href="#about me">About Me</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link active href="#contacts">Contacts</Nav.Link>
           <Card.Header as="h5">
             Katherine Kagawa
           </Card.Header>
