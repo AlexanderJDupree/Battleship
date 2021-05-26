@@ -17,12 +17,12 @@ export enum PLAYER {
 }
 
 export enum SHIP {
-  DESTROYER,
-  SUBMARINE,
-  CRUISER,
-  BATTLESHIP,
-  CARRIER,
-  NONE,
+  DESTROYER = 0,
+  SUBMARINE = 1,
+  CRUISER = 2,
+  BATTLESHIP = 3,
+  CARRIER = 4,
+  NONE = 5,
 }
 
 export const SHIPS: SHIP[] = [
@@ -73,22 +73,26 @@ export interface Cell {
  * Ship
  *****************************************************************************/
 
-export class Ship {
+export interface Ship {
   type: SHIP;
   isSunk: boolean;
   locationOfFront: GridCoor;
   orientation: DIR;
   numHits: number;
   placed: boolean;
+}
 
-  constructor(type: SHIP, position: GridCoor, orientation: DIR) {
-    this.type = type;
-    this.isSunk = false;
-    this.locationOfFront = position;
-    this.orientation = orientation;
-    this.numHits = 0;
-    this.placed = false;
-  }
+export function newShip(type: SHIP, position: GridCoor, orientation: DIR): Ship {
+  let ship: Ship;
+  ship = {
+    type: type,
+    isSunk: false,
+    locationOfFront: position,
+    orientation: orientation,
+    numHits: 0,
+    placed: false,
+  };
+  return ship;
 }
 
 /*****************************************************************************
@@ -226,13 +230,13 @@ export class PlayerState {
     this.setupValid = false;
     this.player = player;
     this.shots = [];
-    this.ships = [
-      new Ship(SHIP.DESTROYER, { x: 0, y: 0 }, DIR.WEST),
-      new Ship(SHIP.SUBMARINE, { x: 0, y: 0 }, DIR.WEST),
-      new Ship(SHIP.CRUISER, { x: 0, y: 0 }, DIR.WEST),
-      new Ship(SHIP.BATTLESHIP, { x: 0, y: 0 }, DIR.WEST),
-      new Ship(SHIP.CARRIER, { x: 0, y: 0 }, DIR.WEST),
-    ];
+
+    this.ships = new Array(5);
+    this.ships[SHIP.DESTROYER] = newShip(SHIP.DESTROYER, { x: 0, y: 0 }, DIR.WEST);
+    this.ships[SHIP.SUBMARINE] = newShip(SHIP.SUBMARINE, { x: 0, y: 0 }, DIR.WEST);
+    this.ships[SHIP.CRUISER] = newShip(SHIP.CRUISER, { x: 0, y: 0 }, DIR.WEST);
+    this.ships[SHIP.BATTLESHIP] = newShip(SHIP.BATTLESHIP, { x: 0, y: 0 }, DIR.WEST);
+    this.ships[SHIP.CARRIER] = newShip(SHIP.CARRIER, { x: 0, y: 0 }, DIR.WEST);
   }
 
   isPlayersTurn(): Boolean {

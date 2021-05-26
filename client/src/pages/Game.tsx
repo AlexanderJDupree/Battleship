@@ -12,6 +12,7 @@ import {
   PLAYER,
   GridCoor,
   Ship,
+  newShip,
 } from 'common/lib/GameLogic';
 import { PlayerContext } from '../contexts/Player';
 import { HoverStyle } from '../components/GameBoard';
@@ -67,7 +68,7 @@ const Game = () => {
     (pos: GridCoor) => {
       if (playerState.phase === PHASE.SETUP) {
         if (selected !== SHIP.NONE) {
-          let ship = new Ship(selected, pos, placementDir);
+          let ship = newShip(selected, pos, placementDir);
           if (playerState.setupBoard.canPlaceShip(ship)) {
             return HoverStyle.Action;
           } else {

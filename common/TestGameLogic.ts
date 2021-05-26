@@ -4,6 +4,7 @@ import {DIR} from "./GameLogic";
 import {GridCoor} from "./GameLogic";
 import {GameBoard} from "./GameLogic";
 import {BOARD_SIZE} from "./GameLogic";
+import {newShip} from "./GameLogic";
 
 
 /*
@@ -44,7 +45,7 @@ function placeShip(board: GameBoard, ship: Ship) {
 }
 
 let board = new GameBoard();
-let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.EAST);
+let ship = newShip(SHIP.BATTLESHIP, {x:9, y:9}, DIR.EAST);
 console.log(ship);
 printBoard(board);
 placeShip(board, ship);
