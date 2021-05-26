@@ -21,8 +21,8 @@ export default function About() {
       </Container>
 
       <h2 className='bg-info text-dark text-center pt-2 pb-2'>About Us</h2>
-      <CardDeck className="pl-3 pr-3">
-        <Card>
+      <CardDeck className="cards pl-3 pr-3">
+        <Card className="card">
           <Card.Header as="h5">
             Katherine Kagawa
           </Card.Header>
@@ -41,58 +41,13 @@ export default function About() {
                 </p>
               </Tab>
               <Tab eventKey="profile" title="Profile">
+                <p>hi</p>
               </Tab>
             </Tabs>
           </Card.Body>
         </Card>
 
-        <Card>
-          <Card.Header as="h5">
-            Your Name
-          </Card.Header>
-          <Card.Img 
-            variant="top" 
-            src=""
-            alt="Profile picture of ---"
-          />
-          <Card.Body>
-            <Tabs defaultActiveKey="home" id="uncontrolled-tab-example">
-              <Tab eventKey="home" title="Home">
-                <p className="pt-3">
-                  
-                </p>
-              </Tab>
-              <Tab eventKey="profile" title="Profile">
-
-              </Tab>
-            </Tabs>
-          </Card.Body>
-        </Card>
-
-        <Card>
-          <Card.Header as="h5">
-            Your Name
-          </Card.Header>
-          <Card.Img 
-            variant="top" 
-            src=""
-            alt="Profile picture of ---"
-          />
-          <Card.Body>
-            <Tabs defaultActiveKey="home" id="uncontrolled-tab-example">
-              <Tab eventKey="home" title="Home">
-                <p>
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="profile" title="Profile">
-                
-              </Tab>
-            </Tabs>
-          </Card.Body>
-        </Card>
+        
 
       </CardDeck>
     </div>
