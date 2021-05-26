@@ -1,4 +1,4 @@
-import {CardDeck, Card, Nav, Container, Tab, Tabs} from 'react-bootstrap';
+import {CardDeck, Card, Nav, Container, Tab, Tabs, Row, Col} from 'react-bootstrap';
 
 export default function About() {
   return (
@@ -27,6 +27,59 @@ export default function About() {
             Katherine Kagawa
           </Card.Header>
           <Card.Img 
+            id="profile"
+            variant="top" 
+            src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg"
+            alt="Profile picture of Katherine"
+          />
+          <Card.Body>
+          <section className="tabs">
+            <Tabs className="extra-content" defaultActiveKey="" id="uncontrolled-tab-example">
+              <Tab eventKey="about-me" title="About Me">
+                <p className="pt-4">
+                  I'm in my senior year at portland state for computer science. 
+                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
+                  I like video games, star wars, and I have the high ground Anakin. 
+                </p>
+              </Tab>
+              <Tab eventKey="contact" title="Contacts">
+                <p>hi</p>
+              </Tab>
+            </Tabs>
+          </section>
+          </Card.Body>
+        </Card>
+        <Card className="card">
+          <Card.Header as="h5">
+            Katherine Kagawa
+          </Card.Header>
+          <Card.Img 
+            id="profile"
+            variant="top" 
+            src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg"
+            alt="Profile picture of Katherine"
+          />
+          <Card.Body>
+            <Tabs defaultActiveKey="" id="uncontrolled-tab-example">
+              <Tab eventKey="home" title="Home">
+                <p className="pt-3">
+                  I'm in my senior year at portland state for computer science. 
+                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
+                  I like video games, star wars, and I have the high ground Anakin. 
+                </p>
+              </Tab>
+              <Tab eventKey="profile" title="Profile">
+                <p>hi</p>
+              </Tab>
+            </Tabs>
+          </Card.Body>
+        </Card>
+        <Card className="card">
+          <Card.Header as="h5">
+            Katherine Kagawa
+          </Card.Header>
+          <Card.Img 
+            id="profile"
             variant="top" 
             src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg"
             alt="Profile picture of Katherine"

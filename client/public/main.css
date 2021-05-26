@@ -407,21 +407,51 @@ body {
 **********************************************/
 
 /* If screen is small, make cards go from collumns to rows */
-.cards {
-  display: flex;
-  flex-direction: column;  
+@media screen and (max-width: 414px) {
+  .cards {
+    display: flex;
+    flex-direction: column;
+    
+    .card {
+      margin-bottom: $card-deck-margin;
+    }
 
-  @include media-breakpoint-up(sm) 
-  {
-    flex-flow: row wrap;
-    margin-right: -$card-deck-margin;
-    margin-left: -$card-deck-margin;
-
+    .tabs{
+      margin-bottom: 1.25rem
+    }
+  
+    @include media-breakpoint-up(sm) 
+    {
+      flex-flow: row wrap;
+      margin-right: -$card-deck-margin;
+      margin-left: -$card-deck-margin;
+      
+      .card {
+        display: flex;
+        flex: 1 0 0%;
+        flex-direction: column;
+        margin-right: $card-deck-margin;
+        margin-bottom: 0; 
+        margin-left: $card-deck-margin;
+      }
+    }
   }
 }
 
-@media screen and (max-width: 650px) {
+/* if screen is big, put more space between profiles*/
+@media screen and (min-width: 1024px){
+  .cards{
+    justify-content: space-around;
 
+    .card {
+      position: absolute;
+
+      .profile{
+        width: fixed;
+      }
+    }
+    
+  }
 }
   
 
