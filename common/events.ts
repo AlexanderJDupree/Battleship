@@ -6,6 +6,7 @@ import { Socket as IOSocket } from 'socket.io';
 import { JoinGameStatus, RoomStatus } from './details';
 import { GameBoard } from './GameLogic';
 import { GridCoor } from './GameLogic';
+import { GameState } from './GameLogic';
 
 /**
  * Events that can be sent by either the server or client
@@ -68,6 +69,11 @@ export namespace Server {
   export const ChatMessage = 'relay_chat_message';
 
   /**
+   * Send gamestate to a client
+   */
+  export const UpdateGameState = 'update_game_state';
+
+  /**
    * Typed events interface for Server to Client
    */
   export interface Events extends Common.Events {
@@ -82,6 +88,7 @@ export namespace Server {
       username: string;
       msg: string;
     }) => void;
+    update_game_state: (newGameState: GameState) => void;
   }
 }
 
@@ -140,6 +147,11 @@ export namespace Client {
   export const TakeShot = 'take_shot';
 
   /**
+   * Notify server that player resigns
+   */
+  export const Resign = 'resign';
+
+  /**
    * Typed events interface for Client to Server event handlers
    */
   export interface Events extends Common.Events {
@@ -157,5 +169,6 @@ export namespace Client {
     check_room: (gameID: string, ack: (roomStatus: RoomStatus) => void) => void;
     ready_up: (setupBoard: GameBoard, gameID: string) => void;
     take_shot: (location: GridCoor) => void;
+    resign: (gameID: string) => void;
   }
 }
