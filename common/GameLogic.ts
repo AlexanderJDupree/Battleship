@@ -217,7 +217,7 @@ export function isOnBoard(coor: GridCoor): boolean {
 
 // this is sent by the server to the client every time the game state changes.
 // should contain all the info needed for the client to render the game.
-export class PlayerState {
+export interface PlayerState {
   phase: PHASE;
   board: GameBoard;
   setupBoard: GameBoard;
@@ -225,59 +225,63 @@ export class PlayerState {
   player: PLAYER;
   shots: GridCoor[]; // list of shots this player has taken
   ships: Ship[]; // index with SHIP enum
+}
 
-  constructor(player: PLAYER) {
-    this.phase = PHASE.SETUP;
-    this.board = newGameBoard();
-    this.setupBoard = newGameBoard();
-    this.setupValid = false;
-    this.player = player;
-    this.shots = [];
+export function newPlayerState(player: PLAYER) {
+  let newPlayer;
+  newPlayer = {
+    phase: PHASE.SETUP,
+    board: newGameBoard(),
+    setupBoard: newGameBoard(),
+    setupValid: false,
+    player: player,
+    shots: [],
+    ships: new Array(5),
+  };
 
-    this.ships = new Array(5);
-    this.ships[SHIP.DESTROYER] = newShip(SHIP.DESTROYER, { x: 0, y: 0 }, DIR.WEST);
-    this.ships[SHIP.SUBMARINE] = newShip(SHIP.SUBMARINE, { x: 0, y: 0 }, DIR.WEST);
-    this.ships[SHIP.CRUISER] = newShip(SHIP.CRUISER, { x: 0, y: 0 }, DIR.WEST);
-    this.ships[SHIP.BATTLESHIP] = newShip(SHIP.BATTLESHIP, { x: 0, y: 0 }, DIR.WEST);
-    this.ships[SHIP.CARRIER] = newShip(SHIP.CARRIER, { x: 0, y: 0 }, DIR.WEST);
+  newPlayer.ships[SHIP.DESTROYER] = newShip(SHIP.DESTROYER, { x: 0, y: 0 }, DIR.WEST);
+  newPlayer.ships[SHIP.SUBMARINE] = newShip(SHIP.SUBMARINE, { x: 0, y: 0 }, DIR.WEST);
+  newPlayer.ships[SHIP.CRUISER] = newShip(SHIP.CRUISER, { x: 0, y: 0 }, DIR.WEST);
+  newPlayer.ships[SHIP.BATTLESHIP] = newShip(SHIP.BATTLESHIP, { x: 0, y: 0 }, DIR.WEST);
+  newPlayer.ships[SHIP.CARRIER] = newShip(SHIP.CARRIER, { x: 0, y: 0 }, DIR.WEST);
+  return newPlayer;
+}
+
+export function isPlayersTurn(player: PlayerState): Boolean {
+  if (player.phase === PHASE.PLAYER1_TURN) {
+    return player.player === PLAYER.PLAYER_1;
+  } else if (player.phase === PHASE.PLAYER2_TURN) {
+    return player.player === PLAYER.PLAYER_2;
+  } else {
+    return false;
   }
+}
 
-  isPlayersTurn(): Boolean {
-    if (this.phase === PHASE.PLAYER1_TURN) {
-      return this.player === PLAYER.PLAYER_1;
-    } else if (this.phase === PHASE.PLAYER2_TURN) {
-      return this.player === PLAYER.PLAYER_2;
-    } else {
-      return false;
+// check for repeat shots or shots out of bounds
+// returns the ship type if it was a hit, SHIP.NONE if miss
+export function fireAtPlayer(player: PlayerState, coor: GridCoor): SHIP {
+  let cellLabel = player.board[coor.y][coor.x].ship;
+  if (cellLabel != SHIP.NONE) {
+    let targetShip = player.ships[cellLabel];
+    targetShip.numHits++;
+    if (targetShip.numHits >= SHIP_SIZES[cellLabel]) {
+      targetShip.isSunk = true;
     }
   }
 
-  // check for repeat shots or shots out of bounds
-  // returns the ship type if it was a hit, SHIP.NONE if miss
-  fireAtPlayer(coor: GridCoor): SHIP {
-    let cellLabel = this.board[coor.y][coor.x].ship;
-    if (cellLabel != SHIP.NONE) {
-      let targetShip = this.ships[cellLabel];
-      targetShip.numHits++;
-      if (targetShip.numHits >= SHIP_SIZES[cellLabel]) {
-        targetShip.isSunk = true;
-      }
-    }
-
-    this.board[coor.y][coor.x].firedUpon = true;
+    player.board[coor.y][coor.x].firedUpon = true;
 
     return cellLabel;
   }
 
-  allShipsPlaced(): boolean {
-    for (let i = 0; i < 5; i++) {
-      if (!this.ships[i].placed) {
-        return false;
-      }
+export function allShipsPlaced(player: PlayerState): boolean {
+  for (let i = 0; i < 5; i++) {
+    if (!player.ships[i].placed) {
+      return false;
     }
-
-    return true;
   }
+
+  return true;
 }
 
 /*****************************************************************************
@@ -290,7 +294,7 @@ export class GameState {
 
   constructor() {
     this.phase = PHASE.SETUP;
-    this.players.push(new PlayerState(PLAYER.PLAYER_1));
-    this.players.push(new PlayerState(PLAYER.PLAYER_2));
+    this.players.push(newPlayerState(PLAYER.PLAYER_1));
+    this.players.push(newPlayerState(PLAYER.PLAYER_2));
   }
 }

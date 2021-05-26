@@ -16,6 +16,9 @@ import {
   placeShip,
   canPlaceShip,
   removeShip,
+  newPlayerState,
+  allShipsPlaced,
+  isPlayersTurn,
 } from 'common/lib/GameLogic';
 import { PlayerContext } from '../contexts/Player';
 import { HoverStyle } from '../components/GameBoard';
@@ -24,7 +27,7 @@ const Game = () => {
   const [placementDir, setPlacementDir] = useState(DIR.WEST);
   const [selected, setSelected] = useState(SHIP.NONE);
   const [playerState, setPlayerState] = useState(
-    new PlayerState(PLAYER.PLAYER_1)
+    newPlayerState(PLAYER.PLAYER_1)
   );
 
   // TODO this is a hack to get react to re-render a component
@@ -35,7 +38,7 @@ const Game = () => {
   const gameID = query.get('gid');
 
   const handleReady = useCallback(() => {
-    if (playerState.allShipsPlaced()) {
+    if (allShipsPlaced(playerState)) {
       // TODO submit finalized board to server
       playerState.phase = PHASE.PLAYER1_TURN;
       setPlayerState(playerState);
@@ -98,7 +101,7 @@ const Game = () => {
 
   const handleOpponentBoardHover = useCallback(
     (pos: GridCoor) => {
-      if (playerState.isPlayersTurn()) {
+      if (isPlayersTurn(playerState)) {
         return HoverStyle.Default;
       }
       return HoverStyle.None;
