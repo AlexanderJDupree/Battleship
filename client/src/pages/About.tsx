@@ -1,4 +1,12 @@
-import {CardDeck, Card, Container, Tab, Tabs } from 'react-bootstrap';
+import {CardDeck, Card, Container, Tab, Tabs, Jumbotron } from 'react-bootstrap';
+
+/*
+  Checklist for new user:
+    name
+    blurb about yourself
+    contact information - email, github username
+    link to github at github button
+*/
 
 export default function About() {
   return (
@@ -10,7 +18,7 @@ export default function About() {
           strategy game, Battleship, in the browser. This application was developed as
           part of the Full-Stack Web Development course at Portland State University.
         </p>
-        <p> <br></br>This application was built with the following:</p>
+        <p> <br/>This application was built with the following:</p>
         <ul>
           <li>React - Front end Framework</li>
           <li>Express - Backend Server</li>
@@ -19,176 +27,133 @@ export default function About() {
           <li>Firebase - Hosting and platform service</li>
         </ul>
       </Container>
+    
+      <h2 className='bg-info text-dark text-center pt-2 pb-2'>About us</h2>
 
-    <div className="cards">
-      <div className="card mr-2">
-        <img className="card-img-top" src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg" alt="Card image top"/>
-        <div className="card-body">
-          <h3 className="card-title">Card title</h3>
-            <Tabs className="content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
-              <Tab eventKey="about-me" title="About Me">
-                <p className="pt-4">
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="contact" title="Contacts">
-                <p>hi</p>
-              </Tab>
-            </Tabs>
-        </div>
-      </div>
-      <div className="card mr-2">
-        <img className="card-img-top" src="https://source.unsplash.com/daily" alt="Card image top"/>
-        <div className="card-body">
-          <h3 className="card-title">Card title</h3>
-            <Tabs className="content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
-              <Tab eventKey="about-me" title="About Me">
-                <p className="pt-4">
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="contact" title="Contacts">
-                <p>hi</p>
-              </Tab>
-            </Tabs>
-        </div>
-      </div>
-      <div className="card">
-        <img className="card-img-top" src="https://source.unsplash.com/daily" alt="Card image top"/>
-        <div className="card-body">
-          <h3 className="card-title">Card title</h3>
-            <Tabs className="content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
-              <Tab eventKey="about-me" title="About Me">
-                <p className="pt-4">
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="contact" title="Contacts">
-                <p>hi</p>
-              </Tab>
-            </Tabs>
-        </div>
-      </div>
-      </div>
+        <CardDeck className="cards p-3">
+          <Card className="card">
+            <Card.Header as="h4">
+              Katherine Kagawa
+            </Card.Header>
+            <Card.Img 
+              id="profile"
+              variant="top" 
+              src="https://media.tenor.com/images/f100f09abc30a5e698366e354a407033/tenor.gif"
+              alt="Profile picture of Katherine"
+            />
+            <Card.Body>
+            <section className="tabs">
+              <Tabs className="extra-content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
+                <Tab eventKey="about-me" title="About Me">
+                  <p className="pt-4">
+                    I'm in my senior year at portland state for computer science. 
+                    I'm most comfortable with c++, c, java, javascript, python, and typescript. 
+                    I like video games, star wars, and I have the high ground Anakin. 
+                  </p>
+                </Tab>
+                <Tab id="contacts" eventKey="contact" title="Contacts">
+                  <div className="pt-4">
+                    <p>
+                        Email: kkagawa <br/>
+                        Github Username: kkagawa88<br/>
+                        Look at my github to see some of my other projects!
+                    </p>
+                    <div className="d-flex justify-content-center">
+                      <button className="bg-light">
+                          Check it out! 
+                        <i className="fa fa-github">
+                          <a href="https://github.com/kkagawa88"/>  
+                        </i>
+                      </button>
+                    </div>
+                  </div>
+                </Tab>
+              </Tabs>
+            </section>
+            </Card.Body>
+          </Card>
 
+          <Card className="card">
+            <Card.Header as="h4">
+              Your Name
+            </Card.Header>
+            <Card.Img 
+              id="profile"
+              variant="top" 
+              src=""
+              alt="Profile picture"
+            />
+            <Card.Body>
+            <section className="tabs">
+              <Tabs className="extra-content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
+                <Tab eventKey="about-me" title="About Me">
+                  <p className="pt-4">
+                    Write some stuff about you
+                  </p>
+                </Tab>
+                <Tab id="contacts" eventKey="contact" title="Contacts">
+                  <div className="pt-4">
+                    <p>
+                        Email: <br/>
+                        Github Username: <br/>
+                        Look at my github to see some of my other projects! 
+                    </p>
+                    <div className="d-flex justify-content-center">
+                      <button className="bg-light">
+                          Check it out! 
+                        <i className="fa fa-github">
+                            <a href="https://github.com"/>
+                        </i>
+                      </button>
+                    </div>
+                  </div>
+                </Tab>
+              </Tabs>
+            </section>
+            </Card.Body>
+          </Card>
 
+          <Card className="card">
+            <Card.Header as="h4">
+              Your Name
+            </Card.Header>
+            <Card.Img 
+              id="profile"
+              variant="top" 
+              src=""
+              alt="Profile picture"
+            />
+            <Card.Body>
+            <section className="tabs">
+              <Tabs className="extra-content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
+                <Tab eventKey="about-me" title="About Me">
+                  <p className="pt-4">
+                    Write some stuff about you
+                  </p>
+                </Tab>
+                <Tab id="contacts" eventKey="contact" title="Contacts">
+                  <div className="pt-4">
+                    <p>
+                        Email: <br/>
+                        Github Username: <br/>
+                        Look at my github to see some of my other projects! 
+                    </p>
+                    <div className="d-flex justify-content-center">
+                      <button className="bg-light">
+                          Check it out! 
+                        <i className="fa fa-github">
+                            <a href="https://github.com"/>
+                        </i>
+                      </button>
+                    </div>
+                  </div>
+                </Tab>
+              </Tabs>
+            </section>
+            </Card.Body>
+          </Card>
 
-      <h2 className='bg-info text-dark text-center pt-2 pb-2'>About Us</h2>
-      <div className="cards">
-        <div className="card">
-          <header>
-            <h5 className="card-title">
-              Card title
-            </h5>
-          </header>
-          <img className="card-img-top" 
-            id="profile" 
-            src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg"
-            alt="Profile picture of Katherine"
-         />
-          <div className="card-body">
-            <Tabs className="content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
-              <Tab eventKey="about-me" title="About Me">
-                <p className="pt-4">
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="contact" title="Contacts">
-                <p>hi</p>
-              </Tab>
-            </Tabs>
-          </div>
-        </div>
-
-        <div className="card">
-          <img className="card-img-top" src="..." alt="Card image cap"/>
-          <div className="card-body">
-            <h5 className="card-title">Card title</h5>
-            <p className="card-text">This card has supporting text below as a natural lead-in to additional content.</p>
-            <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-          </div>
-        </div>
-        <div className="card">
-          <img className="card-img-top" src="..." alt="Card image cap"/>
-          <div className="card-body">
-            <h5 className="card-title">Card title</h5>
-            <p className="card-text">This is a wider card with supporting text below as a natural lead-in to additional content. This card has even longer content than the first to show that equal height action.</p>
-            <p className="card-text"><small className="text-muted">Last updated 3 mins ago</small></p>
-          </div>
-        </div>
-      </div>
-
-
-      <CardDeck className="pl-3 pr-3">
-        <Card >
-          <Card.Header as="h5">
-            Katherine Kagawa
-          </Card.Header>
-          <Card.Img 
-            id="profile"
-            variant="top" 
-            src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg"
-            alt="Profile picture of Katherine"
-          />
-          <Card.Body>
-          <section className="tabs">
-            <Tabs className="extra-content" defaultActiveKey="" id="uncontrolled-tab-example">
-              <Tab eventKey="about-me" title="About Me">
-                <p className="pt-4">
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="contact" title="Contacts">
-                <p>hi</p>
-              </Tab>
-            </Tabs>
-          </section>
-          </Card.Body>
-        </Card>
-        <Card >
-          <Card.Header as="h5">
-            Katherine Kagawa
-          </Card.Header>
-          <Card.Img 
-            id="profile"
-            variant="top" 
-            src="https://i.kym-cdn.com/entries/icons/facebook/000/022/875/Screen_Shot_2017-05-03_at_12.14.21_PM.jpg"
-            alt="Profile picture of Katherine"
-          />
-          <Card.Body>
-          <section className="tabs">
-            <Tabs className="extra-content" defaultActiveKey="" id="uncontrolled-tab-example">
-              <Tab eventKey="about-me" title="About Me">
-                <p className="pt-4">
-                  I'm in my senior year at portland state for computer science. 
-                  I'm most comfortable with c++, c, java, javascript, python, and typescript. 
-                  I like video games, star wars, and I have the high ground Anakin. 
-                </p>
-              </Tab>
-              <Tab eventKey="contact" title="Contacts">
-                <p>hi</p>
-              </Tab>
-            </Tabs>
-          </section>
-          </Card.Body>
-        </Card>
-
-
-        
-
-      </CardDeck>
+        </CardDeck>
     </div>
-
-
   );
 }

@@ -406,23 +406,45 @@ body {
   About page for card layout
 **********************************************/
 
-.cards{
-  display: flex;
-  justify-content: center;
-  /*flex-wrap: wrap;*/
+/* background image*/
+.jumbotron.battleship-image
+{
+  background-image: '../docs/images/cosmetic-images/battleship.jpg';
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
 }
 
 /* If screen is small, make cards go from collumns to rows */
-
-@media screen and (max-width: 414px) 
-{  
-  .card{
+@media screen and (max-width: 414px) {
+  .cards {
     display: flex;
-    flex-wrap: wrap;
-  }
+    flex-direction: column;
+    
+    .card {
+      margin-bottom: $card-deck-margin;
+    }
 
-  .tabs {
-    margin-bottom: 1.25rem
+    .tabs{
+      margin-bottom: 1.25rem
+    }
+  
+    @include media-breakpoint-up(sm) 
+    {
+      flex-flow: row wrap;
+      margin-right: -$card-deck-margin;
+      margin-left: -$card-deck-margin;
+      
+      .card {
+        display: flex;
+        flex: 1 0 0%;
+        flex-direction: column;
+        margin-right: $card-deck-margin;
+        margin-bottom: 0; 
+        margin-left: $card-deck-margin;
+      }
+    }
   }
 }
 
@@ -433,29 +455,9 @@ body {
     flex-direction: center;
   }
   .card{
-    width: 25%;
+    width: 25em;
   }
 }
-
-
-
-/*
-@media screen and (min-width: 1024px){
-  .cards{
-    display: grid;
-    justify-content: space-evenly;
-  }
-  .card{
-
-    flex-grow: 0;
-  }
-  .profile{
-    box-sizing: border-box;
-  }
-
-}
-*/
-
   
 
 /**********************************************
@@ -464,15 +466,19 @@ body {
 
 /* Style icons */
 .fa {
-  padding: 20px;
+  padding: 10px;
   font-size: 30px;
   width: 50px;
   text-align: center;
   text-decoration: none;
 }
 
+/*social media button*/
+#contacts .button{
+  border-radius: 12px;
+}
+
 /* Add a hover effect*/
 .fa:hover {
   opacity: 0.7;
 }
-
