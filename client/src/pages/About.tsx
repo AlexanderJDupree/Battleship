@@ -1,4 +1,4 @@
-import {CardDeck, Card, Container, Tab, Tabs, Jumbotron } from 'react-bootstrap';
+import {CardDeck, Card, Container, Tab, Tabs, Jumbotron, Button } from 'react-bootstrap';
 
 /*
   Checklist for new user:
@@ -11,7 +11,7 @@ import {CardDeck, Card, Container, Tab, Tabs, Jumbotron } from 'react-bootstrap'
 export default function About() {
   return (
     <div>
-      <h1 className='bg-info text-dark text-center pt-2 pb-2'>The Project</h1>
+      <h1 className=' bg-info text-dark text-center pt-2 pb-2'>The Project</h1>
       <Container className="pt-4 pb-4 ">
         <p>
           playbattleship.com is a full-stack web application for playing the classic 
@@ -27,9 +27,11 @@ export default function About() {
           <li>Firebase - Hosting and platform service</li>
         </ul>
       </Container>
-    
-      <h2 className='bg-info text-dark text-center pt-2 pb-2'>About us</h2>
 
+ 
+      <h2 className='bg-info text-dark text-center pt-2 pb-2 mb-0'>About us</h2>
+      
+      <Jumbotron className="battleship-image mt-0 mb-0 rounded-0">
         <CardDeck className="cards p-3">
           <Card className="card">
             <Card.Header as="h4">
@@ -59,12 +61,12 @@ export default function About() {
                         Look at my github to see some of my other projects!
                     </p>
                     <div className="d-flex justify-content-center">
-                      <button className="bg-light">
+                      <Button variant="outline-info">
                           Check it out! 
                         <i className="fa fa-github">
                           <a href="https://github.com/kkagawa88"/>  
                         </i>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </Tab>
@@ -72,6 +74,7 @@ export default function About() {
             </section>
             </Card.Body>
           </Card>
+
 
           <Card className="card">
             <Card.Header as="h4">
@@ -82,7 +85,7 @@ export default function About() {
               variant="top" 
               src=""
               alt="Profile picture"
-            />
+            />  
             <Card.Body>
             <section className="tabs">
               <Tabs className="extra-content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
@@ -99,12 +102,12 @@ export default function About() {
                         Look at my github to see some of my other projects! 
                     </p>
                     <div className="d-flex justify-content-center">
-                      <button className="bg-light">
+                      <Button variant="outline-info">
                           Check it out! 
                         <i className="fa fa-github">
                             <a href="https://github.com"/>
                         </i>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </Tab>
@@ -113,17 +116,17 @@ export default function About() {
             </Card.Body>
           </Card>
 
-          <Card className="card">
-            <Card.Header as="h4">
-              Your Name
-            </Card.Header>
-            <Card.Img 
-              id="profile"
-              variant="top" 
-              src=""
-              alt="Profile picture"
-            />
-            <Card.Body>
+        <Card className="card">
+          <Card.Header as="h4" className="text-bold">
+            Your Name
+          </Card.Header>
+          <Card.Img 
+            id="profile"
+            variant="top" 
+            src=""
+            alt="Profile picture"
+          />  
+          <Card.Body>
             <section className="tabs">
               <Tabs className="extra-content" defaultActiveKey="about-me" id="uncontrolled-tab-example">
                 <Tab eventKey="about-me" title="About Me">
@@ -138,13 +141,14 @@ export default function About() {
                         Github Username: <br/>
                         Look at my github to see some of my other projects! 
                     </p>
+              
                     <div className="d-flex justify-content-center">
-                      <button className="bg-light">
+                      <Button variant="outline-info">
                           Check it out! 
                         <i className="fa fa-github">
                             <a href="https://github.com"/>
                         </i>
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </Tab>
@@ -152,8 +156,8 @@ export default function About() {
             </section>
             </Card.Body>
           </Card>
-
         </CardDeck>
+      </Jumbotron>
     </div>
   );
 }
