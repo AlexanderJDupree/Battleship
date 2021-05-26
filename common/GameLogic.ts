@@ -309,8 +309,8 @@ export function newGameState(): GameState {
 
   newGame.playerStates[0] = newPlayerState(PLAYER.PLAYER_1);
   newGame.playerStates[1] = newPlayerState(PLAYER.PLAYER_2);
-  newGame.playerIDs[0] = '';
-  newGame.playerIDs[1] = '';
+  newGame.playerIDs[0] = null;
+  newGame.playerIDs[1] = null;
 
   return newGame;
 }

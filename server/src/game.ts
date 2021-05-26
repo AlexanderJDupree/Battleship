@@ -1,14 +1,11 @@
 import { genID } from './utils';
 import { UserID } from './session';
+import {
+  GameState,
+  newGameState,
+} from 'common/lib/GameLogic';
 
 export type GameID = string;
-
-export type GameState = {
-  players: [UserID, UserID?];
-  isPublic: boolean;
-  todo?: 'implement me';
-  expiry?: number;
-};
 
 export interface GameStore {
   get: (gid: GameID) => GameState | undefined;
@@ -48,7 +45,10 @@ export class MemoryGameStore implements GameStore {
 
   create(host: UserID, isPublic: boolean) {
     let gid = genID();
-    this.set(gid, { players: [host, null], isPublic });
+    let newGame = newGameState();
+    newGame.playerIDs[0] = host;
+    newGame.isPublic = isPublic;
+    this.set(gid, newGame);
     return gid;
   }
 
