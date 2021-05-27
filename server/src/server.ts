@@ -18,6 +18,12 @@ import { ExtendedSocket, genID } from './utils';
 import * as config from './config';
 import { MemorySessionStore } from './session';
 import { MemoryGameStore } from './game';
+import {
+  getPlayerState,
+  getOpponentState,
+  fireAtPlayer,
+  SHIP,
+} from 'common/lib/GameLogic';
 
 /// Setup server and socket.io
 const app = Express();
@@ -198,16 +204,14 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     let game = gameStore.get(gameID);
     if (game) {
       if (game.playerIDs.includes(socket.userID)) {
-        // get playerstate of shooter
-        // get playerstate of target
-        // if shot hits a ship:
-        //    increment the ship's shot counter
-        //    if ship destroyed:
-        //      set ship destroyed
-        // add coordinates to shooter's shots list
-        // if gameover
-        //    set gamephase to gameover
-        // send updated gamestate to each player
+        let shooter = getPlayerState(game, socket.userID);
+        let target = getOpponentState(game, socket.userID);
+        let result = fireAtPlayer(target, location);
+        shooter.didLastShotHit = result != SHIP.NONE;
+        shooter.lastShipHit = result;
+        shooter.shots.push(location);
+        io.to(gameID).emit(Server.UpdateGameState, game);
+        gameStore.set(gameID, game);
         console.log('takeshot event received');
       }
     }

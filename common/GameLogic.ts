@@ -227,6 +227,8 @@ export interface PlayerState {
   player: PLAYER;
   shots: GridCoor[]; // list of shots this player has taken
   ships: Ship[]; // index with SHIP enum
+  didLastShotHit: boolean; // the results of a takeshot event
+  lastShipHit: SHIP;
 }
 
 export function newPlayerState(player: PLAYER): PlayerState {
@@ -240,6 +242,8 @@ export function newPlayerState(player: PLAYER): PlayerState {
     player: player,
     shots: [],
     ships: new Array(5),
+    didLastShotHit: false,
+    lastShipHit: SHIP.NONE,
   };
 
   newPlayer.ships[SHIP.DESTROYER] = newShip(SHIP.DESTROYER, { x: 0, y: 0 }, DIR.WEST);
@@ -275,7 +279,7 @@ export function fireAtPlayer(player: PlayerState, coor: GridCoor): SHIP {
     player.board[coor.y][coor.x].firedUpon = true;
 
     return cellLabel;
-  }
+}
 
 export function allShipsPlaced(player: PlayerState): boolean {
   for (let i = 0; i < 5; i++) {
@@ -315,4 +319,36 @@ export function newGameState(): GameState {
   newGame.playerIDs[1] = null;
 
   return newGame;
+}
+
+export function getPlayerState(game: GameState, id: string): PlayerState {
+  let index;
+  for (let i = 0; i < 2; i++) {
+    if (game.playerIDs[i] === id) {
+      index = i;
+      break;
+    }
+  }
+  if (index) {
+    return game.playerStates[index];
+  } else {
+    return null;
+  }
+}
+
+export function getOpponentState(game: GameState, playerID: string): PlayerState {
+  let index;
+  if (game.playerIDs.includes(playerID)) {
+    for (let i = 0; i < 2; i++) {
+      if (game.playerIDs[i] !== playerID) {
+        index = i;
+        break;
+      }
+    }
+    if (index) {
+      return game.playerStates[index];
+    } else {
+      return null;
+    }
+  }
 }
