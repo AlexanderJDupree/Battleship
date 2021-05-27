@@ -198,6 +198,16 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     let game = gameStore.get(gameID);
     if (game) {
       if (game.playerIDs.includes(socket.userID)) {
+        // get playerstate of shooter
+        // get playerstate of target
+        // if shot hits a ship:
+        //    increment the ship's shot counter
+        //    if ship destroyed:
+        //      set ship destroyed
+        // add coordinates to shooter's shots list
+        // if gameover
+        //    set gamephase to gameover
+        // send updated gamestate to each player
         console.log('takeshot event received');
       }
     }
