@@ -168,7 +168,7 @@ export namespace Client {
     leave_room: (gameID: string) => void;
     check_room: (gameID: string, ack: (roomStatus: RoomStatus) => void) => void;
     ready_up: (setupBoard: GameBoard, gameID: string) => void;
-    take_shot: (location: GridCoor) => void;
+    take_shot: (gameID: string, location: GridCoor) => void;
     resign: (gameID: string) => void;
   }
 }

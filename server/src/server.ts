@@ -189,7 +189,16 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
         game.playerStates[index].setupBoard = setupBoard;
         game.playerStates[index].isReady = true;
         gameStore.set(gameID, game);
-        console.log('readyup event fired');
+        console.log('readyup event received');
+      }
+    }
+  });
+
+  socket.on(Client.TakeShot, (gameID, location) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        console.log('takeshot event received');
       }
     }
   });
