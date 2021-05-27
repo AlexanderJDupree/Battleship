@@ -180,6 +180,19 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       }
     }
   });
+
+  socket.on(Client.ReadyUp, (setupBoard, gameID) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        let index = game.playerIDs.indexOf(socket.userID);
+        game.playerStates[index].setupBoard = setupBoard;
+        game.playerStates[index].isReady = true;
+        gameStore.set(gameID, game);
+        console.log('readyup event fired');
+      }
+    }
+  });
 });
 
 // Express server handlers

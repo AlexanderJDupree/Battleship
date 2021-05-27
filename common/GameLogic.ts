@@ -223,6 +223,7 @@ export interface PlayerState {
   board: GameBoard;
   setupBoard: GameBoard;
   setupValid: boolean;
+  isReady: boolean;
   player: PLAYER;
   shots: GridCoor[]; // list of shots this player has taken
   ships: Ship[]; // index with SHIP enum
@@ -235,6 +236,7 @@ export function newPlayerState(player: PLAYER): PlayerState {
     board: newGameBoard(),
     setupBoard: newGameBoard(),
     setupValid: false,
+    isReady: false,
     player: player,
     shots: [],
     ships: new Array(5),
