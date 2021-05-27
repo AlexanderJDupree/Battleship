@@ -8,13 +8,15 @@ function App() {
     <main className='App'>
       <SocketContext.Provider value={socket}>
         <Router>
-          <Navigation />
-          <Switch>
-            <Route path='/game' exact component={Game} />
-            <Route path='/about' exact component={About} />
-            <Route path='/' exact component={Home} />
-            <Route path='*' component={NotFound} />
-          </Switch>
+          <div className="main-content">
+            <Navigation />
+            <Switch>
+              <Route path='/game' exact component={Game} />
+              <Route path='/about' exact component={About} />
+              <Route path='/' exact component={Home} />
+              <Route path='*' component={NotFound} />
+            </Switch>
+          </div>
           <Footer />
         </Router>
       </SocketContext.Provider>
