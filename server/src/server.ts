@@ -160,6 +160,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       if (game.playerIDs.includes(socket.userID)) {
         // Player is reconnecting to room
         socket.join(gameID);
+        io.to(gameID).emit(Server.UpdateGameState, game);
         callback(JoinGameStatus.JoinSuccess);
       } else if (!game.playerIDs[1]) {
         // Room has a vacant slot, join game
@@ -168,6 +169,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
           ...game,
           playerIDs: [game.playerIDs[0], socket.userID],
         });
+        io.to(gameID).emit(Server.UpdateGameState, game);
         callback(JoinGameStatus.JoinSuccess);
       } else {
         callback(JoinGameStatus.Error);
