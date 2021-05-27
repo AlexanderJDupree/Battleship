@@ -15,8 +15,8 @@ export default function About() {
       <h2 className='bg-info text-dark text-center pt-2 pb-2 mb-0'>
         About us
       </h2>
-      <Jumbotron className="battleship-image mt-0 mb-0 rounded-0">
-        <CardDeck className="cards p-3">
+      <Jumbotron className="battleship-image mt-0 mb-0 rounded-0 ">
+        <CardDeck>
           <ProfileAlex/>
           <ProfileJcarlson/>
           <ProfileKat/>

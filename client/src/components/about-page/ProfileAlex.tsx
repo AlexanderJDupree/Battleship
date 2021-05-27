@@ -3,7 +3,7 @@ import {Card, Tab, Tabs, Button } from 'react-bootstrap';
 function Profile_alex() {
     
     return (
-        <Card className="card">
+        <Card className="mt-3 mb-3 card">
             <Card.Header as="h4">
               Your Name
             </Card.Header>
@@ -31,9 +31,7 @@ function Profile_alex() {
                             <div className="d-flex justify-content-center">
                                 <Button variant="outline-info">
                                     <a href="https://github.com/jmcarlson0320">
-                                        <p>
-                                            Check it out! 
-                                        </p>
+                                        Check it out!
                                         <i className="fa fa-github"/>
                                     </a>
                                 </Button>
