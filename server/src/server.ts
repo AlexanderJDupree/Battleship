@@ -23,6 +23,8 @@ import {
   getOpponentState,
   fireAtPlayer,
   SHIP,
+  PHASE,
+  checkForWinner,
 } from 'common/lib/GameLogic';
 
 /// Setup server and socket.io
@@ -207,12 +209,25 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
         let shooter = getPlayerState(game, socket.userID);
         let target = getOpponentState(game, socket.userID);
         let result = fireAtPlayer(target, location);
-        shooter.didLastShotHit = result != SHIP.NONE;
-        shooter.lastShipHit = result;
-        shooter.shots.push(location);
+        let didShotHit = result != SHIP.NONE;
+        shooter.shots.push({location: location, isHit: didShotHit, shipHit: result});
+        checkForWinner(game);
         io.to(gameID).emit(Server.UpdateGameState, game);
         gameStore.set(gameID, game);
         console.log('takeshot event received');
+      }
+    }
+  });
+
+  socket.on(Client.Resign, (gameID) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        let winner = getOpponentState(game, socket.userID);
+        game.winner = winner.player;
+        game.phase = PHASE.GAME_OVER;
+        io.to(gameID).emit(Server.UpdateGameState, game);
+        gameStore.set(gameID, game);
       }
     }
   });

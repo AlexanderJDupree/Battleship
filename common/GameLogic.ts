@@ -216,6 +216,12 @@ export function isOnBoard(coor: GridCoor): boolean {
  * Player state
  *****************************************************************************/
 
+export interface Shot {
+  location: GridCoor,
+  isHit: boolean,
+  shipHit: SHIP,
+}
+
 // this is sent by the server to the client every time the game state changes.
 // should contain all the info needed for the client to render the game.
 export interface PlayerState {
@@ -225,10 +231,8 @@ export interface PlayerState {
   setupValid: boolean;
   isReady: boolean;
   player: PLAYER;
-  shots: GridCoor[]; // list of shots this player has taken
+  shots: Shot[]; // list of shots this player has taken
   ships: Ship[]; // index with SHIP enum
-  didLastShotHit: boolean; // the results of a takeshot event
-  lastShipHit: SHIP;
 }
 
 export function newPlayerState(player: PLAYER): PlayerState {
@@ -291,6 +295,16 @@ export function allShipsPlaced(player: PlayerState): boolean {
   return true;
 }
 
+export function allShipsSunk(player: PlayerState): boolean {
+  for (let i = 0; i < 5; i++) {
+    if (!player.ships[i].isSunk) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /*****************************************************************************
  * Game state
  *****************************************************************************/
@@ -300,7 +314,7 @@ export interface GameState {
   playerStates: PlayerState[];
   playerIDs: UserID[];
   isPublic: boolean;
-  todo?: 'implement me';
+  winner: PLAYER;
   expiry?: number;
 }
 
@@ -311,6 +325,7 @@ export function newGameState(): GameState {
     playerStates: new Array(2),
     playerIDs: new Array(2),
     isPublic: true,
+    winner: undefined,
   };
 
   newGame.playerStates[0] = newPlayerState(PLAYER.PLAYER_1);
@@ -351,4 +366,36 @@ export function getOpponentState(game: GameState, playerID: string): PlayerState
       return null;
     }
   }
+}
+
+export function getOpponentID(game: GameState, playerID: string): UserID | null {
+  let index;
+  if (game.playerIDs.includes(playerID)) {
+    for (let i = 0; i < 2; i++) {
+      if (game.playerIDs[i] !== playerID) {
+        return game.playerIDs[i];
+      }
+    }
+  }
+
+  return null;
+}
+
+export function checkForWinner(game: GameState): UserID | null {
+  let p1 = game.playerStates[PLAYER.PLAYER_1];
+  let p2 = game.playerStates[PLAYER.PLAYER_2];
+
+  if (allShipsSunk(p1)) {
+    game.winner = PLAYER.PLAYER_2;
+    game.phase = PHASE.GAME_OVER;
+    return game.playerIDs[PLAYER.PLAYER_2];
+  }
+
+  if (allShipsSunk(p2)) {
+    game.winner = PLAYER.PLAYER_1;
+    game.phase = PHASE.GAME_OVER;
+    return game.playerIDs[PLAYER.PLAYER_1];
+  }
+
+  return null;
 }
