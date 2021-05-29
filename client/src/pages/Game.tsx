@@ -6,12 +6,10 @@ import { JoinGameStatus } from 'common/lib/details';
 import { ChatWindow, GameBoard, SetupBar, StatusBar } from '../components';
 import {
   SHIP,
-  PlayerState,
   DIR,
   PHASE,
   PLAYER,
   GridCoor,
-  Ship,
   newShip,
   placeShip,
   canPlaceShip,
