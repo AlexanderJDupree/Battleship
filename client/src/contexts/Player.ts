@@ -1,6 +1,6 @@
 import React from 'react';
-import { PLAYER, PlayerState } from 'common/lib/GameLogic';
+import { PLAYER, PlayerState, newPlayerState } from 'common/lib/GameLogic';
 
 export const PlayerContext = React.createContext<PlayerState>(
-  new PlayerState(PLAYER.PLAYER_1)
+  newPlayerState(PLAYER.PLAYER_1)
 );

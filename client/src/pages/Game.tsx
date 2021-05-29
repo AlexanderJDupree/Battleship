@@ -6,12 +6,17 @@ import { JoinGameStatus } from 'common/lib/details';
 import { ChatWindow, GameBoard, SetupBar, StatusBar } from '../components';
 import {
   SHIP,
-  PlayerState,
   DIR,
   PHASE,
   PLAYER,
   GridCoor,
-  Ship,
+  newShip,
+  placeShip,
+  canPlaceShip,
+  removeShip,
+  newPlayerState,
+  allShipsPlaced,
+  isPlayersTurn,
 } from 'common/lib/GameLogic';
 import { PlayerContext } from '../contexts/Player';
 import { HoverStyle } from '../components/GameBoard';
@@ -20,7 +25,7 @@ const Game = () => {
   const [placementDir, setPlacementDir] = useState(DIR.WEST);
   const [selected, setSelected] = useState(SHIP.NONE);
   const [playerState, setPlayerState] = useState(
-    new PlayerState(PLAYER.PLAYER_1)
+    newPlayerState(PLAYER.PLAYER_1)
   );
 
   // TODO this is a hack to get react to re-render a component
@@ -31,7 +36,7 @@ const Game = () => {
   const gameID = query.get('gid');
 
   const handleReady = useCallback(() => {
-    if (playerState.allShipsPlaced()) {
+    if (allShipsPlaced(playerState)) {
       // TODO submit finalized board to server
       playerState.phase = PHASE.PLAYER1_TURN;
       setPlayerState(playerState);
@@ -53,7 +58,7 @@ const Game = () => {
           let ship = playerState.ships[selected];
           ship.orientation = placementDir;
           ship.locationOfFront = pos;
-          if (playerState.setupBoard.placeShip(ship)) {
+          if (placeShip(playerState.setupBoard, ship)) {
             setPlayerState(playerState);
             setSelected(SHIP.NONE);
           }
@@ -67,8 +72,8 @@ const Game = () => {
     (pos: GridCoor) => {
       if (playerState.phase === PHASE.SETUP) {
         if (selected !== SHIP.NONE) {
-          let ship = new Ship(selected, pos, placementDir);
-          if (playerState.setupBoard.canPlaceShip(ship)) {
+          let ship = newShip(selected, pos, placementDir);
+          if (canPlaceShip(playerState.setupBoard, ship)) {
             return HoverStyle.Action;
           } else {
             return HoverStyle.Error;
@@ -94,7 +99,7 @@ const Game = () => {
 
   const handleOpponentBoardHover = useCallback(
     (pos: GridCoor) => {
-      if (playerState.isPlayersTurn()) {
+      if (isPlayersTurn(playerState)) {
         return HoverStyle.Default;
       }
       return HoverStyle.None;
@@ -108,7 +113,7 @@ const Game = () => {
         setSelected(SHIP.NONE);
       } else {
         if (playerState.ships[ship].placed) {
-          playerState.setupBoard.removeShip(playerState.ships[ship]);
+          removeShip(playerState.setupBoard, playerState.ships[ship]);
           setPlayerState(playerState);
           setSelected(SHIP.NONE);
           setTrigger(!trigger);
