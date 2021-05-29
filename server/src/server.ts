@@ -25,6 +25,7 @@ import {
   SHIP,
   PHASE,
   checkForWinner,
+  updatePlayerTurn,
 } from 'common/lib/GameLogic';
 
 /// Setup server and socket.io
@@ -160,7 +161,6 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       if (game.playerIDs.includes(socket.userID)) {
         // Player is reconnecting to room
         socket.join(gameID);
-        io.to(gameID).emit(Server.UpdateGameState, game);
         callback(JoinGameStatus.JoinSuccess);
       } else if (!game.playerIDs[1]) {
         // Room has a vacant slot, join game
@@ -176,6 +176,15 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       }
     } else {
       callback(JoinGameStatus.GameNotFound);
+    }
+  });
+
+  socket.on(Client.GetGameState, (gameID) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        io.to(socket.id).emit(Server.UpdateGameState, game);
+      }
     }
   });
 
@@ -196,10 +205,15 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     if (game) {
       if (game.playerIDs.includes(socket.userID)) {
         let index = game.playerIDs.indexOf(socket.userID);
-        game.playerStates[index].setupBoard = setupBoard;
+        game.playerStates[index].board = setupBoard;
         game.playerStates[index].isReady = true;
-        gameStore.set(gameID, game);
-        console.log('readyup event received');
+
+        if (game.playerStates.every((p) => p.isReady)) {
+          game.phase = PHASE.PLAYER1_TURN;
+          game.playerStates.map((p) => (p.phase = PHASE.PLAYER1_TURN));
+          io.to(gameID).emit(Server.UpdateGameState, game);
+        }
+        gameStore.set(gameID, { ...game });
       }
     }
   });
@@ -211,12 +225,20 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
         let shooter = getPlayerState(game, socket.userID);
         let target = getOpponentState(game, socket.userID);
         let result = fireAtPlayer(target, location);
+
         let didShotHit = result != SHIP.NONE;
-        shooter.shots.push({location: location, isHit: didShotHit, shipHit: result});
+
+        shooter.shots.push({
+          location: location,
+          isHit: didShotHit,
+          shipHit: result,
+        });
+
+        updatePlayerTurn(game);
         checkForWinner(game);
+
+        gameStore.set(gameID, { ...game });
         io.to(gameID).emit(Server.UpdateGameState, game);
-        gameStore.set(gameID, game);
-        console.log('takeshot event received');
       }
     }
   });
@@ -228,6 +250,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
         let winner = getOpponentState(game, socket.userID);
         game.winner = winner.player;
         game.phase = PHASE.GAME_OVER;
+        game.playerStates.map((p) => (p.phase = PHASE.GAME_OVER));
         io.to(gameID).emit(Server.UpdateGameState, game);
         gameStore.set(gameID, game);
       }
