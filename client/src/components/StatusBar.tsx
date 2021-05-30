@@ -24,7 +24,11 @@ const StatusBar = () => {
         }
 
       case PHASE.GAME_OVER:
-        return 'You Won!';
+        if (playerState.isWinner) {
+          return 'You Won!';
+        } else {
+          return 'You Lose!';
+        }
       default:
         return '';
     }

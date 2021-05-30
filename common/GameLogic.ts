@@ -83,7 +83,11 @@ export interface Ship {
   placed: boolean;
 }
 
-export function newShip(type: SHIP, position: GridCoor, orientation: DIR): Ship {
+export function newShip(
+  type: SHIP,
+  position: GridCoor,
+  orientation: DIR
+): Ship {
   let ship: Ship;
   ship = {
     type: type,
@@ -217,9 +221,9 @@ export function isOnBoard(coor: GridCoor): boolean {
  *****************************************************************************/
 
 export interface Shot {
-  location: GridCoor,
-  isHit: boolean,
-  shipHit: SHIP,
+  location: GridCoor;
+  isHit: boolean;
+  shipHit: SHIP;
 }
 
 // this is sent by the server to the client every time the game state changes.
@@ -227,9 +231,9 @@ export interface Shot {
 export interface PlayerState {
   phase: PHASE;
   board: GameBoard;
-  setupBoard: GameBoard;
   setupValid: boolean;
   isReady: boolean;
+  isWinner: boolean;
   player: PLAYER;
   shots: Shot[]; // list of shots this player has taken
   ships: Ship[]; // index with SHIP enum
@@ -240,9 +244,9 @@ export function newPlayerState(player: PLAYER): PlayerState {
   newPlayer = {
     phase: PHASE.SETUP,
     board: newGameBoard(),
-    setupBoard: newGameBoard(),
     setupValid: false,
     isReady: false,
+    isWinner: false,
     player: player,
     shots: [],
     ships: new Array(5),
@@ -250,11 +254,31 @@ export function newPlayerState(player: PLAYER): PlayerState {
     lastShipHit: SHIP.NONE,
   };
 
-  newPlayer.ships[SHIP.DESTROYER] = newShip(SHIP.DESTROYER, { x: 0, y: 0 }, DIR.WEST);
-  newPlayer.ships[SHIP.SUBMARINE] = newShip(SHIP.SUBMARINE, { x: 0, y: 0 }, DIR.WEST);
-  newPlayer.ships[SHIP.CRUISER] = newShip(SHIP.CRUISER, { x: 0, y: 0 }, DIR.WEST);
-  newPlayer.ships[SHIP.BATTLESHIP] = newShip(SHIP.BATTLESHIP, { x: 0, y: 0 }, DIR.WEST);
-  newPlayer.ships[SHIP.CARRIER] = newShip(SHIP.CARRIER, { x: 0, y: 0 }, DIR.WEST);
+  newPlayer.ships[SHIP.DESTROYER] = newShip(
+    SHIP.DESTROYER,
+    { x: 0, y: 0 },
+    DIR.WEST
+  );
+  newPlayer.ships[SHIP.SUBMARINE] = newShip(
+    SHIP.SUBMARINE,
+    { x: 0, y: 0 },
+    DIR.WEST
+  );
+  newPlayer.ships[SHIP.CRUISER] = newShip(
+    SHIP.CRUISER,
+    { x: 0, y: 0 },
+    DIR.WEST
+  );
+  newPlayer.ships[SHIP.BATTLESHIP] = newShip(
+    SHIP.BATTLESHIP,
+    { x: 0, y: 0 },
+    DIR.WEST
+  );
+  newPlayer.ships[SHIP.CARRIER] = newShip(
+    SHIP.CARRIER,
+    { x: 0, y: 0 },
+    DIR.WEST
+  );
   return newPlayer;
 }
 
@@ -268,41 +292,45 @@ export function isPlayersTurn(player: PlayerState): Boolean {
   }
 }
 
+export function updatePlayerTurn(game: GameState) {
+  switch (game.phase) {
+    case PHASE.PLAYER1_TURN:
+      game.phase = PHASE.PLAYER2_TURN;
+      game.playerStates.map((p) => (p.phase = PHASE.PLAYER2_TURN));
+      break;
+
+    case PHASE.PLAYER2_TURN:
+      game.phase = PHASE.PLAYER1_TURN;
+      game.playerStates.map((p) => (p.phase = PHASE.PLAYER1_TURN));
+      break;
+
+    default:
+      break;
+  }
+}
+
 // check for repeat shots or shots out of bounds
 // returns the ship type if it was a hit, SHIP.NONE if miss
 export function fireAtPlayer(player: PlayerState, coor: GridCoor): SHIP {
-  let cellLabel = player.board[coor.y][coor.x].ship;
-  if (cellLabel != SHIP.NONE) {
-    let targetShip = player.ships[cellLabel];
+  let cell = player.board.grid[coor.y][coor.x];
+  if (!cell.firedUpon && cell.ship != SHIP.NONE) {
+    let targetShip = player.ships[cell.ship];
     targetShip.numHits++;
-    if (targetShip.numHits >= SHIP_SIZES[cellLabel]) {
+    if (targetShip.numHits >= SHIP_SIZES[cell.ship]) {
       targetShip.isSunk = true;
     }
+    player.board.grid[coor.y][coor.x].firedUpon = true;
   }
 
-    player.board[coor.y][coor.x].firedUpon = true;
-
-    return cellLabel;
+  return cell.ship;
 }
 
 export function allShipsPlaced(player: PlayerState): boolean {
-  for (let i = 0; i < 5; i++) {
-    if (!player.ships[i].placed) {
-      return false;
-    }
-  }
-
-  return true;
+  return player.ships.every((ship) => ship.placed);
 }
 
 export function allShipsSunk(player: PlayerState): boolean {
-  for (let i = 0; i < 5; i++) {
-    if (!player.ships[i].isSunk) {
-      return false;
-    }
-  }
-
-  return true;
+  return player.ships.every((ship) => ship.isSunk);
 }
 
 /*****************************************************************************
@@ -336,49 +364,25 @@ export function newGameState(): GameState {
   return newGame;
 }
 
-export function getPlayerState(game: GameState, id: string): PlayerState {
-  let index;
-  for (let i = 0; i < 2; i++) {
-    if (game.playerIDs[i] === id) {
-      index = i;
-      break;
-    }
+export function getPlayerState(
+  game: GameState,
+  id: string
+): PlayerState | null {
+  let idx = game.playerIDs.findIndex((p) => p === id);
+  if (idx !== -1) {
+    return game.playerStates[idx];
   }
-  if (index) {
-    return game.playerStates[index];
-  } else {
-    return null;
-  }
-}
-
-export function getOpponentState(game: GameState, playerID: string): PlayerState {
-  let index;
-  if (game.playerIDs.includes(playerID)) {
-    for (let i = 0; i < 2; i++) {
-      if (game.playerIDs[i] !== playerID) {
-        index = i;
-        break;
-      }
-    }
-    if (index) {
-      return game.playerStates[index];
-    } else {
-      return null;
-    }
-  }
-}
-
-export function getOpponentID(game: GameState, playerID: string): UserID | null {
-  let index;
-  if (game.playerIDs.includes(playerID)) {
-    for (let i = 0; i < 2; i++) {
-      if (game.playerIDs[i] !== playerID) {
-        return game.playerIDs[i];
-      }
-    }
-  }
-
   return null;
+}
+
+export function getOpponentState(game: GameState, id: string): PlayerState {
+  let idx = game.playerIDs.findIndex((p) => p !== id);
+  return game.playerStates[idx];
+}
+
+export function getOpponentID(game: GameState, id: string): UserID | undefined {
+  let opponent = game.playerIDs.find((p) => p !== id);
+  return opponent;
 }
 
 export function checkForWinner(game: GameState): UserID | null {
@@ -388,12 +392,16 @@ export function checkForWinner(game: GameState): UserID | null {
   if (allShipsSunk(p1)) {
     game.winner = PLAYER.PLAYER_2;
     game.phase = PHASE.GAME_OVER;
+    game.playerStates.map((p) => (p.phase = PHASE.GAME_OVER));
+    p2.isWinner = true;
     return game.playerIDs[PLAYER.PLAYER_2];
   }
 
   if (allShipsSunk(p2)) {
     game.winner = PLAYER.PLAYER_1;
     game.phase = PHASE.GAME_OVER;
+    game.playerStates.map((p) => (p.phase = PHASE.GAME_OVER));
+    p1.isWinner = true;
     return game.playerIDs[PLAYER.PLAYER_1];
   }
 

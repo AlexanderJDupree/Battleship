@@ -152,6 +152,11 @@ export namespace Client {
   export const Resign = 'resign';
 
   /**
+   * Request updated game state, ignored if gameID is invalid or socket isn't part of game
+   */
+  export const GetGameState = 'get_game_state';
+
+  /**
    * Typed events interface for Client to Server event handlers
    */
   export interface Events extends Common.Events {
@@ -170,5 +175,6 @@ export namespace Client {
     ready_up: (setupBoard: GameBoard, gameID: string) => void;
     take_shot: (gameID: string, location: GridCoor) => void;
     resign: (gameID: string) => void;
+    get_game_state: (gameID: string) => void;
   }
 }

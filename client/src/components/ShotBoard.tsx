@@ -1,34 +1,21 @@
-import { Cell, GridCoor, GameBoard as Board, SHIP } from 'common/lib/GameLogic';
+import { GridCoor, SHIP, Shot } from 'common/lib/GameLogic';
 import React, { useCallback, useState } from 'react';
+import { HoverStyle, HoverStyles } from './GameBoard';
 
-export interface GameBoardProps {
+export interface ShotBoardProps {
   onClick: (pos: GridCoor) => void;
   onHover: (pos: GridCoor) => HoverStyle;
-  gameBoard: Board;
+  shots: Shot[];
 }
 
 export interface SquareProps {
   onClick: (pos: GridCoor) => void;
   onHover: (pos: GridCoor) => HoverStyle;
   pos: GridCoor;
-  cell: Cell;
+  shot?: Shot;
 }
 
-export enum HoverStyle {
-  None,
-  Default,
-  Error,
-  Action,
-}
-
-export const HoverStyles: React.CSSProperties[] = [
-  { backgroundColor: 'hsla(0, 0%, 0%, 0.0)' },
-  { backgroundColor: 'hsla(202, 85%, 87%, 0.3)' },
-  { backgroundColor: 'var(--red)' },
-  { backgroundColor: 'var(--green)' },
-];
-
-const Square = ({ onClick, onHover, cell, pos }: SquareProps) => {
+const Square = ({ onClick, onHover, pos, shot }: SquareProps) => {
   const [hoverStyle, setHoverStyle] = useState(HoverStyles[HoverStyle.None]);
   const handleOnHover = useCallback(() => {
     let hoverStyle = HoverStyles[onHover(pos)];
@@ -49,9 +36,9 @@ const Square = ({ onClick, onHover, cell, pos }: SquareProps) => {
       onMouseLeave={handleExitHover}
       style={hoverStyle}
     >
-      <div className={cell.ship !== SHIP.NONE ? 'ship-square' : 'water-square'}>
-        {cell.firedUpon ? (
-          <div className={cell.ship !== SHIP.NONE ? 'hit' : 'miss'}></div>
+      <div className='water-square'>
+        {shot ? (
+          <div className={shot.shipHit !== SHIP.NONE ? 'hit' : 'miss'}></div>
         ) : (
           <></>
         )}
@@ -60,7 +47,7 @@ const Square = ({ onClick, onHover, cell, pos }: SquareProps) => {
   );
 };
 
-const GameBoard = ({ onClick, gameBoard, onHover }: GameBoardProps) => {
+const ShotBoard = ({ onClick, onHover, shots }: ShotBoardProps) => {
   return (
     <div className='grid'>
       {[...Array(10)].map((_x, i) => {
@@ -69,8 +56,8 @@ const GameBoard = ({ onClick, gameBoard, onHover }: GameBoardProps) => {
             key={i * j + j}
             onClick={onClick}
             onHover={onHover}
-            cell={gameBoard.grid[i][j]}
             pos={{ x: j, y: i }}
+            shot={shots.find((s) => s.location.x === j && s.location.y === i)}
           />
         ));
       })}
@@ -78,4 +65,4 @@ const GameBoard = ({ onClick, gameBoard, onHover }: GameBoardProps) => {
   );
 };
 
-export default GameBoard;
+export default ShotBoard;
