@@ -15,7 +15,6 @@ function App() {
             <Route path='/' exact component={Home} />
             <Route path='*' component={NotFound} />
           </Switch>
-          <Footer />
         </Router>
       </SocketContext.Provider>
     </main>

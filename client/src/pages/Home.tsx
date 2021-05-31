@@ -5,7 +5,12 @@ import {
   Container,
   ListGroup,
 } from 'react-bootstrap';
-import { ServerStats, Leaderboard, MatchMakingGroup } from '../components';
+import {
+  ServerStats,
+  Leaderboard,
+  MatchMakingGroup,
+  Footer,
+} from '../components';
 
 export default function Home() {
   return (
@@ -18,9 +23,6 @@ export default function Home() {
             browser
           </p>
           <hr className='mb-4' />
-          <blockquote className='blockquote'>
-            <p className='lead mb-0'>random naval battlefact</p>
-          </blockquote>
           <MatchMakingGroup />
         </Container>
       </Jumbotron>
@@ -64,6 +66,7 @@ export default function Home() {
           </Card>
         </CardDeck>
       </Container>
+      <Footer />
     </div>
   );
 }

@@ -1,3 +1,5 @@
+import { Footer } from '../components';
+
 export default function About() {
   return (
     <div className='about'>
@@ -8,6 +10,7 @@ export default function About() {
         impedit, saepe dolore nam ex sapiente architecto, perferendis natus
         voluptatem consequatur?
       </p>
+      <Footer />
     </div>
   );
 }
