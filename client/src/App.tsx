@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { socket, SocketContext } from './contexts';
-import { Navigation, Footer } from './components';
+import { Navigation } from './components';
 import { Home, About, Game, NotFound } from './pages';
 
 function App() {
