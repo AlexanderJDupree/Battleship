@@ -119,7 +119,6 @@ const Game = () => {
           return HoverStyle.Action;
         }
       }
-      console.log(playerState?.ships);
       return HoverStyle.None;
     },
     [playerState]
@@ -180,7 +179,6 @@ const Game = () => {
     }
     return () => {
       socket.off(Server.UpdateGameState, handleGameUpdate);
-      socket.emit(Client.LeaveRoom, gameID || 'unknown');
     };
   }, [socket, gameID, handleGameUpdate, playerState]);
 
