@@ -10,11 +10,11 @@ import { SERVER_URL } from '../contexts/Socket';
 import { ServerStats as Stats } from 'common/lib/details';
 
 const ServerStats: React.FC<ListGroupProps> = (props) => {
-  const server = useFetch<Stats>(
-    `${SERVER_URL}/stats`,
-    { playersOnline: 0, activeGames: 0, gamesPlayed: 0 },
-    2000
-  ); // Refresh every 3 seconds
+  const server = useFetch<Stats>(`${SERVER_URL}/stats`, {
+    playersOnline: 0,
+    activeGames: 0,
+    gamesPlayed: 0,
+  });
 
   switch (server.status) {
     case FetchStatus.Loading:
