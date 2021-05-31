@@ -60,7 +60,7 @@ See the `package.json` file for a full list of commands but the primary commands
 |
 ├───common              <-- Server/Client shared code e.g. Game logic, event types
 │   └───lib
-├───docs                <-- Documentatoin
+├───docs                <-- Documentation
 |
 └───server              <-- Battleship express server
     └───src

@@ -143,6 +143,10 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
         playerIDs: [game.game.playerIDs[0], socket.userID],
       });
       callback(game.gid);
+      io.to(game.gid).emit(Server.ChatMessage, {
+        username: ServerName,
+        msg: `${socket.username} joined the game!`,
+      });
     } else {
       let gid = gameStore.create(socket.userID, true);
       socket.join(gid);
@@ -155,12 +159,24 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   // TODO refactor this mess.
   socket.on(Client.JoinGame, (gameID, callback) => {
+    // Clear out any leftover game rooms
+    socket.rooms.forEach((room) => {
+      if (room != gameID || room != socket.id) {
+        //socket.leave(room);
+      }
+    });
     // Resume game from session store if it exists
     let game = gameStore.get(gameID);
     if (game) {
       if (game.playerIDs.includes(socket.userID)) {
         // Player is reconnecting to room
-        socket.join(gameID);
+        if (!socket.rooms.has(gameID)) {
+          socket.join(gameID);
+          io.to(gameID).emit(Server.ChatMessage, {
+            username: ServerName,
+            msg: `${socket.username} joined the game!`,
+          });
+        }
         callback(JoinGameStatus.JoinSuccess);
       } else if (!game.playerIDs[1]) {
         // Room has a vacant slot, join game
@@ -171,6 +187,10 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
         });
         io.to(gameID).emit(Server.UpdateGameState, game);
         callback(JoinGameStatus.JoinSuccess);
+        io.to(gameID).emit(Server.ChatMessage, {
+          username: ServerName,
+          msg: `${socket.username} joined the game!`,
+        });
       } else {
         callback(JoinGameStatus.Error);
       }
@@ -249,10 +269,15 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
       if (game.playerIDs.includes(socket.userID)) {
         let winner = getOpponentState(game, socket.userID);
         game.winner = winner.player;
+        winner.isWinner = true;
         game.phase = PHASE.GAME_OVER;
         game.playerStates.map((p) => (p.phase = PHASE.GAME_OVER));
         io.to(gameID).emit(Server.UpdateGameState, game);
         gameStore.set(gameID, game);
+        io.to(gameID).emit(Server.ChatMessage, {
+          username: ServerName,
+          msg: `${socket.username} has resigned!`,
+        });
       }
     }
   });
