@@ -66,14 +66,6 @@ See the `package.json` file for a full list of commands but the primary commands
     └───src
 ```
 
-## Authors
-
-TODO
-
-## License
-
-TODO
-
 ## Misc
 
 Recommended VScode extensions for development:
