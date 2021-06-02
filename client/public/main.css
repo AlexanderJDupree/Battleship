@@ -1,9 +1,4 @@
 :root {
-  /* footer modifications*/
-  min-height: 100%;
-  position: relative;
-  /**********************/
-
   --white: #ffffff;
   --gray1: #333333;
   --gray2: #555555;
@@ -34,6 +29,7 @@ body {
   font-family: 'Open Sans', 'Helvetica Neue', sans-serif;
   font-size: 1.2em;
   color: var(--theme-text-primary);
+  margin-bottom: 60px; /* Margin bottom by footer height */
 }
 
 .bg-theme-primary {
@@ -405,68 +401,32 @@ body {
   }
 }
 
-
-
-/***************************
-  Footer Specifications
-****************************/
-
-.footer-basic {
-  padding:40px 0;
-  background-color:#ffffff;
-  color:#4b4c4d;
+/***********************************************
+  Footer 
+***********************************************/
+.page-container {
+  position: relative;
+  min-height: 100vh;
 }
 
-.footer-basic ul {
-  padding:0;
-  list-style:none;
-  text-align:center;
-  font-size:18px;
-  line-height:1.6;
-  margin-bottom:0;
+.content-wrap {
+  padding-bottom: 2.5rem;    
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  height: 2.5rem;           
 }
 
-.footer-basic li {
-  padding:0 10px;
+/***********************************************
+  Footer Links
+***********************************************/
+.hr_part{
+  margin: 0 15%;
 }
 
-.footer-basic ul a {
-  color:inherit;
-  text-decoration:none;
-  opacity:0.8;
-}
-
-.footer-basic ul a:hover {
-  opacity:1;
-}
-
-.footer-basic .social {
-  text-align:center;
-  padding-bottom:25px;
-}
-
-.footer-basic .social > a {
-  font-size:24px;
-  width:40px;
-  height:40px;
-  line-height:40px;
-  display:inline-block;
-  text-align:center;
-  border-radius:50%;
-  border:1px solid #ccc;
-  margin:0 8px;
-  color:inherit;
-  opacity:0.75;
-}
-
-.footer-basic .social > a:hover {
-  opacity:0.9;
-}
-
-.footer-basic .copyright {
-  margin-top:15px;
-  text-align:center;
-  font-size:13px;
-  color:#aaa;
-  margin-bottom:0;
+/*foot summary*/
+.foot_summary{
+  line-height: 1.7rem
 }
