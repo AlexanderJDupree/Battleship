@@ -37,9 +37,10 @@ export default function Home() {
               Rules
             </Card.Header>
             <ListGroup variant='flush'>
-              <ListGroup.Item>1. setup board</ListGroup.Item>
-              <ListGroup.Item>2. take turns shooting stuff</ListGroup.Item>
-              <ListGroup.Item>3. TODO add actual rules</ListGroup.Item>
+              <ListGroup.Item>1. Place your ships on the board</ListGroup.Item>
+              <ListGroup.Item>2. Press "READY UP!" when done</ListGroup.Item>
+              <ListGroup.Item>3. On your turn, take shots on your opponent's board to the right</ListGroup.Item>
+              <ListGroup.Item>4. The last player with ships on their board wins!</ListGroup.Item>
             </ListGroup>
           </Card>
 
