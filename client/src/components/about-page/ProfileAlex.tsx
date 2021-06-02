@@ -5,7 +5,7 @@ function Profile_alex() {
     return (
         <Card className="mt-3 mb-3 card">
             <Card.Header as="h4">
-              Your Name
+              Alex Dupree
             </Card.Header>
             <Card.Img 
               id="profile"
@@ -25,12 +25,12 @@ function Profile_alex() {
                     <Tab id="contacts" eventKey="contact" title="Contacts">
                         <div className="pt-4">
                             <p>
-                                Email: <br/>
+                                Email: adupree@pdx.edu <br/>
                                 Look at my github to see some of my other projects! 
                             </p>
                             <div className="d-flex justify-content-center">
                                 <Button variant="outline-info">
-                                    <a href="https://github.com/jmcarlson0320">
+                                    <a href="https://github.com/AlexanderJDupree">
                                         Check it out!
                                         <i className="fa fa-github"/>
                                     </a>

@@ -5,7 +5,7 @@ function Profile_jcarlson() {
     return (
         <Card className="mt-3 mb-3 card">
             <Card.Header as="h4">
-              Your Name
+              Josh Carlson
             </Card.Header>
             <Card.Img 
               id="profile"
@@ -25,7 +25,7 @@ function Profile_jcarlson() {
                     <Tab id="contacts" eventKey="contact" title="Contacts">
                         <div className="pt-4">
                             <p>
-                                Email: <br/>
+                                Email: jmc34@pdx.edu<br/>
                                 Look at my github to see some of my other projects! 
                             </p>
                             <div className="d-flex justify-content-center">

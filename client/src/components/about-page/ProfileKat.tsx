@@ -31,7 +31,7 @@ function Profile_kat() {
                     </p>
                     <div className="d-flex justify-content-center">
                         <Button variant="outline-info">
-                            <a href="https://github.com/jmcarlson0320">
+                            <a href="https://github.com/kkagawa88">
                                 Check it out!
                                 <i className="fa fa-github"/>
                             </a>
