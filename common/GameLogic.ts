@@ -321,6 +321,7 @@ export function fireAtPlayer(player: PlayerState, coor: GridCoor): SHIP {
     }
     player.board.grid[coor.y][coor.x].firedUpon = true;
   }
+  cell.firedUpon = true;
 
   return cell.ship;
 }
