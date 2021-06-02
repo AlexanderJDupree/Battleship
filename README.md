@@ -29,6 +29,10 @@ yarn install
 
 See the `package.json` file for a full list of commands but the primary commands we will use are:
 
+- Build the common library, always run this first
+  ```bash
+  yarn run build-common
+  ```
 - Run the client development server with live reloading at `localhost:3000`
   ```bash
   yarn run client
