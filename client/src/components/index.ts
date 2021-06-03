@@ -11,6 +11,7 @@ export { default as JoinGameButton } from './JoinGameButton';
 export { default as MatchMakingGroup } from './MatchMakingGroup';
 export { default as ChatWindow } from './ChatWindow';
 export { default as GameBoard } from './GameBoard';
+export { default as ShotBoard } from './ShotBoard';
 export { default as SetupBar } from './SetupBar';
 export { default as Ship } from './Ship';
 export { default as StatusBar } from './StatusBar';

@@ -37,7 +37,16 @@ const ChatWindow = () => {
   const socket = useContext(SocketContext);
   const [disabled, setDisabled] = useState(false);
   const [message, setMessage] = useState('');
-  const [messages, setMessages] = useState<Message[]>([]);
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      username: ServerName,
+      msg: `Game ID - ${roomID}`,
+    },
+    {
+      username: ServerName,
+      msg: 'Type "forfeit" to resign from game',
+    },
+  ]);
 
   const messageEndRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +58,11 @@ const ChatWindow = () => {
     event.preventDefault();
     event.stopPropagation();
 
-    socket.emit(Client.ChatMessage, roomID, message);
+    if (message.toLowerCase() === 'forfeit') {
+      socket.emit(Client.Resign, roomID);
+    } else {
+      socket.emit(Client.ChatMessage, roomID, message);
+    }
 
     setMessage('');
   };

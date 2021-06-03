@@ -29,6 +29,10 @@ yarn install
 
 See the `package.json` file for a full list of commands but the primary commands we will use are:
 
+- Build the common library, always run this first
+  ```bash
+  yarn run build-common
+  ```
 - Run the client development server with live reloading at `localhost:3000`
   ```bash
   yarn run client
@@ -60,19 +64,11 @@ See the `package.json` file for a full list of commands but the primary commands
 |
 ├───common              <-- Server/Client shared code e.g. Game logic, event types
 │   └───lib
-├───docs                <-- Documentatoin
+├───docs                <-- Documentation
 |
 └───server              <-- Battleship express server
     └───src
 ```
-
-## Authors
-
-TODO
-
-## License
-
-TODO
 
 ## Misc
 

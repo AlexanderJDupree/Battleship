@@ -63,8 +63,7 @@ const LeaderboardLoaded: React.FC<LeaderboardProps> = (props) => {
 const Leaderboard: React.FC<TableProps> = (props) => {
   const leaderboard = useFetch<ServerLeaderboard>(
     `${SERVER_URL}/leaderboard`,
-    [],
-    10000 // Refresh leaderboard every 10 seconds
+    []
   );
 
   switch (leaderboard.status) {

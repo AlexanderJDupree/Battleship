@@ -4,6 +4,9 @@ import {DIR} from "./GameLogic";
 import {GridCoor} from "./GameLogic";
 import {GameBoard} from "./GameLogic";
 import {BOARD_SIZE} from "./GameLogic";
+import {newShip} from "./GameLogic";
+import {placeShip} from "./GameLogic";
+import {newGameBoard} from "./GameLogic";
 
 
 /*
@@ -35,19 +38,19 @@ function printBoard(board: GameBoard) {
   }
 }
 
-function placeShip(board: GameBoard, ship: Ship) {
-  if (board.placeShip(ship)) {
+function placeShipAndLog(board: GameBoard, ship: Ship) {
+  if (placeShip(board, ship)) {
     console.log('placed ship');
   } else {
     console.log('could not place ship');
   }
 }
 
-let board = new GameBoard();
-let ship = new Ship(SHIP.BATTLESHIP, {x:9, y:9}, DIR.EAST);
+let board = newGameBoard();
+let ship = newShip(SHIP.BATTLESHIP, {x:9, y:9}, DIR.EAST);
 console.log(ship);
 printBoard(board);
-placeShip(board, ship);
+placeShipAndLog(board, ship);
 console.log(ship);
 
 printBoard(board);

@@ -1,17 +1,29 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { SocketContext, RoomContext } from '../contexts';
 import useQuery from '../hooks/UseQuery';
-import { Client } from 'common/lib/events';
+import { Server, Client } from 'common/lib/events';
 import { JoinGameStatus } from 'common/lib/details';
-import { ChatWindow, GameBoard, SetupBar, StatusBar } from '../components';
+import {
+  ChatWindow,
+  GameBoard,
+  SetupBar,
+  StatusBar,
+  ShotBoard,
+} from '../components';
 import {
   SHIP,
-  PlayerState,
   DIR,
   PHASE,
-  PLAYER,
   GridCoor,
-  Ship,
+  newShip,
+  placeShip,
+  canPlaceShip,
+  removeShip,
+  allShipsPlaced,
+  isPlayersTurn,
+  getPlayerState,
+  GameState,
+  PlayerState,
 } from 'common/lib/GameLogic';
 import { PlayerContext } from '../contexts/Player';
 import { HoverStyle } from '../components/GameBoard';
@@ -19,9 +31,7 @@ import { HoverStyle } from '../components/GameBoard';
 const Game = () => {
   const [placementDir, setPlacementDir] = useState(DIR.WEST);
   const [selected, setSelected] = useState(SHIP.NONE);
-  const [playerState, setPlayerState] = useState(
-    new PlayerState(PLAYER.PLAYER_1)
-  );
+  const [playerState, setPlayerState] = useState<PlayerState | null>(null);
 
   // TODO this is a hack to get react to re-render a component
   const [trigger, setTrigger] = useState(false);
@@ -31,16 +41,15 @@ const Game = () => {
   const gameID = query.get('gid');
 
   const handleReady = useCallback(() => {
-    if (playerState.allShipsPlaced()) {
-      // TODO submit finalized board to server
-      playerState.phase = PHASE.PLAYER1_TURN;
-      setPlayerState(playerState);
-      setTrigger(!trigger);
+    if (playerState && allShipsPlaced(playerState)) {
+      playerState.isReady = true;
+      socket.emit(Client.ReadyUp, playerState.board, gameID || 'unknown');
+      setPlayerState({ ...playerState });
       return true;
     } else {
       return false;
     }
-  }, [playerState, trigger]);
+  }, [playerState, socket, gameID]);
 
   const handleRotate = useCallback(() => {
     setPlacementDir((dir) => (dir === DIR.NORTH ? DIR.WEST : DIR.NORTH));
@@ -48,12 +57,12 @@ const Game = () => {
 
   const handlePlayerBoardClick = useCallback(
     (pos: GridCoor) => {
-      if (playerState.phase === PHASE.SETUP) {
+      if (playerState && playerState.phase === PHASE.SETUP) {
         if (selected !== SHIP.NONE) {
           let ship = playerState.ships[selected];
           ship.orientation = placementDir;
           ship.locationOfFront = pos;
-          if (playerState.setupBoard.placeShip(ship)) {
+          if (placeShip(playerState.board, ship)) {
             setPlayerState(playerState);
             setSelected(SHIP.NONE);
           }
@@ -65,10 +74,10 @@ const Game = () => {
 
   const handlePlayerBoardHover = useCallback(
     (pos: GridCoor) => {
-      if (playerState.phase === PHASE.SETUP) {
+      if (playerState && playerState.phase === PHASE.SETUP) {
         if (selected !== SHIP.NONE) {
-          let ship = new Ship(selected, pos, placementDir);
-          if (playerState.setupBoard.canPlaceShip(ship)) {
+          let ship = newShip(selected, pos, placementDir);
+          if (canPlaceShip(playerState.board, ship)) {
             return HoverStyle.Action;
           } else {
             return HoverStyle.Error;
@@ -81,21 +90,34 @@ const Game = () => {
     [playerState, placementDir, selected]
   );
 
-  const handleOpponentBoardClick = useCallback(
+  const handleShotBoardClick = useCallback(
     (pos: GridCoor) => {
       if (
-        playerState.phase === PHASE.PLAYER1_TURN ||
-        playerState.phase === PHASE.PLAYER2_TURN
+        gameID &&
+        playerState &&
+        isPlayersTurn(playerState) &&
+        !playerState.shots.find(
+          (s) => s.location.x === pos.x && s.location.y === pos.y
+        )
       ) {
+        socket.emit(Client.TakeShot, gameID, pos);
       }
     },
-    [playerState]
+    [playerState, gameID, socket]
   );
 
-  const handleOpponentBoardHover = useCallback(
+  const handleShotBoardHover = useCallback(
     (pos: GridCoor) => {
-      if (playerState.isPlayersTurn()) {
-        return HoverStyle.Default;
+      if (playerState && isPlayersTurn(playerState)) {
+        if (
+          playerState.shots.find(
+            (s) => s.location.x === pos.x && s.location.y === pos.y
+          )
+        ) {
+          return HoverStyle.Error;
+        } else {
+          return HoverStyle.Action;
+        }
       }
       return HoverStyle.None;
     },
@@ -107,8 +129,8 @@ const Game = () => {
       if (ship === selected) {
         setSelected(SHIP.NONE);
       } else {
-        if (playerState.ships[ship].placed) {
-          playerState.setupBoard.removeShip(playerState.ships[ship]);
+        if (playerState && playerState.ships[ship].placed) {
+          removeShip(playerState.board, playerState.ships[ship]);
           setPlayerState(playerState);
           setSelected(SHIP.NONE);
           setTrigger(!trigger);
@@ -120,7 +142,21 @@ const Game = () => {
     [selected, playerState, trigger]
   );
 
+  const handleGameUpdate = useCallback(
+    (game: GameState) => {
+      if (socket.userID) {
+        let player = getPlayerState(game, socket.userID);
+        if (player) {
+          console.log('Updated game state');
+          setPlayerState(player);
+        }
+      }
+    },
+    [socket.userID]
+  );
+
   useEffect(() => {
+    socket.on(Server.UpdateGameState, handleGameUpdate);
     if (gameID) {
       socket.emit(Client.JoinGame, gameID, (status: JoinGameStatus) => {
         switch (status) {
@@ -134,48 +170,57 @@ const Game = () => {
             console.log(`Error joining room ${gameID}`);
             break;
         }
+        if (!playerState) {
+          socket.emit(Client.GetGameState, gameID);
+        }
       });
     } else {
       console.log('Invalid game id');
     }
     return () => {
-      socket.emit(Client.LeaveRoom, gameID || 'unknown');
+      socket.off(Server.UpdateGameState, handleGameUpdate);
     };
-  }, [query, socket, gameID]);
+  }, [socket, gameID, handleGameUpdate, playerState]);
 
   return (
     <section className='game'>
       <RoomContext.Provider value={gameID || 'unknown'}>
-        <PlayerContext.Provider value={playerState}>
-          <StatusBar />
-          <div className='box-container'>
-            <GameBoard
-              variant='player'
-              onClick={handlePlayerBoardClick}
-              onHover={handlePlayerBoardHover}
-              gameBoard={playerState.setupBoard}
-            />
-            <GameBoard
-              variant='opponent'
-              onClick={handleOpponentBoardClick}
-              onHover={handleOpponentBoardHover}
-              gameBoard={playerState.setupBoard}
-            />
-          </div>
-          {playerState.phase === PHASE.SETUP ? (
-            <SetupBar
-              onReady={handleReady}
-              handleRotate={handleRotate}
-              handleSelect={handleSelect}
-              selected={selected}
-              ships={playerState.ships}
-              placementDir={placementDir}
-            />
-          ) : (
-            <></>
-          )}
-          <ChatWindow />
-        </PlayerContext.Provider>
+        {playerState && (
+          <PlayerContext.Provider value={playerState}>
+            <StatusBar />
+            <div className='box-container'>
+              <GameBoard
+                onClick={handlePlayerBoardClick}
+                onHover={handlePlayerBoardHover}
+                gameBoard={playerState.board}
+              />
+              <ShotBoard
+                onClick={handleShotBoardClick}
+                onHover={handleShotBoardHover}
+                shots={playerState.shots}
+              />
+            </div>
+            {playerState.phase === PHASE.SETUP ? (
+              !playerState.isReady ? (
+                <SetupBar
+                  onReady={handleReady}
+                  handleRotate={handleRotate}
+                  handleSelect={handleSelect}
+                  selected={selected}
+                  ships={playerState.ships}
+                  placementDir={placementDir}
+                />
+              ) : (
+                <p className='text-center text-info'>
+                  Waiting for other player...
+                </p>
+              )
+            ) : (
+              <></>
+            )}
+            <ChatWindow />
+          </PlayerContext.Provider>
+        )}
       </RoomContext.Provider>
     </section>
   );
