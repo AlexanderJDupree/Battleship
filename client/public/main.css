@@ -424,9 +424,25 @@ body {
 ***********************************************/
 .hr_part{
   margin: 0 15%;
+  color: white;
 }
 
 /*foot summary*/
 .foot_summary{
   line-height: 1.7rem
+}
+
+/*********************
+footer contact button
+***********************/
+.contact{
+  background-color: #2A00FF;
+  border-radius: 40px;
+  color: #fff;
+  height: 40px;
+  line-height: 40px;
+  margin: auto 3px;
+  width: 40px;
+  font-size: 24px;
+  text-align: center;
 }

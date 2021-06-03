@@ -20,7 +20,7 @@ export default function Footer() {
               </h6>
             </div>
             <div className="col-md-2 mb-3">
-              <h6 className="text-uppercase font-weight-bold">
+              <h6 className="text-uppercase font-weight-bold text-white text-underline">
                 <a href="https://playbattleship.com/about">
                   About
                 </a>
@@ -28,7 +28,7 @@ export default function Footer() {
             </div>
           </div>
 
-          <hr className="hr_part rgba-white-light"/>
+          <hr className="hr_part"/>
 
           <div className="row d-flex text-center justify-content-center mb-md-0 mb-4">
             <div className="col-md-8 col-12 mt-5">
@@ -41,53 +41,48 @@ export default function Footer() {
             </div>
           </div>
 
-          <hr className="hr_part rgba-white-light mt-5 mb-5"/>
+          <hr className="hr_part mt-5 mb-5"/>
 
           <h6 className="text-uppercase text-center font-weight-bold mb-3">
             Follow us on github!
           </h6>
 
           <section className="row d-flex text-center justify-content-center mb-md-0">
+            
             <div className="mt-2 col-lg-2 col-md-2 mb-4 mb-md-0">
-              <Button variant="outline-info bg-image">
-                <a href="https://github.com/jmcarlson0320">
-                  <img
-                    src="https://mdbootstrap.com/img/new/fluid/city/113.jpg"
-                    alt="Katherine"
-                    className="w-100"
-                  />
-                </a>
-              </Button>
+              <a className="btn btn-large btn-outline-light rounded-circle btn-floating m-1" 
+                href="https://github.com/kkagawa88" 
+                role="button"
+              >
+                <i className="fa fa-github"></i>
+              </a>
+
               <p>
-                Katherine
+                Alex
               </p>
             </div>
 
             <div className="mt-2 col-lg-2 col-md-2 mb-4 mb-md-0">
-              <Button variant="outline-info bg-image">
-                <a href="https://github.com/jmcarlson0320">
-                  <img
-                    src="https://mdbootstrap.com/img/new/fluid/city/113.jpg"
-                    alt="Katherine"
-                    className="w-100"
-                  />
-                </a>
-              </Button>
+              <a className="btn btn-large btn-outline-light rounded-circle btn-floating m-1" 
+                href="https://github.com/AlexanderJDupree" 
+                role="button"
+              >
+                <i className="fa fa-github"></i>
+              </a>
+
               <p>
-                Katherine
+                Josh
               </p>
             </div>
 
             <div className="mt-2 col-lg-2 col-md-2 mb-4 mb-md-0">
-              <Button variant="outline-info bg-image">
-                <a href="https://github.com/jmcarlson0320">
-                  <img
-                    src="https://mdbootstrap.com/img/new/fluid/city/113.jpg"
-                    alt="Katherine"
-                    className="w-100"
-                  />
-                </a>
-              </Button>
+              <a className="btn btn-large btn-outline-light rounded-circle btn-floating m-1" 
+                href="https://github.com/kkagawa88" 
+                role="button"
+              >
+                <i className="fa fa-github"></i>
+              </a>
+
               <p>
                 Katherine
               </p>
