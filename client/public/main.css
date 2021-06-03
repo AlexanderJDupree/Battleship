@@ -401,6 +401,54 @@ body {
   }
 }
 
+
+/**********************************************
+  About page for card layout
+**********************************************/
+
+/* background image*/
+.jumbotron.battleship-image
+{
+  /*background-image: '../cosmetic-images/battleship.jpg';*/
+  background-image: url('https://www.usni.org/sites/default/files/styles/hero_image_2400/public/Bernstein%20F0%20SO%2009.jpg?itok=JsCqd_Vb');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  image-resolution: from-image;
+}
+
+
+@media (max-width: 800px){
+  .card-deck {
+      display: flex !important;
+      flex-flow: column wrap !important;
+      margin-right: -15px !important;
+      margin-left: -15px !important;
+  }
+  .card{
+      display: flex !important;
+      flex-flow: row wrap !important;
+  }
+}
+
+
+/* TODO
+  if screen is big, space it out
+  currently doesn't work. 
+*/
+/*
+@media screen and (min-width: 1024px){
+  .card-deck{
+    display: flex;
+    flex-direction: center;
+  }
+  .card{
+    width: 25em;
+  }
+}
+*/
+
+
 /***********************************************
   Footer 
 ***********************************************/
