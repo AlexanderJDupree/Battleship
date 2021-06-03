@@ -1,4 +1,4 @@
-import {Button } from 'react-bootstrap';
+
 //import { useWindowDimensions } from '../hooks';
 
 export default function Footer() {
@@ -11,24 +11,28 @@ export default function Footer() {
       <footer className="bg-dark text-white">
         <div className="row text-center justify-content-center pt-2 mb-3">
           <div className="col-2 mt-5">
-              <h5 className="text-uppercase text font-weight-bold">
-                Links
-              </h5>
-              <div className="mt-3 row-md-2 mb-3">
-                <h6 className="text-uppercase font-weight-bold">
-                  <a href="https://playbattleship.com/">
-                    Home
-                  </a>
-                </h6>
-              </div>
-              <div className="row-md-2 mb-3">
-                <h6 className="text-uppercase font-weight-bold text-white text-underline">
-                  <a href="https://playbattleship.com/about">
-                    About
-                  </a>
-                </h6>
-              </div>
+            <h5 className="text-uppercase text font-weight-bold">
+              Links
+            </h5>
+            <div className="mt-3 row-md-2 mb-3">
+              <h6 className="">
+                <a href="/">
+                  <span className="text-white">
+                    <u>Home</u>
+                  </span>
+                </a>
+              </h6>
             </div>
+            <div className="row-md-2 mb-3">
+              <h6 className="text-white">
+                <a href="/about">
+                  <span className="text-white">
+                    <u>About</u>
+                  </span>
+                </a>
+              </h6>
+            </div>
+          </div>
 
           <div className="col-8 mt-5 text-left">
             <h5 className="text-uppercase font-weight-bold">
