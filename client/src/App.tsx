@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { socket, SocketContext } from './contexts';
 import { Navigation } from './components';
-import { Home, About, Game, NotFound } from './pages';
+import { Home, About, Game, NotFound, Profile,} from './pages';
 
 function App() {
   return (
@@ -12,6 +12,7 @@ function App() {
             <div className="main-content">
               <Navigation />
               <Switch>
+                <Route path='/profile' exact component={Profile}/>
                 <Route path='/game' exact component={Game} />
                 <Route path='/about' exact component={About} />
                 <Route path='/' exact component={Home} />
