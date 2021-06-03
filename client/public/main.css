@@ -448,28 +448,7 @@ body {
 }
 */
 
-/**********************************************
-  About page css for social media icons
-**********************************************/
 
-/* Style icons */
-.fa {
-  padding: 10px;
-  font-size: 30px;
-  width: 50px;
-  text-align: center;
-  text-decoration: none;
-}
-
-/*social media button*/
-#contacts .button{
-  border-radius: 12px;
-}
-
-/* Add a hover effect*/
-.fa:hover {
-  opacity: 0.7;
-}
 /***********************************************
   Footer 
 ***********************************************/
