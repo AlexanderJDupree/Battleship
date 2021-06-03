@@ -1,24 +1,58 @@
-import { Container, Navbar } from 'react-bootstrap';
-//import { useWindowDimensions } from '../hooks';
 
 export default function Footer() {
-  //const dimensions = useWindowDimensions();
+  return (  
+    <div className="mt-2 footer">
+      <footer className="bg-theme-secondary-dark text-white">
+        <div className="row text-center justify-content-center pt-2 mb-3">
 
-  // TODO magic number, attempting to make the navbar non-fixed on smaller
-  // screens here. This is what I came up with but it's mostly a hack.
-  return (
-    <Navbar
-      expand='lg'
-      bg='theme-secondary-dark'
-      variant='dark'
-      as='footer'
-      className='mt-3'
-      // TODO get this footer to be fixed on short pages
-      //fixed={dimensions.height >= 955 ? 'bottom' : undefined}
-    >
-      <Container className='align-items-center justify-content-center'>
-        <p className='theme-text-secondary text-center'>Some text and stuff</p>
-      </Container>
-    </Navbar>
+        </div>
+
+        <h6 className="text-uppercase text-center font-weight-bold mb-3">
+          Follow us on github!
+        </h6>
+        <hr className="hr_part pb-3"/>
+
+        <section className="pb-3 row d-flex text-center justify-content-center mb-md-0">
+          
+          <div className="mt-2 col-lg-2 col-md-2 mb-4 mb-md-0">
+            <a className="btn btn-large btn-outline-light rounded-circle btn-floating m-1" 
+              href="https://github.com/kkagawa88" 
+              role="button"
+            >
+              <i className="fa fa-github"></i>
+            </a>
+            <span className="ml-2"> 
+              Alex
+            </span>
+          </div>
+
+          <div className="mt-2 col-lg-2 col-md-2 mb-4 mb-md-0">
+            <a className="btn btn-large btn-outline-light rounded-circle btn-floating m-1" 
+              href="https://github.com/AlexanderJDupree" 
+              role="button"
+            >
+              <i className="fa fa-github"></i>
+            </a>
+            <span className="ml-2"> 
+              Josh
+            </span>
+          </div>
+
+          <div className="mt-2 col-lg-2 col-md-2 mb-4 mb-md-0">
+            <a className="btn btn-large btn-outline-light rounded-circle btn-floating m-1" 
+              href="https://github.com/kkagawa88" 
+              role="button"
+            >
+              <i className="fa fa-github"></i>  
+            </a>
+            <span className="ml-2"> 
+              Katherine
+            </span>
+          </div>
+        </section>  
+
+      </footer>
+    </div>
+
   );
 }

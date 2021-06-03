@@ -18,6 +18,15 @@ import { ExtendedSocket, genID } from './utils';
 import * as config from './config';
 import { MemorySessionStore } from './session';
 import { MemoryGameStore } from './game';
+import {
+  getPlayerState,
+  getOpponentState,
+  fireAtPlayer,
+  SHIP,
+  PHASE,
+  checkForWinner,
+  updatePlayerTurn,
+} from 'common/lib/GameLogic';
 
 /// Setup server and socket.io
 const app = Express();
@@ -101,7 +110,7 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
   socket.on(Client.CheckRoom, (roomID, callback) => {
     let game = gameStore.get(roomID);
     if (game) {
-      if (game.players.includes(socket.userID) || !game.players[1]) {
+      if (game.playerIDs.includes(socket.userID) || !game.playerIDs[1]) {
         callback(RoomStatus.Ok);
       } else {
         callback(RoomStatus.RoomFull);
@@ -125,15 +134,19 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
   socket.on(Client.FindGame, (callback) => {
     let game = gameStore
       .all()
-      .find((elem) => elem.game.isPublic && !elem.game.players[1]);
+      .find((elem) => elem.game.isPublic && !elem.game.playerIDs[1]);
 
     if (game) {
       socket.join(game.gid);
       gameStore.set(game.gid, {
         ...game.game,
-        players: [game.game.players[0], socket.userID],
+        playerIDs: [game.game.playerIDs[0], socket.userID],
       });
       callback(game.gid);
+      io.to(game.gid).emit(Server.ChatMessage, {
+        username: ServerName,
+        msg: `${socket.username} joined the game!`,
+      });
     } else {
       let gid = gameStore.create(socket.userID, true);
       socket.join(gid);
@@ -146,21 +159,38 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
 
   // TODO refactor this mess.
   socket.on(Client.JoinGame, (gameID, callback) => {
+    // Clear out any leftover game rooms
+    socket.rooms.forEach((room) => {
+      if (room != gameID || room != socket.id) {
+        //socket.leave(room);
+      }
+    });
     // Resume game from session store if it exists
     let game = gameStore.get(gameID);
     if (game) {
-      if (game.players.includes(socket.userID)) {
+      if (game.playerIDs.includes(socket.userID)) {
         // Player is reconnecting to room
-        socket.join(gameID);
+        if (!socket.rooms.has(gameID)) {
+          socket.join(gameID);
+          io.to(gameID).emit(Server.ChatMessage, {
+            username: ServerName,
+            msg: `${socket.username} joined the game!`,
+          });
+        }
         callback(JoinGameStatus.JoinSuccess);
-      } else if (!game.players[1]) {
+      } else if (!game.playerIDs[1]) {
         // Room has a vacant slot, join game
         socket.join(gameID);
         gameStore.set(gameID, {
           ...game,
-          players: [game.players[0], socket.userID],
+          playerIDs: [game.playerIDs[0], socket.userID],
         });
+        io.to(gameID).emit(Server.UpdateGameState, game);
         callback(JoinGameStatus.JoinSuccess);
+        io.to(gameID).emit(Server.ChatMessage, {
+          username: ServerName,
+          msg: `${socket.username} joined the game!`,
+        });
       } else {
         callback(JoinGameStatus.Error);
       }
@@ -169,13 +199,84 @@ io.on(Client.Connection, (socket: ExtendedSocket) => {
     }
   });
 
+  socket.on(Client.GetGameState, (gameID) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        io.to(socket.id).emit(Server.UpdateGameState, game);
+      }
+    }
+  });
+
   socket.on(Client.ChatMessage, (gameID, msg) => {
     let game = gameStore.get(gameID);
     if (game) {
-      if (game.players.includes(socket.userID)) {
+      if (game.playerIDs.includes(socket.userID)) {
         io.to(gameID).emit(Server.ChatMessage, {
           username: socket.username,
           msg,
+        });
+      }
+    }
+  });
+
+  socket.on(Client.ReadyUp, (setupBoard, gameID) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        let index = game.playerIDs.indexOf(socket.userID);
+        game.playerStates[index].board = setupBoard;
+        game.playerStates[index].isReady = true;
+
+        if (game.playerStates.every((p) => p.isReady)) {
+          game.phase = PHASE.PLAYER1_TURN;
+          game.playerStates.map((p) => (p.phase = PHASE.PLAYER1_TURN));
+          io.to(gameID).emit(Server.UpdateGameState, game);
+        }
+        gameStore.set(gameID, { ...game });
+      }
+    }
+  });
+
+  socket.on(Client.TakeShot, (gameID, location) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        let shooter = getPlayerState(game, socket.userID);
+        let target = getOpponentState(game, socket.userID);
+        let result = fireAtPlayer(target, location);
+
+        let didShotHit = result != SHIP.NONE;
+
+        shooter.shots.push({
+          location: location,
+          isHit: didShotHit,
+          shipHit: result,
+        });
+
+        updatePlayerTurn(game);
+        checkForWinner(game);
+
+        gameStore.set(gameID, { ...game });
+        io.to(gameID).emit(Server.UpdateGameState, game);
+      }
+    }
+  });
+
+  socket.on(Client.Resign, (gameID) => {
+    let game = gameStore.get(gameID);
+    if (game) {
+      if (game.playerIDs.includes(socket.userID)) {
+        let winner = getOpponentState(game, socket.userID);
+        game.winner = winner.player;
+        winner.isWinner = true;
+        game.phase = PHASE.GAME_OVER;
+        game.playerStates.map((p) => (p.phase = PHASE.GAME_OVER));
+        io.to(gameID).emit(Server.UpdateGameState, game);
+        gameStore.set(gameID, game);
+        io.to(gameID).emit(Server.ChatMessage, {
+          username: ServerName,
+          msg: `${socket.username} has resigned!`,
         });
       }
     }

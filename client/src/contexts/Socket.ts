@@ -26,7 +26,7 @@ socket.on(Server.Connect, () => {
 });
 
 socket.on(Server.CreateSession, ({ username, userID, sessionID }) => {
-  localStorage.setItem('sessionID', sessionID);
+  sessionStorage.setItem('sessionID', sessionID);
   socket.userID = userID;
   socket.username = username;
 
@@ -43,7 +43,7 @@ socket.on(Server.ConnectError, (err: Error) => {
   if (err.message === 'session not found') {
     socket.auth = {};
     socket.sessionID = undefined;
-    localStorage.removeItem('sessionID');
+    sessionStorage.removeItem('sessionID');
   }
 });
 
@@ -56,7 +56,7 @@ socket.on(Common.DebugMessage, (msg: string) => {
 });
 
 const initSocket = () => {
-  let sessionID = localStorage.getItem('sessionID');
+  let sessionID = sessionStorage.getItem('sessionID');
   if (sessionID) {
     // Resume session if it exists
     socket.sessionID = sessionID;

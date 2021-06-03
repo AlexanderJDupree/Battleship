@@ -24,6 +24,7 @@
 .env.development.local
 .env.test.local
 .env.production.local
+journal.md
 # vim swap files
 *.swp
 todo.txt
@@ -31,3 +32,4 @@ todo.txt
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+battleship_todo.txt
