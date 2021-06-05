@@ -1,9 +1,17 @@
+
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { socket, SocketContext } from './contexts';
 import { Navigation} from './components';
 import { Home, About, Game, NotFound, Login, Logout, SignUp, ForgotPass} from './pages';
+/*
+import React, { useContext, useRef } from "react";
+import { AuthContext} from "./auth/context/AuthContext";
+import { auth } from "firebase";
+*/
+
 
 function App() {
+
   return (
     <main className='App'>
       <SocketContext.Provider value={socket}>
