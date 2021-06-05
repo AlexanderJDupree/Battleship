@@ -6,7 +6,7 @@ import ProfileJcarlson from '../components/about-page/ProfileJcarlson';
 
 export default function About() {
   return (
-    <div>
+    <div className="about">
       <h1 className=' bg-info text-dark text-center pt-2 pb-2'>
         The Project
       </h1>

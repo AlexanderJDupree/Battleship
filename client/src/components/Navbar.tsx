@@ -32,8 +32,14 @@ export default function Navigation() {
             <LinkContainer to='/about'>
               <Nav.Link>About</Nav.Link>
             </LinkContainer>
-            <LinkContainer to='/profile'>
-              <Nav.Link>Profile</Nav.Link>
+            <LinkContainer to='/login'>
+              <Nav.Link>Login</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/signin'>
+              <Nav.Link>Sign In</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/logout'>
+              <Nav.Link>Logout</Nav.Link>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>
