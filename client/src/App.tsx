@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { socket, SocketContext } from './contexts';
-import { Navigation, Footer } from './components';
+import { Navigation} from './components';
 import { Home, About, Game, NotFound, Login, Logout, SignUp, ForgotPass} from './pages';
 
 function App() {
@@ -22,7 +22,6 @@ function App() {
                 <Route path='*' component={NotFound} />
               </Switch>
             </div>
-            <Footer/>
           </div>
         </Router>
       </SocketContext.Provider>

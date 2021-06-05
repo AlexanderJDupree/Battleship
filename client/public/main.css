@@ -453,18 +453,30 @@ body {
 ***********************************************/
 .page-container {
   position: relative;
-  min-height: 100vh;
+  min-height: 100%;
 }
 
 .content-wrap {
-  padding-bottom: 2.5rem;    
+  padding-bottom: 2.5rem;  
+  padding-bottom:60px;  
 }
 .footer {
-  position: absolute;
+  position: relative;
   bottom: 0;
   width: 100%;
-  height: 2.5rem;           
+  height:60px;          
 }
+
+/*Notes: The deal with the footer 
+- the position on the footer class needs to be relative
+or else on longer pages the footer will cut through the content
+  - Looks great on short pages
+- To fix this we'll probably need some sort of query to 
+check if the content wrap takes up a full screen height
+- we could also cheat our way through and have two types of footers
+for the two types of pages, which we will not do, cause thats digusting
+**/
+
 
 /***********************************************
   Footer Links
@@ -495,7 +507,7 @@ footer contact button
 }
 
 /**************************
-Log in
+Auth Pages
 **************************/
 
 

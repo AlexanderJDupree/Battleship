@@ -9,8 +9,8 @@ import {
   ServerStats,
   Leaderboard,
   MatchMakingGroup,
-  Footer,
 } from '../components';
+import { Footer} from '../components';
 
 export default function Home() {
   return (
@@ -67,7 +67,7 @@ export default function Home() {
           </Card>
         </CardDeck>
       </Container>
-      <Footer />
+      <Footer/>
     </div>
   );
 }

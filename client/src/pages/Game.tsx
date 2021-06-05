@@ -9,6 +9,7 @@ import {
   SetupBar,
   StatusBar,
   ShotBoard,
+  Footer
 } from '../components';
 import {
   SHIP,
@@ -222,6 +223,7 @@ const Game = () => {
           </PlayerContext.Provider>
         )}
       </RoomContext.Provider>
+      <Footer />
     </section>
   );
 };

@@ -1,5 +1,12 @@
+import { Footer} from '../components';
 const NotFound = () => {
-  return <h1 className='text-center'>Not Found</h1>;
+  return (
+    <div>
+      <h1 className='text-center'>Not Found</h1>
+      <Footer/>
+    </div>
+  );
+  
 };
 
 export default NotFound;

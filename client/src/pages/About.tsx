@@ -3,6 +3,7 @@ import Description from '../components/about-page/description';
 import ProfileAlex from '../components/about-page/ProfileAlex';
 import ProfileKat from '../components/about-page/ProfileKat';
 import ProfileJcarlson from '../components/about-page/ProfileJcarlson';
+import { Footer} from '../components';
 
 export default function About() {
   return (
@@ -22,6 +23,7 @@ export default function About() {
           <ProfileKat/>
         </CardDeck>
       </Jumbotron>
+      <Footer/>
     </div>
   );
 }
