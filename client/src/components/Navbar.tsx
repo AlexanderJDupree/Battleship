@@ -35,11 +35,14 @@ export default function Navigation() {
             <LinkContainer to='/login'>
               <Nav.Link>Login</Nav.Link>
             </LinkContainer>
-            <LinkContainer to='/signin'>
-              <Nav.Link>Sign In</Nav.Link>
+            <LinkContainer to='/signup'>
+              <Nav.Link>Sign Up</Nav.Link>
             </LinkContainer>
             <LinkContainer to='/logout'>
               <Nav.Link>Logout</Nav.Link>
+            </LinkContainer>
+            <LinkContainer to='/forgotpass'>
+              <Nav.Link>ForgotPassword</Nav.Link>
             </LinkContainer>
           </Nav>
         </Navbar.Collapse>
