@@ -18,10 +18,10 @@ function ForgotPass() {
                                 <div className="input-group form-group">
                                     <div className="input-group-prepend">
                                         <span className="input-group-text">
-                                            <i className="fas fa-user"></i>
+                                            <i className="fas fa-envelope"></i>
                                         </span>
                                     </div>
-                                    <input type="text" className="form-control" placeholder="email@ex.com"/>
+                                    <input type="email" className="form-control" placeholder="email@ex.com"/>
                                 </div>
                                 <div className="mt-3 mb-2 d-flex justify-content-center form-group">
                                     <input type="submit" value="Sent Reset Link" className="btn w-50 login_btn"/>

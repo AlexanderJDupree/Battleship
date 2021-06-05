@@ -17,10 +17,10 @@ function Login() {
                                 <div className="input-group form-group">
                                     <div className="input-group-prepend">
                                         <span className="input-group-text">
-                                            <i className="fas fa-user"></i>
+                                            <i className="fas fa-envelope"></i>
                                         </span>
                                     </div>
-                                    <input type="text" className="form-control" placeholder="username"/>
+                                    <input type="email" className="form-control" placeholder="email"/>
                                 </div>
                                 <div className="input-group form-group">
                                     <div className="input-group-prepend">

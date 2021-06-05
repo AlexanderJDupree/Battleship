@@ -26,6 +26,14 @@ function SignUp() {
                             <div className="input-group form-group">
                                 <div className="input-group-prepend">
                                     <span className="input-group-text">
+                                        <i className="fas fa-envelope"></i>
+                                    </span>
+                                </div>
+                                <input type="email" className="form-control" placeholder="email@ex.com"/>
+                            </div>
+                            <div className="input-group form-group">
+                                <div className="input-group-prepend">
+                                    <span className="input-group-text">
                                         <i className="fas fa-key"></i>
                                     </span>
                                 </div>

@@ -6,7 +6,7 @@ export default function Footer() {
   // TODO magic number, attempting to make the navbar non-fixed on smaller
   // screens here. This is what I came up with but it's mostly a hack.
   return (  
-    <div className="mt-2 footer">
+    <div className="mt-5 footer">
       <footer className="bg-theme-secondary-dark text-white">
         <div className="row text-center justify-content-center pt-2 mb-3">
           <div className="col-2 mt-5">
